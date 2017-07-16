@@ -1,0 +1,68 @@
+# The default service handles serving the static site, blog, and other 'utility' functions.
+
+runtime: go
+api_version: go1
+
+handlers:
+# SSL challenge, actually served by go handler but must be secure: optional
+ - url: /.well-known/acme-challenge/1914EEpYxXJzea3KgLPgO_qBNMFV6OkSPO_P2JP4n0g
+   script: _go_app
+   secure: optional
+
+# redirect to go.jpco.io, since that one is potentially secure: optional,
+# be secure: optional here
+ - url: /go/.*
+   script: _go_app
+   secure: optional
+    
+# static site handlers
+ - url:  /
+   static_files: public/index.html
+   upload: /
+   secure: always
+ - url: /css
+   static_dir: public/css
+   secure: always
+ - url: /fonts
+   static_dir: public/fonts
+   secure: always
+ - url: /js
+   static_dir: public/js
+   secure: always
+ - url: /img
+   static_dir: public/img
+   secure: always
+ - url: /(.*)/$
+   static_files: public/\1/index.html
+   upload: .*\.html
+   secure: always
+
+# default handler.  *Probably* a request going here is going to be a 404.
+ - url: /.*
+   script: _go_app
+   secure: always
+
+skip_files: |
+  ^(.*/)?(
+  (archetypes/.*)|
+  (app\.yaml)|
+  (app\.yml)|
+  (index\.yaml)|
+  (index\.yml)|
+  (config\.yaml)|
+  (#.*#)|
+  (.*~)|
+  (.*\.py[co])|
+  (.*\.po)|
+  (.*\.pot)|
+  (\..*)|
+  (manage\.py)|
+  (README\.md)|
+  (LICENSE)|
+  (content\/.*)|
+  (data\/.*)|
+  (static\/.*)|
+  (layouts\/.*)|
+  (\.git\/.*)|
+  (\.gitignore)|
+  )$

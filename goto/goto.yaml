@@ -1,0 +1,23 @@
+# The goto service handles performing redirections, that's it.
+
+service: goto
+runtime: go
+api_version: go1.8
+
+includes:
+ - secrets.yaml
+
+handlers:
+ - url: /update
+   script: _go_app
+   secure: always
+   login: admin
+
+ - url: /
+   script: _go_app
+   secure: always
+   login: admin
+
+ - url: /.*
+   script: _go_app
+   secure: optional
