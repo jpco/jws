@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 )
 
 func gotoRedirect(w http.ResponseWriter, r *http.Request) {
@@ -14,7 +15,11 @@ func gotoRedirect(w http.ResponseWriter, r *http.Request) {
 
 // TODO: after hugo is properly set up, this should return a 404
 func static(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "jpco.io is your one-stop-shop for input and also output")
+	if strings.HasSuffix(r.URL.Path, "/") {
+		http.NotFound(w, r)
+	} else {
+		http.Redirect(w, r, r.URL.Path+"/", http.StatusFound)
+	}
 }
 
 func cert(w http.ResponseWriter, r *http.Request) {
