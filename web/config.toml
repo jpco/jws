@@ -1,3 +1,5 @@
 baseURL = "/"
 languageCode = "en-us"
 title = "jpco web services"
+PygmentsCodeFences = true
+pygmentsstyle = "lovelace"

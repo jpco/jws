@@ -29,15 +29,15 @@ handlers:
  - url: /js
    static_dir: public/js
    secure: always
- - url: /img
-   static_dir: public/img
+ - url: /media
+   static_dir: public/media
    secure: always
- - url: /(.*)/$
+ - url: /(.*)$
    static_files: public/\1/index.html
    upload: .*\.html
    secure: always
 
-# default handler.  *Probably* a request going here is going to be a 404.
+# backup/fallback handler.  *Probably* a request going here is going to be a 404.
  - url: /.*
    script: _go_app
    secure: always
