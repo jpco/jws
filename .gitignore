@@ -1,2 +1,3 @@
 secrets.yaml
-default/public/
+web/public/
+web/static/media/welcome.mp4

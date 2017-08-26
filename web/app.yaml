@@ -3,15 +3,18 @@
 runtime: go
 api_version: go1
 
+includes:
+ - secrets.yaml
+
 handlers:
 # SSL challenge, actually served by go handler but must be secure: optional
- - url: /.well-known/acme-challenge/1914EEpYxXJzea3KgLPgO_qBNMFV6OkSPO_P2JP4n0g
+ - url: /.well-known/acme-challenge/2ymobkkpKzxlRiCbbrJBKk9bLuCTzSv0xg7FsjcjSkU
    script: _go_app
    secure: optional
 
 # redirect to go.jpco.io, since that one is potentially secure: optional,
 # be secure: optional here
- - url: /go/.*
+ - url: /go.*
    script: _go_app
    secure: optional
     
@@ -32,14 +35,25 @@ handlers:
  - url: /media
    static_dir: public/media
    secure: always
- - url: /(.*)$
+ - url: /robots.txt
+   static_files: public/robots.txt
+   upload: public/robots.txt
+   secure: optional
+ - url: /sitemap.xml
+   static_files: public/sitemap.xml
+   upload: public/sitemap.xml
+   secure: optional
+ - url: /(.*).html$
+   static_files: public/\1.html
+   upload: .*\.html
+   secure: always
+ - url: /(.*)/$
    static_files: public/\1/index.html
    upload: .*\.html
    secure: always
-
-# backup/fallback handler.  *Probably* a request going here is going to be a 404.
- - url: /.*
-   script: _go_app
+ - url: /(.*)
+   static_files: public/\1/index.html
+   upload: .*\.html
    secure: always
 
 skip_files: |

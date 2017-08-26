@@ -1,5 +1,11 @@
 baseURL = "/"
 languageCode = "en-us"
 title = "jpco web services"
+disableHugoGeneratorInject = true
+
 PygmentsCodeFences = true
 pygmentsstyle = "lovelace"
+
+[outputs]
+ home = ["HTML", "AMP", "RSS"]
+ page = ["HTML", "AMP", "RSS"]

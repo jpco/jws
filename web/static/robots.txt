@@ -1,0 +1,10 @@
+# 80legs
+# User-agent: 008
+# Disallow: /
+# 
+# 80legs also
+# User-agent: voltron
+# Disallow: /
+
+User-Agent: *
+Disallow: /go
