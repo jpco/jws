@@ -8,7 +8,7 @@ includes:
 
 handlers:
 # SSL challenge, actually served by go handler but must be secure: optional
- - url: /.well-known/acme-challenge/2ymobkkpKzxlRiCbbrJBKk9bLuCTzSv0xg7FsjcjSkU
+ - url: /.well-known/acme-challenge/LhY4rN7JWG3CO4PvF3JDoytby9TOMdrx42Kabtrlu4k
    script: _go_app
    secure: optional
 

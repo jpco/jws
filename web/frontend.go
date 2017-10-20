@@ -7,7 +7,10 @@ import (
 )
 
 func gotoRedirect(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Location", fmt.Sprintf("https://go.jpco.io/%s", r.URL.Path[4:]))
+	if err := r.ParseForm(); err != nil {
+		fmt.Fprintf(w, "Got an oopsies: %v", err)
+	}
+	w.Header().Set("Location", fmt.Sprintf("https://go.jpco.io/%s?%s", r.URL.Path[4:], r.Form.Encode()))
 	w.WriteHeader(http.StatusFound)
 	fmt.Fprintf(w, "redirect")
 }
@@ -23,7 +26,10 @@ func cert(w http.ResponseWriter, r *http.Request) {
 }
 
 func init() {
-	http.HandleFunc("/.well-known/acme-challenge/2ymobkkpKzxlRiCbbrJBKk9bLuCTzSv0xg7FsjcjSkU", cert)
+	acmeKey := os.Getenv("ACME_KEY")
+	if acmeKey != "" {
+		http.HandleFunc("/.well-known/acme-challenge/"+acmeKey, cert)
+	}
 
 	http.HandleFunc("/go/", gotoRedirect)
 	http.HandleFunc("/", static)

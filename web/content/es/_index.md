@@ -5,7 +5,7 @@ description: The extensible shell
 
 Es[^1] is a good shell.
 
-If you want a proper introduction to the language, see the [Usenix paper](http://wryun.github.io/es-shell/paper.html) written by the initial designers/implementers of the language.  You can also download and build either the "official" version at [wryun's Github repo](https://github.com/wryun/es-shell) of the language, or [my own fork](https://github.com/jpco/es-shell), which contains some language extensions (and a couple very minor breaking changes).
+If you want a proper introduction to the language, see the [Usenix paper](http://wryun.github.io/es-shell/paper.html) written by the initial designers/implementers of the language.  You can also download and build either the "official" version at [wryun's Github repo](https://github.com/wryun/es-shell) of the language, or [my own fork](https://github.com/jpco/es-shell), which contains some language extensions (and a couple hopefully minor breaking changes).
 
 As a teaser, here are some things you can do with es[^2]:
 
@@ -28,7 +28,7 @@ celebrate $phrase    # Celebrate saving!
 celebrate "$phrase"  # Celebrate saving $100!
 ```
 
-Proper quoting rules are necessary when both setting and using variables.  This is confusing and leads to errors.
+Following the proper quoting rules is necessary when both setting and using variables.  This is confusing and leads to errors.
 
 Es variables are lists.  There is only one kind of significant quote, the single quote, which stops both splitting and interpolation.  Also, variables are only split when the values are first read.
 
@@ -77,7 +77,7 @@ map @ file {mv $file stash/} file1 file2 file3
 # mv file3 stash/
 ```
 
-In the last example, one argument is a lambda, using es' `@ arg {body}` syntax.  Lambdas operate exactly like functions, but can be passed around like any other value.  In fact, function assignment is just sugar for assigning a lambda to a variable.
+In the last example, the first argument to `map` is a lambda, using es' `@ arg {body}` syntax.  Lambdas operate exactly like functions, but can be passed around like other values.  In fact, function assignment is just sugar for assigning a lambda to a variable:
 
 ```
 # The following lines are completely identical
@@ -124,7 +124,7 @@ fn pwd {echo $cwd}
 
 Notice this line: `let (cd = $fn-cd)`.  Since functions are just variables with lambdas as their values, this sets the variable `$cd` to whatever the function `cd` is set to.  This avoids the infinite recursion that would otherwise happen by calling `cd` from within `cd`.
 
-But this also means that you can then redefine `cd` even more!  Suppose the following code block directly follows the previous:
+But this also allows you to redefine `cd` further!  Suppose the following code block directly follows the previous:
 
 ```
 let (cd = $fn-cd)
@@ -145,7 +145,7 @@ For syntax, there is typically a three-tier setup: shell syntax
 ```
 a | b | c
 ```
-will be internally rewritten in terms of a hook function
+will be rewritten, when read, in terms of a hook function
 ```
 %pipe {a} 1 0 {b} 1 0 {c}
 ```

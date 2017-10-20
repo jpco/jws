@@ -136,11 +136,11 @@ func gotoService(w http.ResponseWriter, r *http.Request) {
 }
 
 func cert(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "VQyQ-fXxyhOv5xuumzeScbbPxLvybtFHEIaKpJeaVx8.VZPROWUd-G8vVEpgbFjwam8DmnO1dGY5obMvx5MCyuY")
+	fmt.Fprint(w, "FSdYgqpToL5jkaYxneCNGIKTrrKp9lmH18k7o8CqVo8.VZPROWUd-G8vVEpgbFjwam8DmnO1dGY5obMvx5MCyuY")
 }
 
 func init() {
-	http.HandleFunc("/.well-known/acme-challenge/VQyQ-fXxyhOv5xuumzeScbbPxLvybtFHEIaKpJeaVx8", cert)
+	http.HandleFunc("/.well-known/acme-challenge/FSdYgqpToL5jkaYxneCNGIKTrrKp9lmH18k7o8CqVo8", cert)
 
 	http.HandleFunc("/update", gotoUpdate)
 	http.HandleFunc("/", gotoService)
