@@ -1,20 +1,28 @@
 div.content {
     /* layout */
-    margin: auto;
-    margin-top: 2em;
-    margin-bottom: 2em;
-    width: 90%;
+    margin: 2em auto;
+    width: 85%;
     max-width: 1000px;
 
     /* format */
     font-family: serif;
-    color: #222;
+    font-size: 12pt;
+    color: #444;
+}
+
+div.footnotes {
+    line-height: 1.6em;
+}
+
+div.footnotes li {
+    margin-top: 1ex;
+    margin-bottom: 1em;
 }
 
 .content p {
     /* format */
-    line-height: 1.5em;
-    text-align: justify;
+    line-height: 1.6em;
+    padding: 0.5ex 0;
 }
 
 .content pre {
@@ -23,6 +31,7 @@ div.content {
     border: 1px solid #d4d4d4;
     overflow-x: auto;
     padding: 1ex;
+    margin: 1em 1ex;
     border-radius: .5ex;
     color: #393939;
 }
@@ -56,6 +65,11 @@ div.content {
 
 .content h1.title {
     margin-bottom: .3ex;
+    font-size: 32pt;
+}
+
+.content h2 {
+    margin: 1ex 0;
 }
 
 .content a.subtitle {

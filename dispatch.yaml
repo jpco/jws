@@ -1,5 +1,7 @@
 dispatch:
  - url: "go.jpco.io/*"
    service: goto
+ - url: "jpco.io/x/*"
+   service: xp
  - url: "jpco.io/*"
    service: default

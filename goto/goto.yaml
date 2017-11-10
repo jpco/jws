@@ -1,4 +1,4 @@
-# The goto service handles performing redirections, that's it.
+# The goto service handles redirections (performing them and setting them).
 
 service: goto
 runtime: go

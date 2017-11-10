@@ -61,11 +61,13 @@ func listSrcsDests(w http.ResponseWriter, db *sql.DB) {
 
 func gotoUpdate(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
+		// FIXME this should return a 500
 		fmt.Fprintf(w, "error (1) %v", err)
 		return
 	}
 	db, err := sqlOpen()
 	if err != nil {
+		// FIXME this should also return a 500
 		fmt.Fprintf(w, "error (2) %v", err)
 		return
 	}
@@ -77,6 +79,7 @@ func gotoUpdate(w http.ResponseWriter, r *http.Request) {
 				if _, err := db.Exec(`DELETE FROM goto WHERE SRC = ?`, key); err == nil {
 					fmt.Fprintf(w, "unset %s<br />\n", key)
 				} else {
+					// FIXME this should return a 500
 					fmt.Fprintf(w, "error unsetting %s: %s<br />\n", key, err)
 				}
 			} else {
@@ -87,6 +90,7 @@ func gotoUpdate(w http.ResponseWriter, r *http.Request) {
 										exp = VALUES(exp)`, key, x); err == nil {
 					fmt.Fprintf(w, "set <a href='/%s'>%s</a> to go to <a href='%s'>%s</a><br />\n", key, key, x, x)
 				} else {
+					// FIXME this should return a 500
 					fmt.Fprintf(w, "error setting %s to %s: %s<br />\n", key, x, err)
 				}
 			}

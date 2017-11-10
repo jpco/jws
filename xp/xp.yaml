@@ -1,0 +1,18 @@
+# The goto service handles redirections (performing them and setting them).
+
+service: xp
+runtime: go
+api_version: go1
+
+handlers:
+ - url: /js/roll.js
+   static_files: roll.js
+   upload: roll.js
+
+ - url: /css/roll.css
+   static_files: roll.css
+   upload: roll.css
+
+ - url: /.*
+   script: _go_app
+   secure: always
