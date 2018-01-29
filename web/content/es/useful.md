@@ -86,7 +86,32 @@ fn recache {
 }
 ```
 
-## Operate on streaming input
+### Temporary cd
+
+Change directory for a single command (without forking,
+though that's a way to do it too).  Note this needs to
+be defined before any cd redefinition that might process
+multiple arguments into a single directory.
+
+```
+let (cd = $fn-cd)
+fn cd dir cmd {
+  if {~ $cmd ()} {
+    $cd $dir
+  } {
+    let (wd = `pwd) {
+      unwind-protect {
+	$cd $dir
+	$cmd
+      } {
+	$cd $wd
+      }
+    }
+  }
+}
+```
+
+### Operate on streaming input
 
 Give `for-each` a function as an argument, which itself takes a single argument.  `for-each` will call the function once for each line of input it receives, as it receives it (no buffering of input -- great for huge files!).
 

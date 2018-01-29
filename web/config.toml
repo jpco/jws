@@ -2,10 +2,11 @@ baseURL = "/"
 languageCode = "en-us"
 title = "jpco web services"
 disableHugoGeneratorInject = true
+disableKinds = ["taxonomy", "taxonomyTerm"]
 
 PygmentsCodeFences = true
 pygmentsstyle = "lovelace"
 
 [outputs]
- home = ["HTML", "AMP", "RSS"]
- page = ["HTML", "AMP", "RSS"]
+ home = ["HTML"]
+ page = ["HTML"]
