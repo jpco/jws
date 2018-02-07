@@ -3,7 +3,6 @@ package jpcowww
 import (
 	"fmt"
 	"net/http"
-	"os"
 )
 
 func gotoRedirect(w http.ResponseWriter, r *http.Request) {
@@ -15,22 +14,11 @@ func gotoRedirect(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "redirect")
 }
 
-// TODO: after hugo is properly set up, this should return a 404
 func static(w http.ResponseWriter, r *http.Request) {
 	http.NotFound(w, r)
 }
 
-func cert(w http.ResponseWriter, r *http.Request) {
-	acmeValue := os.Getenv("ACME_VALUE")
-	fmt.Fprint(w, acmeValue)
-}
-
 func init() {
-	acmeKey := os.Getenv("ACME_KEY")
-	if acmeKey != "" {
-		http.HandleFunc("/.well-known/acme-challenge/"+acmeKey, cert)
-	}
-
 	http.HandleFunc("/go/", gotoRedirect)
 	http.HandleFunc("/", static)
 }

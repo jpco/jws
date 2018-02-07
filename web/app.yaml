@@ -3,21 +3,13 @@
 runtime: go
 api_version: go1
 
-includes:
- - secrets.yaml
-
 handlers:
-# SSL challenge, actually served by go handler but must be secure: optional
- - url: /.well-known/acme-challenge/LhY4rN7JWG3CO4PvF3JDoytby9TOMdrx42Kabtrlu4k
-   script: _go_app
-   secure: optional
-
-# redirect to go.jpco.io, since that one is potentially secure: optional,
+# redirect to go.jpco.io, and since that one is potentially secure: optional,
 # be secure: optional here
  - url: /go.*
    script: _go_app
    secure: optional
-    
+
 # static site handlers
  - url:  /
    static_files: public/index.html
@@ -35,9 +27,13 @@ handlers:
  - url: /media
    static_dir: public/media
    secure: always
- - url: /robots.txt
-   static_files: public/robots.txt
-   upload: public/robots.txt
+ - url: /(.*).txt
+   static_files: public/\1.txt
+   upload: .*\.txt
+   secure: optional
+ - url: /dogs.json
+   static_files: public/dogs.json
+   upload: public/dogs.json
    secure: optional
  - url: /sitemap.xml
    static_files: public/sitemap.xml
