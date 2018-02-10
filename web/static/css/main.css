@@ -46,7 +46,7 @@ div.footnotes li {
     border-collapse: collapse;
 }
 
-.content table th, 
+.content table th,
 .content table td {
     padding: 6px 13px;
     border: 1px solid #d4d4d4;
@@ -82,4 +82,17 @@ div.footnotes li {
         padding-left: 3em;
         padding-right: 3em;
     }
+}
+
+.content ul {
+    list-style-type: none;
+}
+.content ul li:before {
+    content: '\2014';
+    position: absolute;
+    margin-left: -20px;
+}
+.content ul li {
+    margin-top: 1ex;
+    margin-bottom: 1ex;
 }

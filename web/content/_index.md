@@ -3,8 +3,8 @@ title: "jpco web services"
 date: 2017-07-16T01:24:53-07:00
 ---
 
-# section 1: [test 1](http://go.jpco.io/17776)
- 
+# section 1
+
 ## [with apologies to crustybagelbites](https://crustybagelbites.tumblr.com/post/162808923091/this-took-me-a-day-but-i-knew-i-had-to-do-it-as)
 
 <video style="width: 100%" src="/media/welcome.mp4" controls="true" type="video/mp4" loop="true"></video>
@@ -32,11 +32,11 @@ func main() {
 
 Four score and seven years ago our fathers brought forth on this continent, a new nation, conceived in Liberty, and dedicated to the proposition that all men are created equal.
 
-> > Now we are engaged in a great civil war, testing whether that nation, or any nation so conceived and so dedicated, can long endure. 
+> > Now we are engaged in a great civil war, testing whether that nation, or any nation so conceived and so dedicated, can long endure.
 
 > > > We are met on a great battle-field of that war.
 
-> We have come to dedicate a portion of that field, as a final resting place for those who here gave their lives that that nation might live. 
+> We have come to dedicate a portion of that field, as a final resting place for those who here gave their lives that that nation might live.
 
 > > It is altogether fitting and proper that we should do this.
 
