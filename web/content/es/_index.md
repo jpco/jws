@@ -3,161 +3,148 @@ title: es
 description: The extensible shell
 ---
 
-Es[^1] is a good shell.
+*Es* is the extensible shell.
 
-If you want a proper introduction to the language, see the [Usenix paper](http://wryun.github.io/es-shell/paper.html) written by the initial designers/implementers of the language.  You can also download and build either the "official" version at [wryun's Github repo](https://github.com/wryun/es-shell) of the language, or [my own fork](https://github.com/jpco/es-shell), which contains some language extensions (and a couple hopefully minor breaking changes).
+For a proper, formal introduction to the language, see [the Usenix paper](paper.html).  The "canonical" source code is available on [Github](https://github.com/wryun/es-shell), as is [my fork](https://github.com/jpco/es-shell), which is undergoing ongoing development[^1].
 
-As a teaser, here are some things you can do with es[^2]:
+These pages are intended to provide a source of useful information for someone potentially interested in hacking on or simply using *es*.
 
-## Avoid confusing quoting
+## A Short(-ish) Introduction to the Extensible Shell
 
-In posix shells, all variables are strings.  When a variable is used unquoted, it is split according to the value of `$IFS` (and then interpolated -- i.e., variables within the quotes will be replaced with their value).  If double-quoted, it is not split, but will be interpolated.  If single-quoted, it will be neither split nor interpolated.
+In very simple cases, *es* looks similar to most other shells:
 
 ```
-phrase='saving $100'
+message='Hello, world!'
+echo $message | tee my-first-output.txt
+```
 
-celebrate() {
-    for i in "$@"; do
-        echo Celebrate $i!
-    done
+In more complex cases, *es* looks like a strange mix of *rc* (the Plan 9 command interpreter), Tcl, and Scheme.  (You know, those universally popular and widely embraced languages...)
+
+Fundamentally, *es* is built around a simple conceit: Code and data are really the same thing[^2]: lists of strings.  At its core, shell "code" is built out of commands, which are whitespace-separated lists of words.  Because of the loosey-goosey nature of shell semantics, when variables are used as arguments to a command (or as the command word itself), it might be considered that the variables store *code*.
+
+```
+fn do-3-times func arg {
+  $func $arg
+  $func $arg
+  $func $arg
 }
 
-celebrate $phrase    # Celebrate saving!
-                     # Celebrate $100!
-
-celebrate "$phrase"  # Celebrate saving $100!
+do-3-times echo 'Hello, world!'
+# Hello, world!
+# Hello, world!
+# Hello, world!
 ```
 
-Following the proper quoting rules is necessary when both setting and using variables.  This is confusing and leads to errors.
-
-Es variables are lists.  There is only one kind of significant quote, the single quote, which stops both splitting and interpolation.  Also, variables are only split when the values are first read.
+Many shells are under-equipped to handle this.  POSIX-compliant shells store (either exclusively or by default) variable values as strings, and try to split them in a sensible way upon use, which can lead to all sorts of trouble [if extreme care isn't taken](https://mywiki.wooledge.org/BashFAQ/050).  *Es*, following *rc*, takes a somewhat simpler approach --- all variables store *lists* of strings, which are split when they're initially read, and then never again (unless explicitly commanded to).  This makes constructs simple in *es* which take surprising care in other shells:
 
 ```
-; name = bob 'big hat' mccoy
-; echo $name
-bob big hat mccoy
-
-; echo $#name  # the length of $name
-3
-
-; echo $name(2)  # the second element of $name (es is one-indexed)
-big hat
-
-; fn celebrate {for (i = $*) echo Celebrate $i^!}
-; celebrate $name  # no quotes necessary, it does not get re-split
-Celebrate bob!
-Celebrate big hat!
-Celebrate mccoy!
-```
-
-This fixes a large class of bugs out of the gate.
-
-
-## Operate on code as data
-
-Es draws quite a bit from Scheme, and as such, allows for operating on code as data.
-
-The canonical example is the `map` function:
-
-```
-fn map cmd args {
-    for (arg = $args) {
-        $cmd $arg
-    }
-}
-
-map echo one two three
-# echo one
-# echo two
-# echo three
-
-map @ file {mv $file stash/} file1 file2 file3
-# mv file1 stash/
-# mv file2 stash/
-# mv file3 stash/
-```
-
-In the last example, the first argument to `map` is a lambda, using es' `@ arg {body}` syntax.  Lambdas operate exactly like functions, but can be passed around like other values.  In fact, function assignment is just sugar for assigning a lambda to a variable:
-
-```
-# The following lines are completely identical
-fn celebrate items {echo Keep celebrating $items}
-fn-celebrate = @ items {echo Keep celebrating $items}
-
-# Very identical indeed:
-fn cool stuff {lots of good commands}
-echo $fn-cool
-# @ stuff {lots of good commands}
-```
-
-Since most shells don't operate on commands in a robust way, it takes a while to dig into how handy it can be, but---trust me---it's *very handy*.
-
-
-## Redefine (and keep redefining) commands
-
-In most shells, there are aliases.
-
-```
-alias egrep='grep -E'
-```
-
-In es, there are no aliases, but there don't need to be:
-```
-fn egrep {
-    grep -E $*
-}
-
-# or, more briefly,
-fn-egrep = grep -E
-```
-
-Es functions allow for everything aliases would, plus quite a bit more interesting functionality (no pun intended).  The following block extends the `cd` command to update the value of the `$cwd` variable every time it is called, and overrides `pwd` to simply `echo $cwd`.
-```
-let (cd = $fn-cd)
-fn cd dest {
-    $cd $dest
-    cwd = `` \n {let (fn-pwd = ()) pwd}
-}
-
-fn pwd {echo $cwd}
-```
-
-Notice this line: `let (cd = $fn-cd)`.  Since functions are just variables with lambdas as their values, this sets the variable `$cd` to whatever the function `cd` is set to.  This avoids the infinite recursion that would otherwise happen by calling `cd` from within `cd`.
-
-But this also allows you to redefine `cd` further!  Suppose the following code block directly follows the previous:
-
-```
-let (cd = $fn-cd)
-fn cd dest {
-    $cd $dest
-    prompt = $cwd^'; '
+files = 'Take on Me.mp3' 'Never Gonna Give You Up.flac'
+for (file = $files) {
+  rm $file
 }
 ```
 
-This way, the shell's prompt is set to the current working directory every time you run `cd`.  Note that this redefinition of `cd` uses functionality set in the previous redefinition (i.e., setting `$cwd`).
+This is the obvious, idiomatic, and mostly-correct way to do this in *es* ("mostly" in that there's going to be a problem if any of your files happen to be something like `-r`, but that's another animal that I don't *think* is solvable by any shell syntax).
 
-## Redefine (and keep redefining) how the shell itself works
+*Es* variables also inherit from *rc* simple list-handling constructs: subscripting (`$list(3)` as well as ranges like `$list(2 ... 4)` pull sublists of `$list`), concatenation (`(a b)^(c d)` produces `ac ad bc bd`), and flattening (`$^list` turns a list to a string).
 
-A huge part of the shell's syntax and functionality is exposed as functions, which can be edited.
-
-For syntax, there is typically a three-tier setup: shell syntax
+Because of the listiness of variables, in the previous `do-3-times` example, we don't need to give the `do-3-times` function two parameters.  In the following code, the two arguments `echo` and `Hello, world!` both get assigned to the value of the `cmd` parameter.
 
 ```
-a | b | c
+fn do-3-times cmd {
+  $cmd
+  $cmd
+  $cmd
+}
+
+do-3-times echo 'Hello, world!'
+# Hello, world!
+# Hello, world!
+# Hello, world!
 ```
-will be rewritten, when read, in terms of a hook function
+
+However, *es* leans in even further to the "code-as-data" conceit, by providing code blocks as a type of "word":
+
 ```
-%pipe {a} 1 0 {b} 1 0 {c}
+fn interleave cmd1 cmd2 {
+  $cmd1
+  $cmd2
+  $cmd1
+  $cmd2
+}
+
+interleave {echo 'One!'} {echo 'Two!'}
+# One!
+# Two!
+# One!
+# Two!
 ```
-which is usually by default set to a primitive (`fn-%pipe = $&pipe`).  Primitives expose the 'core' functionality of the shell, which can't be defined in terms of other shell constructs.  To change the behavior of pipes, you just redefine the `%pipe` function, exactly like in the previous section.
 
-Some constructs don't even have corresponding primitives, since they don't need them -- `&&`, `||`, and `!` (the hook functions `%and`, `%or`, and `%not`, respectively) are all defined in terms of `if`!
+This is, in fact, roughly how the `if` function works: it takes a list of arguments, runs the first one, and then, if the first argument exits "truthily", runs the second argument (and given more arguments, continues in an "else-if-else" fashion).
 
-You can also redefine other parts of the shell.  For instance, the behavior of the interactive REPL is defined by the function `%interactive-loop`, and path searching is defined via the `%pathsearch` function.  Both of these (along with others) can be used to do very powerful things, which are mentioned in the [functions list](/es/useful.html).
+```
+fn true {
+  result 0
+}
+
+fn affirm {
+  echo 'You got it!'
+}
+
+if true affirm
+# You got it!
+```
+
+This is the same as:
+
+```
+if {result 0} {
+  echo 'You got it!'
+}
+```
+
+which should actually look somewhat like syntax.  Many language constructs are built on this, and it's (relatively) easy to build even more (this is part of the "extensible" in "the extensible shell").
+
+Going even *further*, *es* also implements a *lambda calculus* --- that is, in addition to code blocks like `{echo Hello}`, you can specify the *lambda* `@ msg {echo $msg}`, and call it like `@ msg {echo $msg} Hello`.
+
+```
+@ e1 e2 e3 {echo $e3 $e2 $e1} first second third
+# third second first
+```
+
+Lambdas are no different from any function --- they take arguments, you can `return` from them, and you can save them and run them multiple times.  In fact, function declaration in *es* is implemented as assigning lambdas to variables.  Lambdas simply provide a way to pass functions around in variables, or as arguments to other functions.  This means that, for instance, anywhere someone would use
+
+```
+fn foo str {
+  echo FOO $str
+}
+
+fn apply-thrice cmd {
+  $cmd ONE
+  $cmd TWO
+  $cmd THREE
+}
+
+apply-thrice foo
+# FOO ONE
+# FOO TWO
+# FOO THREE
+```
+
+one can also immediately say
+
+```
+apply-thrice @ msg {echo FROM LAMBDA $msg}
+# FROM LAMBDA ONE
+# FROM LAMBDA TWO
+# FROM LAMBDA THREE
+```
+
+Having a lambda calculus in the language unlocks some powerful stuff, and allows *es* to piggy-back off of the work and constructs of previous lambda-focused languages, like Scheme.
+
+This page doesn't address all of the interesting features of *es*, such as its rich return values, exception mechanism, lexical binding support, and syntax rewriting --- check out the [paper](paper.html) by the original authors for a complete introduction.
 
 
-[^1]: The Extensible Shell
+[^1]: It would be nice to use the phrase "ongoing improvement" here, but that may be overselling the continuing work.
 
-[^2]: These examples include language changes from my own fork of es, so don't be surprised if they break with the version from wryun's repo.
-
-[^3]: The ones and zeros are file descriptors.
+[^2]: Folks familiar with homoiconicity should recognize what's coming, though note that *es* tends to feel more like Tcl than Scheme in how it does its code-as-data stuff.
