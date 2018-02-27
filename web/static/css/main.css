@@ -19,6 +19,11 @@ div.footnotes li {
     margin-bottom: 1em;
 }
 
+div.caption {
+    text-align: center;
+    font-style: italic;
+}
+
 .content p {
     /* format */
     line-height: 1.6em;

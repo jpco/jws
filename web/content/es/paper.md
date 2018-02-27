@@ -6,15 +6,6 @@ url: /es/paper.html
 
 ---
 
-<style>
-    /* A custom style for figure captions. If it becomes useful elsewhere, we
-     * may want to consider moving it into main.css. */
-    div.caption {
-	text-align: center;
-	font-style: italic;
-    }
-</style>
-
 # *Es*: A shell with higher-order functions
 
  - *Paul Haahr* -- Adobe Systems Incorporated <a href="#erratum1" id="erratum1-use">[Errata Note 1]</a>
