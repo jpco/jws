@@ -1,3 +1,30 @@
+/*
+ * Colors (accessible):
+ * - red    (222,  73,  73)  #de4949
+ * - blue   ( 51,  82, 225)  #3352e1
+ * - yellow (255, 185,  55)  #ffb937
+ * - purple ( 83,  51, 100)  #533364
+ * - green  ( 47, 176, 110)  #2fb06e
+ * - grey   ( 90, 125, 139)  #5a7d8b
+ *
+ * colors based on those:
+ * - darkgrey       #2d3e45
+ * - lightgrey      #b4bcd1
+ * - lightergrey    #
+ */
+
+a:link {
+    color: #3352e1;
+}
+
+a:visited {
+    color: #533364;
+}
+
+a:active {
+    color: #5a7d8b;
+}
+
 div.content {
     /* layout */
     margin: 2em auto;
@@ -7,7 +34,7 @@ div.content {
     /* format */
     font-family: serif;
     font-size: 12pt;
-    color: #444;
+    color: #2d3e45;
 }
 
 div.footnotes {
@@ -32,17 +59,16 @@ div.caption {
 
 .content pre {
     line-height: 125%;
-    background-color: #f3f3f3;
-    border: 1px solid #d4d4d4;
+    background-color: #f0f3f6;
+    border: 1px solid #b4bcd1;
     overflow-x: auto;
     padding: 1ex;
     margin: 1em 1ex;
     border-radius: .5ex;
-    color: #393939;
 }
 
 .content blockquote {
-    border-left: thick solid #d4d4d4;
+    border-left: thick solid #b4bcd1;
     margin: 1em 1em 1em 0;
     padding-left: 1em;
 }
@@ -78,7 +104,7 @@ div.caption {
 }
 
 .content a.subtitle {
-    color: #6f6f6f;
+    color: #5a7a8b;
     font-style: oblique;
 }
 
@@ -92,11 +118,13 @@ div.caption {
 .content ul {
     list-style-type: none;
 }
+
 .content ul li:before {
     content: '\2014';
     position: absolute;
     margin-left: -20px;
 }
+
 .content ul li {
     margin-top: 1ex;
     margin-bottom: 1ex;
