@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"sort"
+	"strings"
 
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/user"
@@ -23,19 +24,18 @@ func sqlOpen() (*sql.DB, error) {
 	return sql.Open("mysql", fmt.Sprintf("%s:%s@cloudsql(%s)/goto", user, pass, conn))
 }
 
-func listSrcsDests(w http.ResponseWriter, db *sql.DB) {
+func scanAllLinks(db *sql.DB) error {
 	if db == nil {
 		var err error
 		db, err = sqlOpen()
 		if err != nil {
-			fmt.Fprintf(w, "error opening db connection: %v", err)
-			return
+			return fmt.Errorf("error opening db connection: %v", err)
 		}
 	}
+
 	rows, err := db.Query("SELECT src, dest FROM goto")
 	if err != nil {
-		fmt.Fprintf(w, "error querying all src => dests: %v", err)
-		return
+		return fmt.Errorf("error querying all src => dests: %v", err)
 	}
 	defer rows.Close()
 	for rows.Next() {
@@ -44,19 +44,100 @@ func listSrcsDests(w http.ResponseWriter, db *sql.DB) {
 			dest string
 		)
 		if err := rows.Scan(&src, &dest); err != nil {
-			fmt.Fprintf(w, "error scanning row: %v", err)
-			break
+			return fmt.Errorf("error scanning DB row: %v", err)
 		}
 		gotoDests[src] = dest
 	}
-	var srcs []string
-	for s := range gotoDests {
-		srcs = append(srcs, s)
+	return nil
+}
+
+// We're apparently just going whole-hog on the whole tree structure thing now
+type link struct {
+	dest     string
+	children map[string]*link
+}
+
+func (l *link) Fprint(w http.ResponseWriter, prefix, nm string) {
+	var singles []string
+	var tuples []string
+	for s, c := range l.children {
+		if c.children != nil {
+			tuples = append(tuples, s)
+		} else {
+			singles = append(singles, s)
+		}
 	}
-	sort.Strings(srcs)
-	for _, s := range srcs {
+
+	if l.dest != "" {
+		if prefix != "" {
+			fmt.Fprintf(w, "%s / <a href='%s/%s'>%s</a>: %s<br />\n",
+				prefix, prefix, nm, nm, l.dest)
+		} else {
+			fmt.Fprintf(w, "<a href='%s'>%s</a>: %s<br />\n", nm, nm, l.dest)
+		}
+		if len(singles) > 0 || len(tuples) > 0 {
+			fmt.Fprint(w, "<br />\n")
+		}
+	}
+
+	nprefix := nm
+	if prefix != "" {
+		nprefix = fmt.Sprintf("%s/%s", prefix, nm)
+	}
+
+	sort.Strings(singles)
+	for _, s := range singles {
+		l.children[s].Fprint(w, nprefix, s)
+	}
+
+	sort.Strings(tuples)
+	for i, s := range tuples {
+		if i != 0 || len(singles) != 0 {
+			fmt.Fprint(w, "<br />\n\n")
+		}
+		l.children[s].Fprint(w, nprefix, s)
+	}
+}
+
+func listSrcsDests(w http.ResponseWriter, db *sql.DB) {
+	if err := scanAllLinks(db); err != nil {
+		fmt.Fprint(w, err)
+		return
+	}
+
+	var short []string
+	links := make(map[string]*link)
+	for s, d := range gotoDests {
+		if !strings.HasPrefix(d, "http://") && !strings.HasPrefix(d, "https://") {
+			short = append(short, s)
+			continue
+		}
+
+		var cl *link
+		for _, t := range strings.Split(s, "/") {
+			ls := links
+			if cl != nil {
+				if cl.children == nil {
+					cl.children = make(map[string]*link)
+				}
+				ls = cl.children
+			}
+			if _, ok := ls[t]; !ok {
+				ls[t] = new(link)
+			}
+			cl = ls[t]
+		}
+		cl.dest = d
+	}
+
+	sort.Strings(short)
+	for _, s := range short {
 		fmt.Fprintf(w, "<a href='/%s'>%s</a>: %s<br />\n", s, s, gotoDests[s])
 	}
+	fmt.Fprint(w, "<br />\n\n")
+
+	root := link{children: links}
+	root.Fprint(w, "", "")
 }
 
 func gotoUpdate(w http.ResponseWriter, r *http.Request) {
@@ -85,9 +166,9 @@ func gotoUpdate(w http.ResponseWriter, r *http.Request) {
 			} else {
 				gotoDests[key] = x
 				if _, err := db.Exec(`INSERT INTO goto (src, dest) VALUES (?, ?)
-									  ON DUPLICATE KEY UPDATE src = VALUES(src), 
-										dest = VALUES(dest),
-										exp = VALUES(exp)`, key, x); err == nil {
+                                      ON DUPLICATE KEY UPDATE src = VALUES(src),
+                                        dest = VALUES(dest),
+                                        exp = VALUES(exp)`, key, x); err == nil {
 					fmt.Fprintf(w, "set <a href='/%s'>%s</a> to go to <a href='%s'>%s</a><br />\n", key, key, x, x)
 				} else {
 					// FIXME this should return a 500
@@ -139,13 +220,7 @@ func gotoService(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func cert(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "FSdYgqpToL5jkaYxneCNGIKTrrKp9lmH18k7o8CqVo8.VZPROWUd-G8vVEpgbFjwam8DmnO1dGY5obMvx5MCyuY")
-}
-
 func init() {
-	http.HandleFunc("/.well-known/acme-challenge/FSdYgqpToL5jkaYxneCNGIKTrrKp9lmH18k7o8CqVo8", cert)
-
 	http.HandleFunc("/update", gotoUpdate)
 	http.HandleFunc("/", gotoService)
 }
