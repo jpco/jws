@@ -8,6 +8,8 @@ import (
 	"sort"
 	"strings"
 
+	"httpresp"
+
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/user"
 
@@ -29,13 +31,13 @@ func scanAllLinks(db *sql.DB) error {
 		var err error
 		db, err = sqlOpen()
 		if err != nil {
-			return fmt.Errorf("error opening db connection: %v", err)
+			return fmt.Errorf("opening db connection: %v", err)
 		}
 	}
 
 	rows, err := db.Query("SELECT src, dest FROM goto")
 	if err != nil {
-		return fmt.Errorf("error querying all src => dests: %v", err)
+		return fmt.Errorf("querying all src => dests: %v", err)
 	}
 	defer rows.Close()
 	for rows.Next() {
@@ -57,7 +59,7 @@ type link struct {
 	children map[string]*link
 }
 
-func (l *link) Fprint(w http.ResponseWriter, prefix, nm string) {
+func (l *link) Write(prefix, nm string) *httpresp.Response {
 	var singles []string
 	var tuples []string
 	for s, c := range l.children {
@@ -67,16 +69,17 @@ func (l *link) Fprint(w http.ResponseWriter, prefix, nm string) {
 			singles = append(singles, s)
 		}
 	}
+	var resp *httpresp.Response
 
 	if l.dest != "" {
 		if prefix != "" {
-			fmt.Fprintf(w, "%s / <a href='%s/%s'>%s</a>: %s<br />\n",
+			resp = httpresp.Format("%s / <a href='%s/%s'>%s</a>: %s",
 				prefix, prefix, nm, nm, l.dest)
 		} else {
-			fmt.Fprintf(w, "<a href='%s'>%s</a>: %s<br />\n", nm, nm, l.dest)
+			resp = httpresp.Format("<a href='%s'>%s</a>: %s", nm, nm, l.dest)
 		}
 		if len(singles) > 0 || len(tuples) > 0 {
-			fmt.Fprint(w, "<br />\n")
+			resp = resp.AddNL()
 		}
 	}
 
@@ -87,22 +90,22 @@ func (l *link) Fprint(w http.ResponseWriter, prefix, nm string) {
 
 	sort.Strings(singles)
 	for _, s := range singles {
-		l.children[s].Fprint(w, nprefix, s)
+		resp = resp.Join(l.children[s].Write(nprefix, s))
 	}
 
 	sort.Strings(tuples)
 	for i, s := range tuples {
 		if i != 0 || len(singles) != 0 {
-			fmt.Fprint(w, "<br />\n\n")
+			resp = resp.AddNL()
 		}
-		l.children[s].Fprint(w, nprefix, s)
+		resp = resp.Join(l.children[s].Write(nprefix, s))
 	}
+	return resp
 }
 
-func listSrcsDests(w http.ResponseWriter, db *sql.DB) {
+func listSrcsDests(db *sql.DB) (*httpresp.Response, *httpresp.Error) {
 	if err := scanAllLinks(db); err != nil {
-		fmt.Fprint(w, err)
-		return
+		return nil, httpresp.NewError(http.StatusInternalServerError, err)
 	}
 
 	var short []string
@@ -131,96 +134,121 @@ func listSrcsDests(w http.ResponseWriter, db *sql.DB) {
 	}
 
 	sort.Strings(short)
+	var resp *httpresp.Response
 	for _, s := range short {
-		fmt.Fprintf(w, "<a href='/%s'>%s</a>: %s<br />\n", s, s, gotoDests[s])
+		resp = resp.Appendf("<a href='/%s'>%s</a>: %s", s, s, gotoDests[s])
 	}
-	fmt.Fprint(w, "<br />\n\n")
+	resp = resp.AddNL()
 
 	root := link{children: links}
-	root.Fprint(w, "", "")
+	return resp.Join(root.Write("", "")), nil
 }
 
-func gotoUpdate(w http.ResponseWriter, r *http.Request) {
-	if err := r.ParseForm(); err != nil {
-		// FIXME this should return a 500
-		fmt.Fprintf(w, "error (1) %v", err)
-		return
+func getRedirect(path string) (string, *httpresp.Error) {
+	if dest, ok := gotoDests[path]; ok {
+		return dest, nil
 	}
+
 	db, err := sqlOpen()
 	if err != nil {
-		// FIXME this should also return a 500
-		fmt.Fprintf(w, "error (2) %v", err)
+		return "", httpresp.NewError(http.StatusInternalServerError, err)
+	}
+	defer db.Close()
+
+	var dest string
+	err = db.QueryRow("SELECT dest FROM goto WHERE src = ?", path).Scan(&dest)
+	if err == sql.ErrNoRows {
+		return "", httpresp.Errorf(http.StatusNotFound, "no destination found for %q", path)
+	} else if err != nil {
+		return "", httpresp.Errorf(http.StatusInternalServerError,
+			"fetching destination: %v", err)
+	}
+
+	gotoDests[path] = dest
+	return dest, nil
+}
+
+func setLink(db *sql.DB, key, val string) (*httpresp.Response, *httpresp.Error) {
+	if val == "" {
+		delete(gotoDests, key)
+		if _, err := db.Exec(`DELETE FROM goto WHERE SRC = ?`, key); err != nil {
+			return nil, httpresp.Errorf(http.StatusInternalServerError, "unsetting %q: %v", key, err)
+		}
+		return httpresp.Format("unset %s", key), nil
+	}
+
+	gotoDests[key] = val
+	_, err := db.Exec(`INSERT INTO goto (src, dest) VALUES (?, ?)
+                       ON DUPLICATE KEY UPDATE src = VALUES(src),
+                         dest = VALUES(dest),
+                         exp = VALUES(exp)`, key, val)
+	if err != nil {
+		return nil, httpresp.Errorf(http.StatusInternalServerError, "setting %q = %q: %s", key, val, err)
+	}
+	return httpresp.Format("set <a href='/%s'>%s</a> to go to <a href='%s'>%s</a>", key, key, val, val), nil
+}
+
+func updateHandler(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		httpresp.NewError(http.StatusBadRequest, err).Write(w)
+		return
+	}
+
+	db, err := sqlOpen()
+	if err != nil {
+		httpresp.NewError(http.StatusInternalServerError, err).Write(w)
 		return
 	}
 	defer db.Close()
+
+	var resp *httpresp.Response
 	for key, vr := range r.Form {
-		for _, x := range vr {
-			if x == "" {
-				delete(gotoDests, key)
-				if _, err := db.Exec(`DELETE FROM goto WHERE SRC = ?`, key); err == nil {
-					fmt.Fprintf(w, "unset %s<br />\n", key)
-				} else {
-					// FIXME this should return a 500
-					fmt.Fprintf(w, "error unsetting %s: %s<br />\n", key, err)
-				}
-			} else {
-				gotoDests[key] = x
-				if _, err := db.Exec(`INSERT INTO goto (src, dest) VALUES (?, ?)
-                                      ON DUPLICATE KEY UPDATE src = VALUES(src),
-                                        dest = VALUES(dest),
-                                        exp = VALUES(exp)`, key, x); err == nil {
-					fmt.Fprintf(w, "set <a href='/%s'>%s</a> to go to <a href='%s'>%s</a><br />\n", key, key, x, x)
-				} else {
-					// FIXME this should return a 500
-					fmt.Fprintf(w, "error setting %s to %s: %s<br />\n", key, x, err)
-				}
+		for _, val := range vr {
+			re, err := setLink(db, key, val)
+			if err != nil {
+				err.Write(w)
+				return
 			}
+			resp = resp.Join(re)
 		}
 	}
-	fmt.Fprintf(w, "<br />\n\n")
-	listSrcsDests(w, db)
+
+	re, er := listSrcsDests(db)
+	if er != nil {
+		er.Write(w)
+		return
+	}
+	resp.AddNL().Join(re).Write(w)
 }
 
-func gotoService(w http.ResponseWriter, r *http.Request) {
+func gotoHandler(w http.ResponseWriter, r *http.Request) {
 	src := r.URL.Path[1:]
 	if src == "" {
 		ctx := appengine.NewContext(r)
 		if user.Current(ctx) != nil {
-			listSrcsDests(w, nil)
+			resp, err := listSrcsDests(nil)
+			if err != nil {
+				err.Write(w)
+			} else {
+				resp.Write(w)
+			}
 			return
 		}
 	}
 
-	dest, ok := gotoDests[src]
-	var err error
-
-	if !ok {
-		db, e2 := sqlOpen()
-		if e2 != nil {
-			fmt.Fprintf(w, "error (2) %v", e2)
-			return
-		}
-		defer db.Close()
-
-		err = db.QueryRow("SELECT dest FROM goto WHERE src = ?", src).Scan(&dest)
-		if err == nil {
-			gotoDests[src] = dest
-		}
+	dest, err := getRedirect(src)
+	if err != nil {
+		err.Write(w)
+		return
 	}
 
-	if ok || err == nil {
-		w.Header().Set("Location", dest)
-		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		w.WriteHeader(http.StatusFound)
-		fmt.Fprintf(w, "headed to '<a href='%s'>%s</a>'", dest, dest)
-	} else if err == sql.ErrNoRows {
-		fmt.Fprintf(w, "no destination for '%s'", src)
-	} else {
-		fmt.Fprintf(w, "error fetching destination: %v", err)
-	}
+	w.Header().Set("Location", dest)
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+    w.WriteHeader(http.StatusFound)
+	httpresp.Format("headed to <a href='%s'>%q</a>", dest, dest).Write(w)
 }
 
 func init() {
-	http.HandleFunc("/update", gotoUpdate)
-	http.HandleFunc("/", gotoService)
+	http.HandleFunc("/update", updateHandler)
+	http.HandleFunc("/", gotoHandler)
 }
