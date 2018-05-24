@@ -126,12 +126,11 @@ PWD = `pwd
 fn-pwd = {echo $PWD}
 ```
 
-This version also provides a (somewhat awkwardly named) second variable `$CWD-l`, which is the current working directory in a list form -- which may be useful for prompting, or some other purpose.
+This version also provides a (somewhat awkwardly named) second variable `$CWD-l`, which is the current working directory in a list form -- which may be useful for prompts, or some other purpose.
 
 ### Temporary cd
 
-Change directory for a single command (without forking,
-though that's a way to do it too).
+Change directory for a single command without forking.
 
 ```
 let (cd = $fn-cd)
@@ -153,12 +152,18 @@ fn cd dir cmd {
 
 ### Streaming input
 
-Give `for-each` a function as an argument, which itself takes a single argument.  `for-each` will call the function once for each line of input it receives, as it receives it (no buffering of input -- great for huge files!).
+`for-each` takes an optional field separator and a lambda, and for each line of input it receives, calls the lambda with the separated line as input.  (Call with `''` as the first argument to perform no separating.)
 
 ```
-fn-for-each = $&noreturn @ lambda {
+fn-for-each = $&noreturn @ fs lambda {
+  if {~ $lambda ()} {
+    lambda = $sep
+    sep = ' '^\t
+  }
   let (line = ())
-    while {!~ <={line = <=%read} ()} {$&noreturn $lambda $line}
+    while {!~ <={line = <=%read} ()} {
+      $&noreturn $lambda <={%split $sep $line}
+    }
 }
 
 # Example -- print words containing "gnu" as a substring
