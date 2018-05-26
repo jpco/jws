@@ -4,8 +4,8 @@ title = "jpco web services"
 disableHugoGeneratorInject = true
 disableKinds = ["taxonomy", "taxonomyTerm"]
 
-PygmentsCodeFences = true
-pygmentsstyle = "lovelace"
+pygmentsCodefences = true
+pygmentsStyle = "lovelace"
 
 [outputs]
  home = ["HTML"]
