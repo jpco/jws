@@ -4,6 +4,9 @@ service: xp
 runtime: go
 api_version: go1
 
+includes:
+ - secrets.yaml
+
 handlers:
  - url: /js/roll.js
    static_files: roll.js
@@ -12,6 +15,10 @@ handlers:
  - url: /css/roll.css
    static_files: roll.css
    upload: roll.css
+
+ - url: /x/cron/tweet/.*
+   script: _go_app
+   login: admin
 
  - url: /.*
    script: _go_app
