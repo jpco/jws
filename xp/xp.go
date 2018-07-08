@@ -38,6 +38,6 @@ func init() {
 	http.HandleFunc("/x/roll", roll)
 	http.HandleFunc("/x/cron/tweet/ddate", tweet(dDateTweet))
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprint(w, "")
+		http.NotFound(w, r)
 	})
 }

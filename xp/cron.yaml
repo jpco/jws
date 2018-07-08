@@ -1,4 +1,4 @@
 cron:
- - description: "date tweet"
-   url: /x/cron/tweet/date
+ - description: "ddate tweet"
+   url: /x/cron/tweet/ddate
    schedule: every 24 hours

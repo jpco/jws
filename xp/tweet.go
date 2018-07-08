@@ -35,12 +35,12 @@ func tweet(getTweet tweetGetter) func(w http.ResponseWriter, r *http.Request) {
                 fmt.Fprint(w, "no tweet today")
                 return
             }
-            // TODO: Return error code
+            w.WriteHeader(http.StatusInternalServerError)
 			fmt.Fprintf(w, "error: %v", err)
 		}
 
 		if _, err := api.PostTweet(fmt.Sprintf("> %s", tw), nil); err != nil {
-			// TODO: Return error code
+            w.WriteHeader(http.StatusInternalServerError)
 			fmt.Fprintf(w, "error: %v", err)
 		} else {
 			fmt.Fprint(w, "ok")
