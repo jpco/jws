@@ -11,14 +11,15 @@ draft: true
  - motivation
     - UNIXing the GUI
     - intro to bspwm && lemonbar
-    - lemonbar just reads from stdin, oof
-    - set up our examples:
+        - it's all just shells -- bspwmrc is just a shell script
+    - lemonbar just reads from stdin (cool, but oof)
+    - set up what we want lemonbar to do
         - `echo`: notifications, must appear immediately, disappear after a bit
-        - `sys`: things like volume up/down, brightness up/down
+        - `sys`: things like volume up/down, brightness up/down (expires)
         - `time`: doesn't need to do much but update occasionally
         - `battery`: must update occasionally, *and* when we plug/unplug
  - `$PT_FIFO`
-    - motivation for
+    - motivation for (multiple writers, but only one reader? ugh)
     - fifos are just pipes but with multiple writers
     - what happens with multiple readers?
     - what happens when the fifo isn't there?
@@ -28,19 +29,22 @@ draft: true
     - the `BARNUM_^(LEFT CENTER RIGHT)` config
     - final product: `barnum` and usage
  - `pt-run`, `pt-loop`, and `pt/*`
-    - we can now write things simply
+    - we can now write things simply -- we have a working `echo` :)
     - but there's some catches: what if the FIFO isn't there? what if `$PT_FIFO` isn't set?
-    - also it's a pain to muddy our writer scripts with all those redirections
+    - what about loops? `time` works now too!
+        - what about plugging power in? -- signals, etc. now we have `battery`!
+    - it's a pain to muddy our writer scripts with all those redirections
     - `pt-run` takes care of it!
         - introduce the `pt/$foo` conceit here
-        - we have a basic `pt/echo` now!
-    - what about loops? `pt-loop`!
-        - what about plugging power in? -- signals, etc.
+        - we have `pt/echo` now!
+    - `pt-loop` for "free" interruptible loops, too!
  - what about expiration?
     - there's concurrency here that shells just can't handle
-    - Go does concurrency good though
-    - you have to wire it up with a second fifo ... i know this sucks
+    - Go does concurrency good though. yes we have to write a "real" program for this
+    - you have to wire it up with a second fifo ... this sucks!
  - what about real notifications?
+    - hmm, can't escape the real world for long! :)
+    - in the name of "simplicity", let's write a whole C binary for this! `notcat`
 
 ---
 

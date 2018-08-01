@@ -2,7 +2,7 @@
 
 service: goto
 runtime: go
-api_version: go1.8
+api_version: go1
 
 includes:
  - secrets.yaml
