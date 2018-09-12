@@ -1,6 +1,6 @@
 baseURL = "/"
 languageCode = "en-us"
-title = "jpco web services"
+title = "jpco dot io"
 disableHugoGeneratorInject = true
 disableKinds = ["taxonomy", "taxonomyTerm"]
 
