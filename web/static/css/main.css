@@ -10,8 +10,11 @@
  * colors based on those:
  * - darkgrey       #2d3e45
  * - lightgrey      #b4bcd1
- * - lightergrey    #
  */
+
+body {
+    background-color: #efebd8;
+}
 
 a:link {
     color: #3352e1;
@@ -33,12 +36,12 @@ div.content {
 
     /* format */
     font-family: serif;
-    font-size: 12pt;
+    font-size: 20px;
     color: #2d3e45;
 }
 
 div.footnotes {
-    line-height: 1.6em;
+    line-height: 1.4;
 }
 
 div.footnotes li {
@@ -53,12 +56,14 @@ div.caption {
 
 .content p {
     /* format */
-    line-height: 1.6em;
+    line-height: 1.4;
     padding: 0.5ex 0;
 }
 
 .content pre {
     line-height: 125%;
+    font-size: 20px;
+    font-variant-ligatures: none;
     background-color: #f0f3f6;
     border: 1px solid #b4bcd1;
     overflow-x: auto;
@@ -67,8 +72,13 @@ div.caption {
     border-radius: .5ex;
 }
 
+.content p code {
+    font-size: 20px;
+    font-variant-ligatures: none;
+}
+
 .content blockquote {
-    border-left: thick solid #b4bcd1;
+    border-left: thick solid #c4bab4;
     margin: 1em 1em 1em 0;
     padding-left: 1em;
 }
@@ -91,7 +101,7 @@ div.caption {
     width: 60%;
     margin-top: 2em;
     margin-bottom: 2em;
-    color: #f3f3f3;
+    color: #efebd8;
 }
 
 .content h1.title {
@@ -104,7 +114,7 @@ div.caption {
 }
 
 .content a.subtitle {
-    color: #5a7a8b;
+    color: #6a6a4a;
     font-style: oblique;
 }
 

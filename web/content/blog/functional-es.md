@@ -40,10 +40,37 @@ Putting this together produces a simple `apply` function (analogous to many lang
       $lambda $arg
     }
   }
-; apply @ {echo PRINTING $*} zip zap zop
-PRINTING zip
-PRINTING zap
-PRINTING zop
+; apply @ {echo printing $*} zip zap zop
+printing zip
+printing zap
+printing zop
+```
+
+Or, given the prior `print` function that was already defined[^1]
+
+[^1]: This is actually also possible with bash, though bash doesn't allow for inline functions or really useful returns, and its splitting rules are always cause for concern.
+
+```
+function print {
+    echo printing $*
+}
+
+function apply {
+    cmd=$1
+    shift
+    for arg in $*; do
+        $cmd $arg
+    done
+}
+
+apply print zip zap zop
+```
+
+```
+; apply print zip zap zop
+printing zip
+printing zap
+printing zop
 ```
 
 ---
@@ -88,5 +115,3 @@ eno owt eerht
 ```
 
 This command states: For each element of `one two three`, reverse the element with `rev`, collect the output of that command, and return it.  Then, take the `apply`-ed output of each of those commands, and `echo` them.
-
-
