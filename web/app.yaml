@@ -18,11 +18,13 @@ handlers:
  - url: /css
    static_dir: public/css
    secure: always
+   mime_type: text/css
  - url: /fonts
    static_dir: public/fonts
    secure: always
  - url: /js
    static_dir: public/js
+   mime_type: text/javascript
    secure: always
  - url: /media
    static_dir: public/media
