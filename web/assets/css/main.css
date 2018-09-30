@@ -31,13 +31,13 @@ a:active {
 div.content {
     /* layout */
     margin: 2em auto;
-    width: 85%;
+    width: 95%;
     max-width: 1000px;
 
     /* format */
     font-family: serif;
     font-size: 20px;
-    color: #453e2d;
+    /* color: #453e2d; */
 }
 
 div.footnotes {
@@ -62,7 +62,7 @@ div.caption {
 
 .content pre {
     line-height: 1.25;
-    font-size: 18px;
+    font-size: 16px;
     font-variant-ligatures: none;
     background-color: #f6f3f0;
     border: 1px solid #b4bcd1;
@@ -73,7 +73,7 @@ div.caption {
 }
 
 .content p code {
-    font-size: 18px;
+    font-size: 16px;
     font-variant-ligatures: none;
 }
 

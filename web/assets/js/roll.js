@@ -6,7 +6,7 @@ var chunks;
 
 function termEq(a, b) {
     if (typeof a === 'object' && typeof b === 'object') {
-        return (a.ct == b.ct && a.type == b.type);   
+        return (a.ct == b.ct && a.type == b.type);
     } else {
         return a == b;
     }
@@ -126,17 +126,28 @@ function reset(val) {
 // =============
 // listeners + setup
 
-function inputEvent(r, w) {
+function setWFunc(w, reroll) {
+    let empty = true;
+    return function(nVal) {
+        w.innerHTML = nVal;
+        if ((nVal === '') != empty) {
+            empty = (nVal === '');
+            reroll.style.display = (empty ? 'none' : 'inline-block');
+        }
+    }
+}
+
+function inputEvent(r, setW) {
     return function() {
         window.location.hash = '#' + encodeURIComponent(r.value);
-        w.innerHTML = update(r.value);
+        setW(update(r.value));
     };
 }
 
-function rerollEvent(r, w) {
+function rerollEvent(r, setW) {
     return function(e) {
         if (e.which == 13 || e.keyCode == 13) {
-            w.innerHTML = reset(r.value);
+            setW(reset(r.value));
         }
     };
 }
@@ -144,9 +155,13 @@ function rerollEvent(r, w) {
 window.onload = function() {
     let r = document.getElementById('r');
     let w = document.getElementById('w');
+    let reroll = document.getElementById('re-roll');
 
-    r.addEventListener('input', inputEvent(r, w));
-    document.body.addEventListener('keydown', rerollEvent(r, w));
+    let setW = setWFunc(w, reroll);
+
+    r.addEventListener('input', inputEvent(r, setW));
+    document.body.addEventListener('keydown', rerollEvent(r, setW));
+    reroll.addEventListener('click', function() {setW(reset(r.value))});
     r.value = decodeURIComponent(window.location.hash.substr(1));
-    w.innerHTML = reset(r.value);
+    setW(reset(r.value));
 }

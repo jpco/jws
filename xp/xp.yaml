@@ -8,14 +8,6 @@ includes:
  - secrets.yaml
 
 handlers:
- - url: /js/roll.js
-   static_files: roll.js
-   upload: roll.js
-
- - url: /css/roll.css
-   static_files: roll.css
-   upload: roll.css
-
  - url: /x/cron/tweet/.*
    script: _go_app
    login: admin
