@@ -139,7 +139,7 @@ function setWFunc(w, reroll) {
 
 function inputEvent(r, setW) {
     return function() {
-        window.location.hash = '#' + encodeURIComponent(r.value);
+        history.replaceState({}, r.value, '#' + encodeURIComponent(r.value));
         setW(update(r.value));
     };
 }

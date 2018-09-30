@@ -5,7 +5,7 @@
         <a class="subtitle">{{ .Description }}</a>
         <ul>
         {{ range .Data.Pages }}
-            <li><a href="{{ .Permalink }}">{{ .Description }}</a>
+            <li>({{ dateFormat "2006-01-02" .Date }}) <a href="{{ .Permalink }}">{{ .Description }}</a>
         {{ end }}
         </ul>
     </header>

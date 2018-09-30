@@ -12,8 +12,41 @@
  * - lightgrey      #b4bcd1
  */
 
+html {
+    height: 100%;
+    box-sizing: border-box;
+    hyphens: auto;
+}
+
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+
 body {
+    position: absolute;
+    margin: 0;
+    padding-bottom: 6rem;
+    min-height: 100%;
+    width: 100%;
+
     background-color: #efebd8;
+}
+
+footer {
+    position: absolute;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    padding: 1rem;
+
+    color: #6a6a4a;
+    text-align: center;
+    font-style: italic;
+}
+
+footer div {
+    margin: 0 auto;
+    border-top: 1px solid black;
 }
 
 a:link {
@@ -37,7 +70,6 @@ div.content {
     /* format */
     font-family: serif;
     font-size: 20px;
-    /* color: #453e2d; */
 }
 
 div.footnotes {
@@ -49,7 +81,7 @@ div.footnotes li {
     margin-bottom: 1em;
 }
 
-div.caption {
+figcaption {
     text-align: center;
     font-style: italic;
 }

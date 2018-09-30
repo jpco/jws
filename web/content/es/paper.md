@@ -470,6 +470,8 @@ Spoofing can also be used for tasks which other shells cannot do; one example is
 
 ---
 
+<figure>
+
 <pre>
 es> <em>let (pipe = $fn-%pipe) {
   fn %pipe first out in rest {
@@ -495,7 +497,9 @@ es> <em>cat paper9 | tr -cs a-zA-Z0-9 '\012' | sort | uniq -c | sort -nr | sed 6
    3r   0.6u   0.2s   sort -nr
 </pre>
 
-<div class="caption">Figure 1: Timing pipeline elements</div>
+<figcaption>Figure 1: Timing pipeline elements</figcaption>
+
+</figure>
 
 ---
 
@@ -503,7 +507,9 @@ Many shells provide some mechanism for caching the full pathnames of executables
 
 ---
 
-```
+<figure>
+
+<pre>
 let (search = $fn-%pathsearch) {
   fn %pathsearch prog {
     let (file = <>{$search $prog}) {
@@ -520,9 +526,11 @@ fn recache {
     fn-$i =
   path-cache =
 }
-```
+</pre>
 
-<div class="caption">Figure 2: Path caching</div>
+<figcaption>Figure 2: Path caching</figcaption>
+
+</figure>
 
 ---
 
@@ -530,7 +538,9 @@ One other piece of *es* which can be replaced is the interpreter loop. In fact, 
 
 ---
 
-```
+<figure>
+
+<pre>
 fn %interactive-loop {
   let (result = 0) {
     catch @ e msg {
@@ -552,9 +562,9 @@ fn %interactive-loop {
     }
   }
 }
-```
+</pre>
 
-<div class="caption">Figure 3: Default interactive loop</div>
+<figcaption>Figure 3: Default interactive loop</figcaption>
 
 ---
 
