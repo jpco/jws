@@ -1,7 +1,7 @@
 {{ partial "header.html" . }}
 <div class="content">
     <header>
-        <h1 class="title"><a href="/">/</a> <a href="/{{ .Section }}/">{{ .Section }}</a> / {{ .Title }}</h1>
+        <h1 class="title"><a href="/">/</a> <a href="/{{ .Section }}/">{{ .Section }}</a>{{ if .Section }} / {{ end }}{{ .Title }}</h1>
         <a class="subtitle">{{ .Description }}</a>
     </header>
     <hr>

@@ -12,12 +12,13 @@ There are additional example `.esrc` files available with the [source code](http
 ## The quick list
 
  - [Simple aliasing](#simple-aliasing)
- - [Local SHELL=bash](#local-shell-bash)
+ - [Local `SHELL=bash`](#local-shell-bash)
  - [Autoload directory](#autoload-directory)
- - [Path caching](#path-caching)
- - [PWD caching](#pwd-caching)
- - [Temporary cd](#temporary-cd)
+ - [`$path` caching](#path-caching)
+ - [`$PWD` caching](#pwd-caching)
+ - [Temporary `cd`](#temporary-cd)
  - [Streaming input](#streaming-input)
+ - [Auto-`cat`](#auto-cat)
 
 ### Simple aliasing
 
@@ -34,7 +35,7 @@ alias ls    ls --color=auto
 alias egrep egrep --color=auto
 ```
 
-### Local SHELL=bash
+### Local `SHELL=bash`
 
 Some tools don't behave well with non-POSIX-compliant shells.  This command allows these tools to "transparently" use POSIX syntax, without too much fuss for the *es* user.
 
@@ -72,9 +73,9 @@ fn %pathsearch prog {
 }
 ```
 
-### Path caching
+### `$path` caching
 
-Many shells have path caching (or "hashing") support built-in.  *Es* does not, because it can be written purely in *es* itself.
+Many shells have `$path` caching (or "hashing") support built-in.  *Es* does not, because it can be written purely in *es* itself.
 
 ```
 let (search = $fn-%pathsearch)
@@ -105,7 +106,7 @@ set-path = @ {
 }
 ```
 
-### PWD caching
+### `$PWD` caching
 
 Many shells maintain a `$PWD` environment variable and, by default, simply define the `pwd` command as `echo $PWD`.  *Es* can do this too:
 
@@ -128,9 +129,9 @@ fn-pwd = {echo $PWD}
 
 This version also provides a (somewhat awkwardly named) second variable `$CWD-l`, which is the current working directory in a list form -- which may be useful for prompts, or some other purpose.
 
-### Temporary cd
+### Temporary `cd`
 
-Change directory for a single command without forking.
+Change directory for a single command without forking the shell.
 
 ```
 let (cd = $fn-cd)
@@ -172,6 +173,34 @@ for-each @ word {
 } < /usr/share/dict/words
 ```
 
+### Auto-`cat`
+
+In zsh, if a redirection or heredoc is typed with an empty command, [a default command can be set](http://zsh.sourceforge.net/Doc/Release/Redirection.html#Redirections-with-no-command).  Similar behavior is easy to program in *es*:
+
+```
+NULLCMD = cat
+READNULLCMD = less
+
+let (here = <={%whatis %here})
+fn %here fd file cmd {
+  if {~ $cmd '{}'} {
+    cmd = {$NULLCMD}
+  }
+  $here $fd $file $cmd
+}
+
+let (openfile = <={%whatis %openfile})
+fn %openfile mode fd file cmd {
+  if {~ $cmd '{}'} {
+    if {~ $mode r} {
+      cmd = {$READNULLCMD}
+    } {
+      cmd = {$NULLCMD}
+    }
+  }
+  $openfile $mode $fd $file $cmd
+}
+```
 
 ---
 
