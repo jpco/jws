@@ -1,4 +1,4 @@
-package jpcowww
+package main
 
 import (
     "time"
@@ -27,6 +27,8 @@ var happies = []string{
     "%s really HAS gotten too commercial",
 }
 
+var seeded = false
+
 func dDateTweet() (string, error) {
     loc, err := time.LoadLocation("America/Los_Angeles")
     if err != nil {
@@ -42,6 +44,10 @@ func dDateTweet() (string, error) {
     }
     if holiday == "" {
         return "", noTweet{}
+    }
+
+    if !seeded {
+        rand.Seed(time.Now().UnixNano())
     }
 
     // weird hack

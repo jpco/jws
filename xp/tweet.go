@@ -1,4 +1,4 @@
-package jpcowww
+package main
 
 import (
 	"fmt"
@@ -20,10 +20,10 @@ func (noTweet) Error() string {
 
 func tweet(getTweet tweetGetter) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
-		accessToken := os.Getenv("TWITTER_ACCESS_TOKEN")
+		accessToken  := os.Getenv("TWITTER_ACCESS_TOKEN")
 		accessSecret := os.Getenv("TWITTER_ACCESS_TOKEN_SECRET")
-		apiToken := os.Getenv("TWITTER_API_KEY")
-		apiSecret := os.Getenv("TWITTER_API_SECRET")
+		apiToken     := os.Getenv("TWITTER_API_KEY")
+		apiSecret    := os.Getenv("TWITTER_API_SECRET")
 
 		api := anaconda.NewTwitterApiWithCredentials(accessToken, accessSecret, apiToken, apiSecret)
 		c := appengine.NewContext(r)
