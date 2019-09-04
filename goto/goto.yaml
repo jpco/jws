@@ -17,6 +17,6 @@ handlers:
    secure: always
    login: admin
 
- - url: /.*
+ - url: /.+
    script: auto
    secure: optional

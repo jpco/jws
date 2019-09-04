@@ -3,19 +3,15 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"sort"
 	"strings"
-    "log"
 
 	"github.com/jpco/jws/goto/httpresp"
 
-	"google.golang.org/appengine"
-	"google.golang.org/appengine/user"
-
-    _ "github.com/GoogleCloudPlatform/cloudsql-proxy/proxy/dialers/mysql"
-    // _ "github.com/go-sql-driver/mysql"
+	_ "github.com/GoogleCloudPlatform/cloudsql-proxy/proxy/dialers/mysql"
 )
 
 var gotoDests = map[string]string{}
@@ -25,7 +21,7 @@ func sqlOpen() (*sql.DB, error) {
 	user := os.Getenv("CLOUDSQL_USER")
 	pass := os.Getenv("CLOUDSQL_PASSWORD")
 
-    log.Printf("Connecting to %s:PASSWORD@cloudsql(%s)/goto", user, conn)
+	log.Printf("Connecting to %s:PASSWORD@cloudsql(%s)/goto", user, conn)
 
 	return sql.Open("mysql", fmt.Sprintf("%s:%s@cloudsql(%s)/goto", user, pass, conn))
 }
@@ -222,26 +218,21 @@ func updateHandler(w http.ResponseWriter, r *http.Request) {
 		er.Write(w)
 		return
 	}
-    w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	resp.AddNL().Join(re).Write(w)
 }
 
 func gotoHandler(w http.ResponseWriter, r *http.Request) {
 	src := r.URL.Path[1:]
 	if src == "" {
-        log.Printf("Going to dashboard page")
-		ctx := appengine.NewContext(r)
-		if user.Current(ctx) != nil {
-            log.Printf("A user is here")
-			resp, err := listSrcsDests(nil)
-			if err != nil {
-				err.Write(w)
-			} else {
-	            w.Header().Set("Content-Type", "text/html; charset=utf-8")
-				resp.Write(w)
-			}
-			return
+		resp, err := listSrcsDests(nil)
+		if err != nil {
+			err.Write(w)
+		} else {
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			resp.Write(w)
 		}
+		return
 	}
 
 	dest, err := getRedirect(src)
@@ -252,20 +243,20 @@ func gotoHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Location", dest)
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-    w.WriteHeader(http.StatusFound)
+	w.WriteHeader(http.StatusFound)
 	httpresp.Format("headed to <a href='%s'>%q</a>", dest, dest).Write(w)
 }
 
 func main() {
-    port := os.Getenv("PORT")
-    if port == "" {
-        port = "8080"
-        log.Printf("Defaulting to port %s", port)
-    }
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+		log.Printf("Defaulting to port %s", port)
+	}
 
 	http.HandleFunc("/update", updateHandler)
 	http.HandleFunc("/", gotoHandler)
 
-    log.Printf("Listening on port %s", port)
-    log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), nil))
+	log.Printf("Listening on port %s", port)
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), nil))
 }
