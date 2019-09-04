@@ -14,27 +14,26 @@ import (
 	_ "github.com/GoogleCloudPlatform/cloudsql-proxy/proxy/dialers/mysql"
 )
 
-var gotoDests = map[string]string{}
+var (
+    gotoDests = map[string]string{}
+    db *sql.DB
+)
 
-func sqlOpen() (*sql.DB, error) {
+func sqlOpen() *sql.DB {
 	conn := os.Getenv("CLOUDSQL_CONNECTION_NAME")
 	user := os.Getenv("CLOUDSQL_USER")
 	pass := os.Getenv("CLOUDSQL_PASSWORD")
 
-	log.Printf("Connecting to %s:PASSWORD@cloudsql(%s)/goto", user, conn)
+    db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@cloudsql(%s)/goto", user, pass, conn))
+    if err != nil {
+        log.Fatalf("Could not connect to database: %v", err)
+    }
 
-	return sql.Open("mysql", fmt.Sprintf("%s:%s@cloudsql(%s)/goto", user, pass, conn))
+    log.Printf("Connected to database at %s@cloudsql(%s)/goto", user, conn)
+    return db
 }
 
-func scanAllLinks(db *sql.DB) error {
-	if db == nil {
-		var err error
-		db, err = sqlOpen()
-		if err != nil {
-			return fmt.Errorf("opening db connection: %v", err)
-		}
-	}
-
+func scanAllLinks() error {
 	rows, err := db.Query("SELECT src, dest FROM goto")
 	if err != nil {
 		return fmt.Errorf("querying all src => dests: %v", err)
@@ -103,8 +102,8 @@ func (l *link) Write(prefix, nm string) *httpresp.Response {
 	return resp
 }
 
-func listSrcsDests(db *sql.DB) (*httpresp.Response, *httpresp.Error) {
-	if err := scanAllLinks(db); err != nil {
+func listSrcsDests() (*httpresp.Response, *httpresp.Error) {
+	if err := scanAllLinks(); err != nil {
 		return nil, httpresp.NewError(http.StatusInternalServerError, err)
 	}
 
@@ -149,14 +148,8 @@ func getRedirect(path string) (string, *httpresp.Error) {
 		return dest, nil
 	}
 
-	db, err := sqlOpen()
-	if err != nil {
-		return "", httpresp.NewError(http.StatusInternalServerError, err)
-	}
-	defer db.Close()
-
 	var dest string
-	err = db.QueryRow("SELECT dest FROM goto WHERE src = ?", path).Scan(&dest)
+    err := db.QueryRow("SELECT dest FROM goto WHERE src = ?", path).Scan(&dest)
 	if err == sql.ErrNoRows {
 		return "", httpresp.Errorf(http.StatusNotFound, "no destination found for %q", path)
 	} else if err != nil {
@@ -168,7 +161,7 @@ func getRedirect(path string) (string, *httpresp.Error) {
 	return dest, nil
 }
 
-func setLink(db *sql.DB, key, val string) (*httpresp.Response, *httpresp.Error) {
+func setLink(key, val string) (*httpresp.Response, *httpresp.Error) {
 	if val == "" {
 		delete(gotoDests, key)
 		if _, err := db.Exec(`DELETE FROM goto WHERE SRC = ?`, key); err != nil {
@@ -194,17 +187,10 @@ func updateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	db, err := sqlOpen()
-	if err != nil {
-		httpresp.NewError(http.StatusInternalServerError, err).Write(w)
-		return
-	}
-	defer db.Close()
-
 	var resp *httpresp.Response
 	for key, vr := range r.Form {
 		for _, val := range vr {
-			re, err := setLink(db, key, val)
+			re, err := setLink(key, val)
 			if err != nil {
 				err.Write(w)
 				return
@@ -213,7 +199,7 @@ func updateHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	re, er := listSrcsDests(db)
+	re, er := listSrcsDests()
 	if er != nil {
 		er.Write(w)
 		return
@@ -225,7 +211,7 @@ func updateHandler(w http.ResponseWriter, r *http.Request) {
 func gotoHandler(w http.ResponseWriter, r *http.Request) {
 	src := r.URL.Path[1:]
 	if src == "" {
-		resp, err := listSrcsDests(nil)
+		resp, err := listSrcsDests()
 		if err != nil {
 			err.Write(w)
 		} else {
@@ -253,6 +239,9 @@ func main() {
 		port = "8080"
 		log.Printf("Defaulting to port %s", port)
 	}
+
+    db = sqlOpen()
+    defer db.Close()
 
 	http.HandleFunc("/update", updateHandler)
 	http.HandleFunc("/", gotoHandler)
