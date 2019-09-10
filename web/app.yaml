@@ -1,13 +1,12 @@
 # The default service handles serving the static site, blog, and other 'utility' functions.
 
-runtime: go
-api_version: go1
+runtime: go112
 
 handlers:
 # redirect to go.jpco.io, and since that one is potentially secure: optional,
 # be secure: optional here
  - url: /go.*
-   script: _go_app
+   script: auto
    secure: optional
 
 # static site handlers
@@ -53,28 +52,3 @@ handlers:
    static_files: public/\1/index.html
    upload: .*\.html
    secure: always
-
-skip_files: |
-  ^(.*/)?(
-  (archetypes/.*)|
-  (app\.yaml)|
-  (app\.yml)|
-  (index\.yaml)|
-  (index\.yml)|
-  (config\.yaml)|
-  (#.*#)|
-  (.*~)|
-  (.*\.py[co])|
-  (.*\.po)|
-  (.*\.pot)|
-  (\..*)|
-  (manage\.py)|
-  (README\.md)|
-  (LICENSE)|
-  (content\/.*)|
-  (data\/.*)|
-  (static\/.*)|
-  (layouts\/.*)|
-  (\.git\/.*)|
-  (\.gitignore)|
-  )$

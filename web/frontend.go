@@ -1,8 +1,10 @@
-package jpcowww
+package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
+	"os"
 )
 
 func gotoRedirect(w http.ResponseWriter, r *http.Request) {
@@ -18,7 +20,16 @@ func static(w http.ResponseWriter, r *http.Request) {
 	http.NotFound(w, r)
 }
 
-func init() {
+func main() {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+		log.Printf("Defaulting to port %s", port)
+	}
+
 	http.HandleFunc("/go/", gotoRedirect)
 	http.HandleFunc("/", static)
+
+	log.Printf("Listening on port %s", port)
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), nil))
 }
