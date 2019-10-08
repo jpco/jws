@@ -4,5 +4,4 @@ data/
 static/
 layouts/
 app.yaml
-frontend.go
 config.toml
