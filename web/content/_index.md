@@ -15,4 +15,3 @@ Pages:
 
  - [es](/es)
  - [blog](/blog)
- - [hobbyhorse](/hobbyhorse.html)
