@@ -73,6 +73,16 @@ div.footnotes li {
     margin-bottom: 1em;
 }
 
+img {
+    width: 100%;
+}
+
+figure.hero {
+    margin-top: -20pt;
+    margin-left: 0;
+    margin-right: 0;
+}
+
 figcaption {
     text-align: center;
     font-style: italic;

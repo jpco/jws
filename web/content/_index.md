@@ -9,9 +9,8 @@ Born in Alaska; now a site reliability engineer on [Google Compute Engine](https
 
 Previously a devops intern at Silicon Mechanics.
 
-Email: contact [at] jpco [dot] io
+Interested in Unix shells.  Particularly the [extensible shell](/es).
 
-Pages:
+Technically, this website contains a [blog](/blog).
 
- - [es](/es)
- - [blog](/blog)
+Email: contact [at] jpco [dot] io.
