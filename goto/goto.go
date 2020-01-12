@@ -15,8 +15,8 @@ import (
 )
 
 var (
-    gotoDests = map[string]string{}
-    db *sql.DB
+	gotoDests = map[string]string{}
+	db        *sql.DB
 )
 
 func sqlOpen() *sql.DB {
@@ -24,13 +24,13 @@ func sqlOpen() *sql.DB {
 	user := os.Getenv("CLOUDSQL_USER")
 	pass := os.Getenv("CLOUDSQL_PASSWORD")
 
-    db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@cloudsql(%s)/goto", user, pass, conn))
-    if err != nil {
-        log.Fatalf("Could not connect to database: %v", err)
-    }
+	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@cloudsql(%s)/goto", user, pass, conn))
+	if err != nil {
+		log.Fatalf("Could not connect to database: %v", err)
+	}
 
-    log.Printf("Connected to database at %s@cloudsql(%s)/goto", user, conn)
-    return db
+	log.Printf("Connected to database at %s@cloudsql(%s)/goto", user, conn)
+	return db
 }
 
 func scanAllLinks() error {
@@ -72,13 +72,13 @@ func (l *link) Write(prefix, nm string) *httpresp.Response {
 
 	if l.dest != "" {
 		if prefix != "" {
-			resp = httpresp.Format("%s / <a href='%s/%s'>%s</a>: %s",
+			resp = httpresp.Format("%s / <a href='%s/%s'>%s</a><span class='dest'>: %s</span><br />",
 				prefix, prefix, nm, nm, l.dest)
 		} else {
-			resp = httpresp.Format("<a href='%s'>%s</a>: %s", nm, nm, l.dest)
+			resp = httpresp.Format("<a href='%s'>%s</a><span class='dest'>: %s</span><br />", nm, nm, l.dest)
 		}
 		if len(singles) > 0 || len(tuples) > 0 {
-			resp = resp.AddNL()
+			resp = resp.Append("<br />")
 		}
 	}
 
@@ -95,7 +95,7 @@ func (l *link) Write(prefix, nm string) *httpresp.Response {
 	sort.Strings(tuples)
 	for i, s := range tuples {
 		if i != 0 || len(singles) != 0 {
-			resp = resp.AddNL()
+			resp = resp.Append("<br />")
 		}
 		resp = resp.Join(l.children[s].Write(nprefix, s))
 	}
@@ -134,10 +134,13 @@ func listSrcsDests() (*httpresp.Response, *httpresp.Error) {
 
 	sort.Strings(short)
 	var resp *httpresp.Response
+	resp = resp.Append("<meta name='viewport' content='width=device-width, initial-scale=1'>")
+	resp = resp.Append("<style>.dest{display: none;}@media(min-width:500px){.dest{display: inline;}}</style>")
+
 	for _, s := range short {
-		resp = resp.Appendf("<a href='/%s'>%s</a>: %s", s, s, gotoDests[s])
+		resp = resp.Appendf("<a href='/%s'>%s</a><span class='dest'>: %s</span><br />", s, s, gotoDests[s])
 	}
-	resp = resp.AddNL()
+	resp = resp.Append("<br />")
 
 	root := link{children: links}
 	return resp.Join(root.Write("", "")), nil
@@ -149,7 +152,7 @@ func getRedirect(path string) (string, *httpresp.Error) {
 	}
 
 	var dest string
-    err := db.QueryRow("SELECT dest FROM goto WHERE src = ?", path).Scan(&dest)
+	err := db.QueryRow("SELECT dest FROM goto WHERE src = ?", path).Scan(&dest)
 	if err == sql.ErrNoRows {
 		return "", httpresp.Errorf(http.StatusNotFound, "no destination found for %q", path)
 	} else if err != nil {
@@ -167,18 +170,17 @@ func setLink(key, val string) (*httpresp.Response, *httpresp.Error) {
 		if _, err := db.Exec(`DELETE FROM goto WHERE SRC = ?`, key); err != nil {
 			return nil, httpresp.Errorf(http.StatusInternalServerError, "unsetting %q: %v", key, err)
 		}
-		return httpresp.Format("unset %s", key), nil
+		return httpresp.Format("unset %s<br />", key), nil
 	}
 
 	gotoDests[key] = val
 	_, err := db.Exec(`INSERT INTO goto (src, dest) VALUES (?, ?)
                        ON DUPLICATE KEY UPDATE src = VALUES(src),
-                         dest = VALUES(dest),
-                         exp = VALUES(exp)`, key, val)
+                         dest = VALUES(dest)`, key, val)
 	if err != nil {
 		return nil, httpresp.Errorf(http.StatusInternalServerError, "setting %q = %q: %s", key, val, err)
 	}
-	return httpresp.Format("set <a href='/%s'>%s</a> to go to <a href='%s'>%s</a>", key, key, val, val), nil
+	return httpresp.Format("set <a href='/%s'>%s</a> to go to <a href='%s'>%s</a><br />", key, key, val, val), nil
 }
 
 func updateHandler(w http.ResponseWriter, r *http.Request) {
@@ -205,7 +207,7 @@ func updateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	resp.AddNL().Join(re).Write(w)
+	resp.Append("<br />").Join(re).Write(w)
 }
 
 func gotoHandler(w http.ResponseWriter, r *http.Request) {
@@ -240,8 +242,8 @@ func main() {
 		log.Printf("Defaulting to port %s", port)
 	}
 
-    db = sqlOpen()
-    defer db.Close()
+	db = sqlOpen()
+	defer db.Close()
 
 	http.HandleFunc("/update", updateHandler)
 	http.HandleFunc("/", gotoHandler)

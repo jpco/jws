@@ -81,5 +81,5 @@ func (a *Response) Join(b *Response) *Response {
 }
 
 func (r *Response) Write(w http.ResponseWriter) {
-	fmt.Fprint(w, strings.Join(r.inner, "<br />\n"))
+	fmt.Fprint(w, strings.Join(r.inner, "\n"))
 }
