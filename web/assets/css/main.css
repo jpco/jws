@@ -88,6 +88,10 @@ figcaption {
     font-style: italic;
 }
 
+figcaption p {
+    margin: 0;
+}
+
 .content p {
     /* format */
     line-height: 1.4;

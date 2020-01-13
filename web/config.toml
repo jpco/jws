@@ -10,3 +10,6 @@ pygmentsStyle = "lovelace"
 [outputs]
  home = ["HTML"]
  page = ["HTML"]
+
+[markup.goldmark.renderer]
+unsafe = true
