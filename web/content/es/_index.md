@@ -171,7 +171,7 @@ enclose-with BETA
 
 Having lexical binding and a lambda calculus in the language unlocks some powerful stuff, and allows *es* to piggy-back off of the work and constructs of previous lambda-focused languages, like Scheme.
 
-This page doesn't address all of the interesting features of *es*, such as its rich return values, exception mechanism, and syntax rewriting --- check out the [paper](paper.html) by the original authors for a complete introduction.  For snippets of the language in action, look at the [useful snippets](/es/useful) collection or some of the [es source](https://github.com/jpco/es-shell/tree/master/builtin) itself.
+This page doesn't address all of the interesting features of *es*, such as its rich return values, exception mechanism, and syntax rewriting --- check out the [paper](paper.html) by the original authors for a complete introduction.  For snippets of the language in action, look at the [useful snippets](useful.html) collection or some of the [es source](https://github.com/jpco/es-shell/tree/master/builtin) itself.
 
 
 [^1]: Scheme is obviously [homoiconic](https://en.wikipedia.org/wiki/Homoiconicity), being a Lisp.  Tcl is less obviously homoiconic, but because it is also based on a core data type (the string), which its code is easily represented as, and it focuses on metaprogramming as a core part of the language, it definitely counts for this purpose.
