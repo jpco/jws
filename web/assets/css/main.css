@@ -180,6 +180,10 @@ h2 {
     margin-bottom: 1ex;
 }
 
+.katex {
+    font-size: 1em !important;
+}
+
 @media (min-width: 1000px) {
     .content a.subtitle {
         padding-left: 3em;
