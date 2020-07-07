@@ -1,5 +1,5 @@
 {{ partial "header.html" . }}
-<div class="content">
+<main>
     <header>
         <h1 class="title"><a href="/">/</a> <a href="/{{ .Section }}/">{{ .Section }}</a>{{ if .Section }} / {{ end }}{{ .Title }}</h1>
         <a class="subtitle">{{ .Description }}</a>
@@ -8,5 +8,5 @@
     <article>
         {{ .Content }}
     </article>
-</div>
+</main>
 {{ partial "footer.html" . }}

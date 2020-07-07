@@ -15,7 +15,11 @@
 html {
     height: 100%;
     box-sizing: border-box;
+
     hyphens: auto;
+    -moz-hyphens: auto;
+    -ms-hyphens: auto;
+    -webkit-hyphens: auto;
 }
 
 *, *:before, *:after {
@@ -53,7 +57,7 @@ a:link { color: #3352e1; }
 a:visited { color: #533364; }
 a:active { color: #5a7d8b; }
 
-div.content {
+main {
     /* layout */
     margin: 2em auto;
     width: 95%;
@@ -92,13 +96,14 @@ figcaption p {
     margin: 0;
 }
 
-.content p {
+main p {
     /* format */
     line-height: 1.4;
     padding: 0.5ex 0;
+    text-align: justify;
 }
 
-.content pre {
+main pre {
     line-height: 1.25;
     font-size: 16px;
     font-variant-ligatures: none;
@@ -110,32 +115,32 @@ figcaption p {
     border-radius: .5ex;
 }
 
-.content p code {
+main p code {
     font-size: 16px;
     font-variant-ligatures: none;
 }
 
-.content blockquote {
+main blockquote {
     border-left: thick solid #c4bab4;
     margin: 1em 1em 1em 0;
     padding-left: 1em;
 }
 
-.content table {
+main table {
     border-collapse: collapse;
 }
 
-.content table th,
-.content table td {
+main table th,
+main table td {
     padding: 6px 13px;
     border: 1px solid #d4d4d4;
 }
 
-.content tbody tr:nth-child(odd) {
+main tbody tr:nth-child(odd) {
    background-color: #f3f3f3;
 }
 
-.content hr {
+main hr {
     width: 60%;
     margin-top: 2em;
     margin-bottom: 2em;
@@ -146,7 +151,7 @@ h1 {
     font-weight: normal;
 }
 
-.content h1.title {
+main h1.title {
     margin-bottom: .3ex;
     font-size: 32pt;
 }
@@ -155,29 +160,34 @@ h2 {
     font-weight: normal;
 }
 
-.content h2 {
+main h2 {
     margin: 1ex 0;
 }
 
-.content a.subtitle {
+main a.subtitle {
     color: #6a6a4a;
     font-style: oblique;
     display: block;
 }
 
-.content ul {
+ul {
     list-style-type: none;
 }
 
-.content ul li:before {
+ul li:before {
     content: '\2014';
     position: absolute;
     margin-left: -25px;
 }
 
-.content ul li {
+ul li {
     margin-top: 1ex;
     margin-bottom: 1ex;
+}
+
+ul li p {
+    padding-top: 0;
+    padding-bottom: 0;
 }
 
 .katex {
@@ -185,7 +195,7 @@ h2 {
 }
 
 @media (min-width: 1000px) {
-    .content a.subtitle {
+    main a.subtitle {
         padding-left: 3em;
         padding-right: 3em;
     }
@@ -199,27 +209,32 @@ h2 {
 
     footer { color: #8a8aaa; }
 
-    .content pre {
+    main pre {
         background-color: #335261;
     }
 
-    .content tbody tr:nth-child(odd) {
+    main tbody tr:nth-child(odd) {
        background-color: #335261;
     }
 
-    .content hr {
+    main hr {
         color: #5a7d8b;
     }
 
-    .content a.subtitle {
+    main a.subtitle {
         color: #8a8aaa;
     }
 
-    .content blockquote {
+    main blockquote {
         border-left: thick solid #4a4a6a;
     }
 
     a:link { color: #5574fd; }
     a:visited { color: #9545a6; }
     a:active { color: #7c9dad; }
+}
+
+/* just in case browsers don't know about these elements */
+article, aside, footer, header, nav, section, main {
+  display: block;
 }

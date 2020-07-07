@@ -1,17 +1,21 @@
 {{ partial "header.html" . }}
-<div class="content">
+<main>
     <header>
         <h1 class="title"><a href="/">/</a> {{ .Title }}</h1>
         <a class="subtitle">{{ .Description }}</a>
-        <ul>
-        {{ range .Data.Pages }}
-            <li>({{ dateFormat "2006-01-02" .Date }}) <a href="{{ .Permalink }}">{{ .Description }}</a>
-        {{ end }}
-        </ul>
+        <nav>
+            <ul>
+            {{ range .Data.Pages }}
+                <li>({{ dateFormat "2006-01-02" .Date }}) <a href="{{ .Permalink }}">{{ .Description }}</a>
+            {{ end }}
+            </ul>
+        </nav>
     </header>
-    <hr>
+    {{ with .Content }}
+<hr>
     <article>
-        {{ .Content }}
+        {{ . }}
     </article>
-</div>
+    {{ end }}
+</main>
 {{ partial "footer.html" . }}
