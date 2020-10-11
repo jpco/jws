@@ -17,6 +17,8 @@ In the fall of 1990, one of us (Rakitzis) re-implemented the Plan 9 command inte
 
 *Note: This web page is an HTML version of a paper which was presented at the Winter 1993 Usenix Conference in San Diego, California.  The paper corresponds to an out-of-date version of *es*; see the Errata section for changes which affect parts of the paper.  [Source code for the current version of *es*](ftp://ftp.sys.utoronto.ca/pub/es/es-0.9-alpha1.tar.gz) and a [PostScript copy of this paper](ftp://ftp.sys.utoronto.ca/pub/es/usenix-w93.ps.Z), from which the version appearing in the proceedings was typeset, are available by anonymous FTP.*
 
+<nav>
+
 ## Table of Contents
 
  - [Introduction](#introduction)
@@ -40,6 +42,8 @@ In the fall of 1990, one of us (Rakitzis) re-implemented the Plan 9 command inte
  - [Errata](#errata)
  - [References](#references)
  - [Author Information](#author-information)
+
+</nav>
 
 ---
 
@@ -565,6 +569,8 @@ fn %interactive-loop {
 </pre>
 
 <figcaption>Figure 3: Default interactive loop</figcaption>
+
+</figure>
 
 ---
 

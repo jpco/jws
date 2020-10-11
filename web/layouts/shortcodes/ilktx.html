@@ -1,1 +1,2 @@
+{{/* usage: {{< ilktx "1/2" "\frac{1}{2}">}} or {{< ilktx "P(A)" >}} */}}
 <span class="ktx-ns" data-katex="\({{ with .Get 1 }}{{.}}{{ else }}{{ .Get 0 }}{{ end }}\)">{{ .Get 0 }}</span>{{ "" -}}
