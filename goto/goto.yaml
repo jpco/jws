@@ -1,21 +1,25 @@
 # The goto service handles redirections (performing them and setting them).
 
 service: goto
-runtime: go111
+runtime: go114
 
 includes:
  - secrets.yaml
 
 handlers:
- - url: /update
+ - url: /_api/.+
    script: auto
    secure: always
-   login: admin
 
  - url: /
-   script: auto
+   static_files: index.html
    secure: always
-   login: admin
+   upload: index.html
+
+ - url: /index.js
+   static_files: index.js
+   secure: always
+   upload: index.js
 
  - url: /.+
    script: auto
