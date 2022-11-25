@@ -1,5 +1,0 @@
-cron:
- - description: "ddate tweet"
-   url: /x/cron/tweet/ddate
-   schedule: every 24 hours
-   target: xp
