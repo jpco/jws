@@ -1,0 +1,13 @@
+# The default service handles serving the site
+
+runtime: go116
+
+handlers:
+ - url: /
+   static_files: static/index.html
+   upload: static/index\.html
+   secure: optional
+
+ - url: /.*
+   static_dir: static
+   secure: optional
