@@ -8,5 +8,20 @@ handlers:
    upload: static/index\.html
    secure: optional
 
+ - url: /favicon.ico
+   static_files: static/favicon.ico
+   upload: static/favicon\.ico
+   secure: optional
+
+ - url: /sitemap.xml
+   static_files: static/sitemap.xml
+   upload: static/sitemap\.xml
+   secure: optional
+
+ - url: /robots.txt
+   static_files: static/robots.txt
+   upload: static/robots\.txt
+   secure: optional
+
  - url: /toki
    static_dir: static/toki
