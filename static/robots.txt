@@ -1,0 +1,2 @@
+# Not really much to configure at this time.
+Sitemap: https://jpco.io/sitemap.xml

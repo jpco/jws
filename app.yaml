@@ -1,6 +1,6 @@
 # The default service handles serving the site
 
-runtime: go116
+runtime: go125
 
 handlers:
  - url: /
@@ -8,9 +8,9 @@ handlers:
    upload: static/index\.html
    secure: optional
 
- - url: /favicon.ico
-   static_files: static/favicon.ico
-   upload: static/favicon\.ico
+ - url: /icon.svg
+   static_files: static/icon.svg
+   upload: static/icon\.svg
    secure: optional
 
  - url: /sitemap.xml
@@ -25,3 +25,6 @@ handlers:
 
  - url: /toki
    static_dir: static/toki
+
+ - url: /style
+   static_dir: static/style

@@ -1,0 +1,54 @@
+body {
+	max-width: 1000px;
+	margin-left: auto;
+	margin-right: auto;
+	padding: 10px;
+	hyphens: auto;
+}
+svg {
+	stroke: black;
+	fill: black;
+}
+@media (prefers-color-scheme: dark) {
+	body {
+		color: #fff;
+		background-color: #191919;
+	}
+	svg {
+		stroke: white;
+		fill: white;
+	}
+	a:link {
+		color: #78f;
+	}
+	a:visited {
+		color: #bb6fbf;
+	}
+}
+h1 {
+	text-align: center;
+}
+div.time {
+	text-align: center;
+}
+table {
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+}
+figure {
+	text-align: center;
+}
+caption {
+	font-style: italic;
+}
+figcaption {
+	font-style: italic;
+}
+li {
+	margin-top: 15px;
+	margin-bottom: 15px;
+}
+dt {
+	margin-top: 15px;
+}
