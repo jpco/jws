@@ -9,6 +9,37 @@ svg {
 	stroke: black;
 	fill: black;
 }
+h1 {
+	text-align: center;
+}
+div.time {
+	text-align: center;
+}
+table {
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+}
+figure {
+	text-align: center;
+}
+figure pre {
+	text-align: left;
+	display: inline-block;
+}
+caption {
+	font-style: italic;
+}
+figcaption {
+	font-style: italic;
+}
+li {
+	margin-top: 15px;
+	margin-bottom: 15px;
+}
+dt {
+	margin-top: 15px;
+}
 @media (prefers-color-scheme: dark) {
 	body {
 		color: #fff;
@@ -25,30 +56,8 @@ svg {
 		color: #bb6fbf;
 	}
 }
-h1 {
-	text-align: center;
-}
-div.time {
-	text-align: center;
-}
-table {
-	margin-left: auto;
-	margin-right: auto;
-	text-align: center;
-}
-figure {
-	text-align: center;
-}
-caption {
-	font-style: italic;
-}
-figcaption {
-	font-style: italic;
-}
-li {
-	margin-top: 15px;
-	margin-bottom: 15px;
-}
-dt {
-	margin-top: 15px;
+@media print {
+	a[href]::after {
+		content: " (" attr(href) ")"
+	}
 }

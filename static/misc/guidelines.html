@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang=en-US>
+<meta charset=UTF-8>
+<meta name=viewport content="width=device-width, initial-scale=1.0">
+<link rel=stylesheet href=/style/style.css />
+<link rel=icon href=/icon.svg sizes=any type=image/svg+xml>
+
+<title>jpco.io | Guidelines for this website</title>
+
+<h1>Guidelines for this website</h1>
+<div class=time><time datetime="2025-08-17">2025-08-17</time></div>
+
+<p>
+A website is a complicated thing.
+There's a huge amount of stuff to consider, decades of legacy cruft, and a lot to avoid (as they say, &ldquo;it's the notes you don't play.&rdquo;)
+
+<p>
+This page is written largely for myself, so that I don't lose track of my own goals and methods for this site, but it's reasonable to record these in a public place in case anyone like me (i.e., bad at this) wants some resources to help them write good, accessible websites.
+
+<p>
+Now, I'll note that I'm pretty stupid when it comes to frontend stuff, and that creates some amount of incentive for me to <a href="https://en.wikipedia.org/wiki/KISS_principle">keep things simple</a>.
+So I have to confess that some of this might be rationalization: It's not that I'm making websites the only way I know how, it's that I'm making websites the <em>better</em> way!
+
+<p>
+But also, I seem to have different design goals than many others.
+I want a website that works without javascript wherever I don't need it.
+I want a website that's reasonably functional without CSS.
+I want a website that's mostly HTML, and doesn't try to reimplement stuff the browser does ten times better and faster, and with better accessibility characteristics.
+I want a website where most of the data you download is actual content that you see.
+
+<p>
+Accessibility is a priority &mdash; probably <em>the</em> priority.
+That means accessibility for people with <a href="https://danluu.com/web-bloat/">slow or intermittent internet</a>, <a href="https://danluu.com/slow-device/">slow devices</a>, old and underpowered browsers, or small screens.
+It also means accessibility for people who use screen readers or other assistive technology.
+Generally, these benefits compound and <a href="https://en.wikipedia.org/wiki/Curb_cut_effect">help everybody</a>; a website that has these characteristics is a website that's fast for those with good internet, is understandable for search engines and reasonably easy for machine translation, and can be used by people working without images in a terminal.
+
+<ul>
+<li>Guide: <a href="http://lofi.limo/blog/write-html-right">http://lofi.limo/blog/write-html-right</a>
+<li>Guide: <a href="https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/CSS_layout/Responsive_Design">https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/CSS_layout/Responsive_Design</a>
+<li>Opinion: <a href="https://unplannedobsolescence.com/blog/hard-page-load/">https://unplannedobsolescence.com/blog/hard-page-load/</a>
+<li>Opinion: <a href="https://motherfuckingwebsite.com/">https://motherfuckingwebsite.com/</a>
+</ul>
+
+<p>
+It's also worth paying attention to the different ways people want to use the web.
+Respecting dark- and light-mode settings with media queries is the most obvious example.
+Some users have more &ldquo;heavy-weight&rdquo; opinions, though.
+For example, there are <a href="https://www.gnu.org/philosophy/javascript-trap.html">those with strong opinions on javascript</a>.
+
+<p>
+There are also those who, like me, often &ldquo;print&rdquo; pages from the web.
+For me, this is to download onto an e-ink device.
+Supporting this well involves <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_media_queries/Printing">using media queries for printing</a>.
+One straightforward choice is to display link targets for printed content, since you can't exactly click a link on the web.
+
+<figure>
+<pre>
+@media print {
+	a[href]::after {
+		content: " (" attr(href) ")"
+	}
+}
+</pre>
+<figcaption>CSS for displaying link targets in printed pages</figcaption>
+</figure>
+
+<p>
+I will admit this site doesn't do things perfectly in terms of accessibility right now.
+While I probably don't need to bother with aria, I ought to better follow <a href="https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Accessibility/HTML">the MDN's accessibility recommendations</a>.
+There's also the matter that many semantic elements are (relatively) newfangled; how portable is HTML5 and CSS3 (and SVG support)?
+Is it a good tradeoff to add polyfills for browsers which don't quite handle semantic HTML?
+
+<p>
+Language and encoding are also considerations, since the web is a global platform and &ldquo;English is the implicit default&rdquo; isn't actually a good way for the world to work.
+As part of that, it's good to declare which language you're writing in, so that the browser and OS don't have to guess, and that you're using UTF-8, since that's basically what you have to use.
+
+<ul>
+<li>Guide: <a href="https://www.w3.org/International/tutorials/language-decl/">https://www.w3.org/International/tutorials/language-decl/</a>
+<li>Guide: <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/meta#charset">https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/meta#charset</a>
+</ul>
