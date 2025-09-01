@@ -8,12 +8,24 @@
 # Requires ncat (from nmap) to run.  Other netcats should work too with tweaks.
 
 #
+# Prep site.
+# This runs any prep scripts for dynamic content.
+#
+
+fn prep-site {
+	./script/genman.es
+}
+
+#
 # The server loop.  Tells ncat to run this script again when a request is
 # received, but when that happens, $NCAT_SUBSHELL_MODE is set, so we know we
 # don't need to run another server.
 #
 
 if {~ $NCAT_SUBSHELL_MODE ()} {
+	prep-site
+
+	echo >[1=2] 'Serving ...'
 	local (NCAT_SUBSHELL_MODE = yes)
 	forever {ncat -k -l -p 8181 -e $0}
 }

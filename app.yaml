@@ -43,6 +43,10 @@ handlers:
    static_files: static/es/paper.html
    upload: static/es/paper.html
    secure: optional
+ - url: /es/man.txt
+   static_files: static/es/man.txt
+   upload: static/es/man.txt
+   secure: optional
 
   # /toki
  - url: /toki
