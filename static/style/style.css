@@ -1,13 +1,37 @@
-body {
-	max-width: 1000px;
+main {
+	max-width: 600pt;
 	margin-left: auto;
 	margin-right: auto;
 	padding: 10px;
+}
+p {
 	hyphens: auto;
+}
+.sitelenpona {
+	font-family: "sitelenSeliKiwen";
+	font-size: 28pt;
+}
+.sitelenpona rp, rt {
+	font-family: serif;
+	font-size: 10pt;
 }
 svg {
 	stroke: black;
 	fill: black;
+}
+nav {
+	text-align: center;
+	width: 100%;
+	color: white;
+	background-color: #2d2d2d;
+	padding: 1px;
+	border-radius: 5px;
+}
+nav a:link {
+	color: #78f;
+}
+nav a:visited {
+	color: #bb6fbf;
 }
 h1 {
 	text-align: center;
@@ -27,22 +51,28 @@ figure pre {
 	text-align: left;
 	display: inline-block;
 }
+figure .scrollable {
+	max-width: 100%;
+	overflow-x: scroll;
+}
 caption {
 	font-style: italic;
 }
+blockquote {
+	margin-left: 1em;
+	padding-left: 1em;
+	border-left: 2px solid gray;
+	font-style: oblique;
+}
 figcaption {
 	font-style: italic;
-}
-li {
-	margin-top: 15px;
-	margin-bottom: 15px;
 }
 dt {
 	margin-top: 15px;
 }
 @media (prefers-color-scheme: dark) {
 	body {
-		color: #fff;
+		color: white;
 		background-color: #191919;
 	}
 	svg {
@@ -57,7 +87,15 @@ dt {
 	}
 }
 @media print {
+	nav {
+		display: none;
+	}
 	a[href]::after {
 		content: " (" attr(href) ")"
 	}
+}
+
+@font-face {
+	font-family: "sitelenSeliKiwen";
+	src: url("/style/sitelenselikiwenjuniko.ttf");
 }

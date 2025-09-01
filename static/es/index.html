@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang=en-US>
+<meta charset=UTF-8>
+<meta name=viewport content="width=device-width, initial-scale=1.0">
+<link rel=stylesheet href=/style/style.css />
+<link rel=icon href=/icon.svg sizes=any type=image/svg+xml>
+
+<title>jpco.io | A (re-)introduction to the extensible shell</title>
+
+<nav><pre>http://<a href=/>jpco.io</a>/<a href=/es>es</a>/</pre></nav>
+
+<main>
+<h1>A (re-)introduction to the extensible shell</h1>
+<div class=time><time datetime=2025-08-30>2025-08-30</time></div>
+
+<p>
+<i>Es</i> is the extensible shell.
+
+<p>
+The best (if slightly out-of-date) introduction to the shell is <a href=/es/paper.html>the original <i>es</i> paper</a> presented at Usenix 1993, but I'll provide a shorter, incomplete introduction to the shell here, the state of the shell after three decades, and some thoughts on what interesting work there is left to be done.
+
+<h2>What is <i>es</i>?</h2>
+
+<p>
+<i>Es</i> is a Unix shell first developed in the early 1990s by Byron Rakitzis and Paul Haahr, based directly on <a href="https://github.com/rakitzis/rc">Rakitzis' earlier port of the shell <i>rc</i></a> from Plan 9 to Unix.
+As the paper puts it,
+
+<blockquote>
+While rc was an experiment in adding modern syntax to Bourne shell semantics, es is an exploration of new semantics combined with rc-influenced syntax: es has lexically scoped variables, first-class functions, and an exception mechanism, which are concepts borrowed from modern programming languages such as Scheme and ML.
+</blockquote>
+
+<p>
+Simple commands closely resemble other shells, with pipes, redirections, <code>$variables</code>, and all that. Redirection syntax particularly resembles <i>rc</i>.
+
+<figure>
+<pre>
+make -npq &gt;[2] /dev/null | grep '.*:'
+</pre>
+</figure>
+
+<p>
+Also like <i>rc</i>, <i>es</i> has list-typed variables, no rescanning, and no double quotes.
+These together make variables significantly more straightforward to use than in POSIX-compatible shells.
+
+<figure>
+<pre>
+; args = -l 'Long Document.pdf'
+; ls $args
+-rw-r--r-- 1 jpco jpco 12345 Aug 31 15:44 'Long Document.pdf'
+</pre>
+</figure>
+
+<p>
+From Scheme, <i>es</i> draws features like first-class functions and lexical bindings.
+
+<figure>
+<pre>
+fn map cmd args {
+  for (i = $args)
+    $cmd $i
+}
+map @ i { cd $i; rm -f * } /tmp /var/tmp
+</pre>
+</figure>
+
+<p>
+In this example, <code>@ i { cd $i; rm -f * }</code> is a <em>lambda expression</em>&mdash;an inline function&mdash;which takes one argument, <code>i</code>, <code>cd</code>s to it, and then <code>rm -f</code>s everything in the directory.
+Note that both <code>map</code> and the lambda expression use variables named <code>i</code>, but this works just fine, since function arguments and variables defined in <code>for</code> expressions are both <em>lexically bound</em>, meaning that they're only defined within the code the definitions wrap (the body of the <code>for</code> and the body of the function, respectively).
+
+<p>
+Nearly everything in <i>es</i> is a function under the hood, and functions are just variables whose names start with <code>fn-</code>.
+
+<figure>
+<pre>
+; echo {command &gt; file}
+{%create &lt;={%one file} {command}}
+; echo $fn-%create
+%openfile w
+; # this is not very useful
+; fn-%create = echo
+; command &gt; file
+1 file {command}
+</pre>
+</figure>
+
+<p>
+This lets users redefine swaths of shell behavior.
+For example, the <code>%write-history</code> function is called to write a command to history after reading it.
+To make the shell avoid writing duplicate commands to history, one can write:
+
+<figure>
+<pre>
+let (write = $fn-%write-history; last-cmd = ())
+fn %write-history cmd {
+  if {!~ $cmd $last-cmd} {
+    $write $cmd
+    last-cmd = $cmd
+  }
+}
+</pre>
+</figure>
+
+<p>
+We can go through this example line-by-line.
+
+<ol>
+<li>
+<code>let (write = $fn-%write-history; last-cmd = ())</code>
+
+<p>
+This creates a binding of the current definition of <code>%write-history</code> to <code>write</code>, and <code>()</code> (the empty list) to <code>last-cmd</code>.
+
+<li>
+<code>fn %write-history cmd {</code>
+
+<p>
+This creates a new definition of <code>%write-history</code>, with the bindings defined in the previous line.
+Because of the <code>let</code> line, the old definition of <code>%write-history</code> is bound within this function.
+This is a very common idiom in <i>es</i>, used for &ldquo;spoofing&rdquo; functions: extending their definitions to match user preferences.
+
+<p>
+The <code>let</code> also bound the <code>last-cmd</code> variable; it doesn't have any definition initially, but because this binding is created outside the function, the value persists across calls.
+
+<li>
+<code>if {!~ $cmd $last-cmd} {</code>
+
+<p>
+This compares <code>$cmd</code> against <code>$last-cmd</code>.
+If they differ, then...
+
+<li>
+<code>$write $cmd</code>
+
+<p>
+We call the prior definition of <code>%write-history</code> with the new <code>$cmd</code>.
+
+<li>
+<code>last-cmd = $cmd</code>
+
+<p>
+Then, we set <code>last-cmd</code> to <code>$cmd</code>.
+Because <code>last-cmd</code> persists across function calls, this effectively saves this command for future calls.
+
+</ol>
+
+<p>
+This is essentially the same behavior as <code>HISTCONTROL=ignoredups</code> in Bash, and it's reasonable to note that the Bash version is quite a bit more concise than the <i>es</i> one.
+However, the <i>es</i> method has benefits &ldquo;at scale&rdquo;, when considering shell features in aggregate.
+Many shells add behaviors by adding special variables and options with specific valid values or special &ldquo;sub-languages&rdquo; to configure specific behaviors.
+When configuring many parts of the shell, this adds up to a huge set of things to remember and a culture of &ldquo;special tricks&rdquo; available in each shell.
+
+<p>
+<i>Es</i> takes a different approach instead, exposing the core behaviors of the shell in a way that allows users to customize them in arbitrary ways.
+
+<p>
+This combination of features creates a shell which is highly customizable and very scriptable, without carrying a huge bag of features to do so.
+The difference can maybe be best illustrated as:
+
+<figure>
+<pre>
+; man es | wc -l
+1695
+; man zshall | wc -l
+29739
+</pre>
+</figure>
+
+<h2>What's been happening with <i>es</i>?</h2>
+
+<p>
+<i>Es</i> was mostly developed over the course of 1992-1995.
+The major development went through the release of version 0.84; 0.88 was released after a brief hiatus from the original authors, and then both of them got busy with life and work.
+
+<p>
+After that, maintainership passed through a couple hands, leading eventually to the current maintainer James Haggerty, but development was largely focused on keeping <i>es</i> functional and hosted over the decades as OSes and build systems have evolved.
+
+<p>
+This left the shell as an incomplete experiment: Paul and Byron weren't able to get around to implementing a good number of what they meant to, and their near- to medium-term plans certainly didn't sum up to everything the shell could be made to do.
+
+<p>
+However: at its core <i>es</i> has a simple and powerful design which removes a huge amount of the friction of shell scripting.
+Its ethos of providing fewer and more powerful language and runtime mechanisms makes it relatively easy to know top to bottom.
+It is, genuinely, an extremely elegant piece of software that I am very glad to use every day.
+
+<h2><i>Es</i> futures</h2>
+
+<p>
+So, where is <i>es</i> now, and where is it headed?
+
+<p>
+Well, there are a few major directions I would like to see the shell to go in:
+
+<ul>
+<li>
+<p>
+More usage!
+The current <i>es</i> community is small, and I would love to see it grow.
+Packaging it for more OSes and Linux distros will help, as would more writing about the shell and more documentation online.
+
+<p>
+Quite a bit of existing knowledge about the shell is wrapped up inside the old mailing list or the source code, and users shouldn't be reasonably expected to dig around GitHub or years worth of old emails to understand a piece of software enough to use it effectively.
+
+<p>
+Better tooling would be helpful as well; syntax highlighting for editors, maybe even some kind of LSP integration, as well as reviving (and documenting) the <code>esdebug</code> script.
+
+<li>
+<p>
+&ldquo;Modernization&rdquo;: Recent work has been focused in part on updating the portability of <i>es</i> to a more current state, fixing it on modern Unices.
+Now that that's mostly complete, I would like to add job control (or, at least, the ability to have job control; it's a whole thing) and programmable input, which would allow for more of those fancy interactive features present in other shells.
+
+<li>
+<p>
+More extensibility: while <i>es</i> is already flexible, that flexibility is something that hasn't been fully exploited or developed.
+Much of this is pretty experimental, so there aren't a lot of concrete designs.
+
+<p>
+Paul and Byron were looking at extensible parsing so that much of the shell's fancy syntactic sugar (redirections, pipes, backgrounding, backquotes) could be configured and changed within the shell.
+
+<p>
+The startup sequence of the shell is hard-coded and <a href="https://github.com/jpco/es-shell/tree/es-main">it could be done in the script itself</a>.
+
+<p>
+Finally, the primitives backing many <i>es</i> commands do not necessarily have to be linked in with the shell statically.
+Dynamic loading of libararies has been standardized and has good support across Unices, so with the right runtime support, the shell could have a default set of broad Unix primitives, augmented with loadable primitives for OS-specific behavior, such as <a href="https://www.haiku-os.org/blog/humdinger/2017-11-05_scripting_the_gui_with_hey/">GUI scripting in Haiku</a> or <a href="https://wiki.freebsd.org/Capsicum">Capsicum support in BSDs</a>.
+
+<p>
+Adding these up, along with some smaller changes to do with the environment and signal delivery, could create a shell that could be essentially librarified in the same way as Tcl.
+In fact, this was a long-term goal of the original authors.
+
+<li>
+<p>
+Runtime improvements: <i>es</i> was never optimized in either runtime or memory to a meaningful degree, as it has always been largely experimental.
+
+<p>
+There are a few potential directions to improve: switching to a bytecode interpreter or something like it, optimizing shell data structure memory use, adding tail-call optimization, adding some continuation-like mechanism, or combination of those.
+<a href="https://www.cs.cornell.edu/~asampson/blog/flattening.html#bonus-exploiting-the-flat-representation">AST flattening</a> seems like a promising direction in particular.
+The GC could also use some re-evaluation.
+
+<p>
+Another practical benefit of this work would also be removing the current heavy reliance on <code>setjmp(3)</code>/<code>longjmp(3)</code>, which would make the shell much friendlier to integration with non-C code.
+
+</ul>
+
+<h2>To write</h2>
+<ul>
+<li>Job control and the extensible shell
+<li>Effective <i>es</i>
+<li>The shell-forward desktop
+<li>Better documentation of the internals: GC, exceptions, that kind of thing.
+</ul>
