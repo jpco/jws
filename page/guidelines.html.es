@@ -102,7 +102,7 @@ I like to print articles to my e-ink device to read later, and it's very nice wh
 Supporting this well involves <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_media_queries/Printing">using media queries for printing</a>.
 One straightforward choice is to display link targets for printed content, since you can't exactly click a link on the web.
 
-<figure>
+<figure class=centered>
 <pre class=scrollable>
 @media print {
 	a[href]::after {

@@ -45,7 +45,7 @@ while {!~ <={header = <=%read} \r} {
 #
 
 # Prints basic http response headers to stdout.
-# This code stuff is gross lol.
+# This code-* stuff is gross lol.
 let (
 	code-100 = 'Continue'
 	code-101 = 'Switching Protocols'
@@ -119,7 +119,7 @@ fn reply code type flags {
 	echo >[1=2] $method $reqpath '->' $version $code $(code-$code)
 	echo $version $code $(code-$code)
 	echo Content-Type: $type
-	if {~ $flags cache} {
+	if {$IN_DOCKER && ~ $flags cache} {
 		echo Cache-Control: public, max-age=3600
 	}
 	echo
@@ -146,10 +146,10 @@ fn serve file {
 # Core routing/service logic.
 #
 
-catch @ {
-	# 500, hmmm
-	reply 500 text/plain
-	echo 'Internal server error:' $*
+catch @ exception {
+	reply 500 text/html
+	echo >[1=2] 'Internal server error:' $exception
+	. script/500.es $exception
 } {
 	if (
 		# "pages": es scripts wrapped in html templates.

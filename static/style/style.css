@@ -1,16 +1,9 @@
-/* TODO: sort this all out into a reasonable order */
+/* structural elements/layout */
 main {
 	max-width: 600pt;
 	margin-left: auto;
 	margin-right: auto;
 	padding: 10px;
-}
-p {
-	hyphens: auto;
-}
-svg {
-	stroke: black;
-	fill: black;
 }
 nav {
 	text-align: center;
@@ -26,11 +19,28 @@ nav a:link {
 nav a:visited {
 	color: #bb6fbf;
 }
+
+/* text rendering */
+p {
+	hyphens: auto;
+}
 h1 {
 	text-align: center;
 }
 div.time {
 	text-align: center;
+}
+blockquote {
+	margin-left: 1em;
+	padding-left: 1em;
+	border-left: 2px solid gray;
+	font-style: oblique;
+}
+
+/* figures and such */
+svg {
+	stroke: black;
+	fill: black;
 }
 table {
 	margin-left: auto;
@@ -57,18 +67,14 @@ figure .scrollable {
 caption {
 	font-style: italic;
 }
-blockquote {
-	margin-left: 1em;
-	padding-left: 1em;
-	border-left: 2px solid gray;
-	font-style: oblique;
-}
 figcaption {
 	font-style: italic;
 }
 dt {
 	margin-top: 15px;
 }
+
+/* @stuff */
 @media (prefers-color-scheme: dark) {
 	body {
 		color: white;
@@ -89,10 +95,14 @@ dt {
 	nav {
 		display: none;
 	}
+	.noprint {
+		display: none;
+	}
 	a[href]::after {
 		content: " (" attr(href) ")"
 	}
 }
+
 @font-face {
 	font-family: "sitelenSeliKiwen";
 	src: url("/style/sitelenselikiwenjuniko.ttf");

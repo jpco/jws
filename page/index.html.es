@@ -28,7 +28,7 @@ I have some <a href=/toki/linluwi.html>thoughts about <span lang=tok>linluwi</sp
 You can email me at this domain.
 If for some reason you want to use PGP, this key will work:
 
-<figure>
+<figure class=centered>
 <pre class=scrollable>
 -----BEGIN PGP PUBLIC KEY BLOCK-----
 

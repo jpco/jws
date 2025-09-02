@@ -2,9 +2,7 @@
 
 <style>
 table.meaning {
-	margin: 20pt;
-	margin-left: auto;
-	margin-right: auto;
+	margin: 20pt auto;
 }
 table.meaning caption {
 	border-bottom: 1px solid #ddd;
@@ -30,7 +28,7 @@ table.meaning td {
 <h1><span lang=tok>linluwi li ken nimi sin pona</span> / <span lang=tok>linluwi</span> can be a good nimisin</h1>
 <div class=time><time datetime="2023-06-12">2023-06-12</time></div>
 
-<figure>
+<figure class=centered>
 <svg width=100% height=62mm version=1.1 viewBox="0 0 27.502 31.312" xmlns="http://www.w3.org/2000/svg">
 <g stroke-width=.26458>
 <g transform="translate(1235.3 -50.718)">
