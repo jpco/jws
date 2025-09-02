@@ -21,5 +21,5 @@ To deploy the dang thing:
 # Cloud Build the new container version. you'll have to increment the version
 gcloud builds submit --tag gcr.io/jpco-cloud/web:0.70 .
 # Cloud Run the new container version
-gcloud run deploy --image=gcr.io/jpco-cloud/web:0.70 --platform managed
+gcloud run deploy --platform managed --image=gcr.io/jpco-cloud/web:0.70
 ```

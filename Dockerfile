@@ -12,8 +12,8 @@ RUN	apt-get update && \
 	make && \
 	make install
 
-# Clean install: step 1
-RUN git clone https://github.com/jpco/jws
+# Clean install step 1
+RUN git clone --separate-git-dir=/tmp/git-dir --depth=1 https://github.com/jpco/jws
 
 FROM debian:stable-slim
 WORKDIR /usr/local/app
