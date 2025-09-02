@@ -12,7 +12,7 @@ To run the server really locally:
 To run the server in a local docker container (for test dependencies):
 ```
 sudo docker build -t es-srv .
-sudo docker run -p 8181:8080 es-srv
+sudo docker run -it --rm -p 8181:8080 es-srv
 curl -i localhost:8181
 ```
 
