@@ -1,13 +1,8 @@
-<!DOCTYPE html>
-<html lang=en-US>
-<meta charset=UTF-8>
-<meta name=viewport content="width=device-width, initial-scale=1.0">
-<link rel=stylesheet href=/style/style.css />
-<link rel=icon href=/icon.svg sizes=any type=image/svg+xml>
+<; cat tmpl/header.html >
 
 <title>jpco.io | Guidelines for a website</title>
 
-<nav><pre>http://<a href=/>jpco.io</a>/<a href=/guidelines.html>guidelines.html</a></pre></nav>
+<; . script/build-nav.es /guidelines.html >
 
 <main>
 <h1>Guidelines for a website</h1>

@@ -1,12 +1,15 @@
-<!DOCTYPE html>
-<html lang=en-US>
-<meta charset=UTF-8>
-<meta name=viewport content="width=device-width, initial-scale=1.0">
-<link rel=stylesheet href=/style/style.css />
-<link rel=icon href=/icon.svg sizes=any type=image/svg+xml>
+<; cat tmpl/header.html >
 
-<!-- TODO: don't do this -->
 <style>
+.sitelenpona {
+	font-family: "sitelenSeliKiwen";
+	font-size: 28pt;
+}
+.sitelenpona rp, rt {
+	font-family: serif;
+	font-size: 10pt;
+}
+/* TODO: don't do this */
 .linluwi-hack {
 	letter-spacing: -1.4ex;
 }
@@ -14,7 +17,7 @@
 
 <title>jpco.io | toki li pona</title>
 
-<nav><pre>http://<a href=/>jpco.io</a>/<a href=/toki>toki</a>/</pre></nav>
+<; . script/build-nav.es /toki >
 
 <main>
 <h1><span lang=tok>toki li pona</span></h1>

@@ -1,15 +1,6 @@
-<!DOCTYPE html>
-<html lang=en-US>
-<meta charset=UTF-8>
-<meta name=viewport content="width=device-width, initial-scale=1.0">
-<link rel=stylesheet href=/style/style.css>
-<link rel=icon href=/icon.svg sizes=any type=image/svg+xml>
+<; cat tmpl/header.html >
 
 <style>
-figure {
-  text-align: left;
-  margin: 1em;
-}
 figure.bigfig {
   text-align: center;
   padding-top: 1ex;
@@ -17,16 +8,11 @@ figure.bigfig {
   border-top: 1px solid #bbb;
   border-bottom: 1px solid #bbb;
 }
-figure pre {
-  max-width: 100%;
-  overflow-x: scroll;
-  margin: 0;
-}
 </style>
 
 <title>jpco.io | Es: A shell with higher-order functions</title></head>
 
-<nav><pre>http://<a href=/>jpco.io</a>/<a href=/es>es</a>/<a href=/es/paper.html>paper.html</a></pre></nav>
+<; . script/build-nav.es /es/paper.html >
 
 <main>
 <h1><i>Es</i>: A shell with higher-order functions</h1>

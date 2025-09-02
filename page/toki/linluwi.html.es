@@ -1,9 +1,4 @@
-<!DOCTYPE html>
-<html lang=en-US>
-<meta charset=UTF-8>
-<meta name=viewport content="width=device-width, initial-scale=1.0">
-<link rel=stylesheet href=/style/style.css />
-<link rel=icon href=/icon.svg sizes=any type=image/svg+xml>
+<; cat tmpl/header.html >
 
 <style>
 table.meaning {
@@ -29,7 +24,7 @@ table.meaning td {
 
 <title>jpco.io | linluwi li ken nimi sin pona</title>
 
-<nav><pre>http://<a href=/>jpco.io</a>/<a href=/toki>toki</a>/<a href=/toki/linluwi.html>linluwi.html</a></pre></nav>
+<; . script/build-nav.es /toki/linluwi.html >
 
 <main>
 <h1><span lang=tok>linluwi li ken nimi sin pona</span> / <span lang=tok>linluwi</span> can be a good nimisin</h1>
@@ -260,7 +255,7 @@ The lines of <span lang=tok>mute</span> make up the warp, while the <span lang=t
 In the physical metaphor, one can picture how the <span lang=tok>linluwi</span> glyph represents an &ldquo;in-progress&rdquo; view of the <span lang=tok>len</span> glyph.
 </ol>
 
-<figure><div class=scrollable>
+<figure class=centered><div class=scrollable>
 <svg width=120mm height=31.312mm version=1.1 viewBox="10 0 25.502 31.312" xmlns="http://www.w3.org/2000/svg">
 
 <g stroke-width=.26458>

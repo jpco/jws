@@ -1,3 +1,4 @@
+/* TODO: sort this all out into a reasonable order */
 main {
 	max-width: 600pt;
 	margin-left: auto;
@@ -6,14 +7,6 @@ main {
 }
 p {
 	hyphens: auto;
-}
-.sitelenpona {
-	font-family: "sitelenSeliKiwen";
-	font-size: 28pt;
-}
-.sitelenpona rp, rt {
-	font-family: serif;
-	font-size: 10pt;
 }
 svg {
 	stroke: black;
@@ -45,11 +38,17 @@ table {
 	text-align: center;
 }
 figure {
+	margin: 1em;
+}
+figure.centered {
 	text-align: center;
 }
 figure pre {
+	max-width: 100%;
+	overflow-x: scroll;
 	text-align: left;
 	display: inline-block;
+	margin: 0;
 }
 figure .scrollable {
 	max-width: 100%;
@@ -94,7 +93,6 @@ dt {
 		content: " (" attr(href) ")"
 	}
 }
-
 @font-face {
 	font-family: "sitelenSeliKiwen";
 	src: url("/style/sitelenselikiwenjuniko.ttf");

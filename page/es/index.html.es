@@ -1,13 +1,8 @@
-<!DOCTYPE html>
-<html lang=en-US>
-<meta charset=UTF-8>
-<meta name=viewport content="width=device-width, initial-scale=1.0">
-<link rel=stylesheet href=/style/style.css />
-<link rel=icon href=/icon.svg sizes=any type=image/svg+xml>
+<; cat tmpl/header.html >
 
 <title>jpco.io | A (re-)introduction to the extensible shell</title>
 
-<nav><pre>http://<a href=/>jpco.io</a>/<a href=/es>es</a>/</pre></nav>
+<; . script/build-nav.es /es >
 
 <main>
 <h1>A (re-)introduction to the extensible shell</h1>
@@ -17,7 +12,10 @@
 <i>Es</i> is the extensible shell.
 
 <p>
-The best (if slightly out-of-date) introduction to the shell is <a href=/es/paper.html>the original <i>es</i> paper</a> presented at Usenix 1993 or the <a href=/es/man.txt><i>es</i> man page</a>, but I'll provide a shorter, incomplete introduction to the shell here, the state of the shell after three decades, and some thoughts on what interesting work there is left to be done.
+The best (if slightly out-of-date) introduction to the shell is <a href=/es/paper.html>the original <i>es</i> paper</a> presented at Usenix 1993 or the <a href=/es/man.html><i>es</i> man page</a>, but I'll provide a shorter, incomplete introduction to the shell here, the state of the shell after three decades, and some thoughts on what interesting work there is left to be done.
+
+<p>
+The current version is hosted on <a href="https://github.com/wryun/es-shell">the GitHub repository</a>.
 
 <h2>What is <i>es</i>?</h2>
 
@@ -26,7 +24,7 @@ The best (if slightly out-of-date) introduction to the shell is <a href=/es/pape
 As the paper puts it,
 
 <blockquote>
-While rc was an experiment in adding modern syntax to Bourne shell semantics, es is an exploration of new semantics combined with rc-influenced syntax: es has lexically scoped variables, first-class functions, and an exception mechanism, which are concepts borrowed from modern programming languages such as Scheme and ML.
+[w]hile rc was an experiment in adding modern syntax to Bourne shell semantics, es is an exploration of new semantics combined with rc-influenced syntax: es has lexically scoped variables, first-class functions, and an exception mechanism, which are concepts borrowed from modern programming languages such as Scheme and ML.
 </blockquote>
 
 <p>
