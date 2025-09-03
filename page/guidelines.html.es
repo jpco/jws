@@ -1,6 +1,7 @@
 <; cat tmpl/header.html >
 
 <title>jpco.io | Guidelines for a website</title>
+<meta name=description content="Fallible thoughts on making a good website from somebody who really doesn't know how to make a good website." />
 
 <; . script/build-nav.es /guidelines.html >
 
@@ -63,9 +64,9 @@ The browser is going to be better at that stuff than we are.
 Some good pages in this space:
 
 <ul>
-<li><a href="http://lofi.limo/blog/write-html-right">Aaron Parks has helpful tips for hand-writing HTML.</a>
-<li><a href="https://unplannedobsolescence.com/blog/hard-page-load/">&ldquo;Who's afraid of a hard page load?&rdquo; from Alex Petros, on the virtues of letting links work like links.</a>
-<li><a href="https://motherfuckingwebsite.com/">The classic &ldquo;motherfucking website&rdquo;, which puts my point better than I could.</a>
+<li><p><a href="http://lofi.limo/blog/write-html-right">Aaron Parks has helpful tips for hand-writing HTML.</a>
+<li><p><a href="https://unplannedobsolescence.com/blog/hard-page-load/">&ldquo;Who's afraid of a hard page load?&rdquo; from Alex Petros, on the virtues of letting links work like links.</a>
+<li><p><a href="https://motherfuckingwebsite.com/">The classic &ldquo;motherfucking website&rdquo;, which puts my point better than I could.</a>
 </ul>
 
 <p>
@@ -86,9 +87,9 @@ Printers.
 Screen readers and non-mouse-based navigation add a whole set of constraints on design.
 Some tips related to these include:
 <ul>
-<li>Use semantic HTML, not just a pile of <code>&lt;div&gt;</code>s.
-<li>Put a useful amount of text in links for someone tabbing around, not just one or two words. (Admission: I don't follow this one reliably.)
-<li>Use the <code>&lt;abbr&gt;</code> tag for abbreviations. (have I ever done this?)
+<li><p>Use semantic HTML, not just a pile of <code>&lt;div&gt;</code>s.
+<li><p>Put a useful amount of text in links for someone tabbing around, not just one or two words. (Admission: I don't follow this one reliably.)
+<li><p>Use the <code>&lt;abbr&gt;</code> tag for abbreviations. (have I ever done this?)
 </ul>
 
 <p>
@@ -118,9 +119,12 @@ Language and encoding are also considerations, since the web is a global platfor
 As part of that, it's good to declare which language you're writing in, so that the browser and OS don't have to guess, and that you're using UTF-8, since that's basically what you have to use.
 
 <ul>
-<li><a href="https://www.w3.org/International/tutorials/language-decl/">On the <code>lang</code> attribute, both for a whole page and just a part.</a>
-<li>Note that good use of the <code>lang</code> attribute helps the browser render text better!
-<li><a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/meta#charset">On the <code>&lt;meta charset&gt;</code> tag. Basically, declare UTF-8 because that's what you're gonna be using.</a>
+<li><p><a href="https://www.w3.org/International/tutorials/language-decl/">On the <code>lang</code> attribute, both for a whole page and just a part.</a>
+
+<li><p>Note that good use of the <code>lang</code> attribute helps the browser render text better!
+
+<li><p><a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/meta#charset">On the <code>&lt;meta charset&gt;</code> tag. Basically, declare UTF-8 because that's what you're gonna be using.</a>
+
 </ul>
 
 <!--

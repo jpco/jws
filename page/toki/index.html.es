@@ -16,6 +16,7 @@
 </style>
 
 <title>jpco.io | toki li pona</title>
+<meta name=description content="toki pona lon lipu linluwi jpco.io." />
 
 <; . script/build-nav.es /toki >
 

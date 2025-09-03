@@ -14,10 +14,10 @@ nav {
 	border-radius: 5px;
 }
 nav a:link {
-	color: #78f;
+	color: #a8b5ff;
 }
 nav a:visited {
-	color: #bb6fbf;
+	color: #d9aada;
 }
 
 /* text rendering */
@@ -55,14 +55,14 @@ figure.centered {
 }
 figure pre {
 	max-width: 100%;
-	overflow-x: scroll;
+	overflow-x: auto;
 	text-align: left;
 	display: inline-block;
 	margin: 0;
 }
 figure .scrollable {
 	max-width: 100%;
-	overflow-x: scroll;
+	overflow-x: auto;
 }
 caption {
 	font-style: italic;
@@ -74,7 +74,7 @@ dt {
 	margin-top: 15px;
 }
 
-/* @stuff */
+/* dark mode colors */
 @media (prefers-color-scheme: dark) {
 	body {
 		color: white;
@@ -85,21 +85,10 @@ dt {
 		fill: white;
 	}
 	a:link {
-		color: #78f;
+		color: #a8b5ff;
 	}
 	a:visited {
-		color: #bb6fbf;
-	}
-}
-@media print {
-	nav {
-		display: none;
-	}
-	.noprint {
-		display: none;
-	}
-	a[href]::after {
-		content: " (" attr(href) ")"
+		color: #d9aada;
 	}
 }
 

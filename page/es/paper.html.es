@@ -11,6 +11,7 @@ figure.bigfig {
 </style>
 
 <title>jpco.io | Es: A shell with higher-order functions</title></head>
+<meta name=description content="Es: A shell with higher-order functions.  Written by Paul Haahr and Byron Rakitzis for Usenet 1993." />
 
 <; . script/build-nav.es /es/paper.html >
 
@@ -21,7 +22,7 @@ figure.bigfig {
 <div class=time>
 <a href="mailto:paul@paulhaahr.com"><i>Paul Haahr</i></a>
 &mdash; Adobe Systems Incorporated
-[<a href=#erratum1 id=erratum1-use>Errata note 1</a>]
+[<a class=local href=#erratum1 id=erratum1-use>Errata note 1</a>]
 <br>
 <a href="http://www.rakitzis.com/resume.html"><i>Byron Rakitzis</i></a>
 &mdash; Network Appliance Corporation
@@ -55,27 +56,27 @@ GitHub.
 <h2><a id=table-of-contents>Table of Contents</a></h2>
 
 <ul>
-<li><a href=#introduction>Introduction</a>
-<li><a href=#using-es-commands>Using <i>es</i> Commands</a>
-<li><a href=#functions>Functions</a>
-<li><a href=#variables>Variables</a>
-<li><a href=#binding>Binding</a>
-<li><a href=#settor-variables>Settor Variables</a>
-<li><a href=#return-values>Return Values</a>
-<li><a href=#exceptions>Exceptions</a>
-<li><a href=#spoofing>Spoofing</a>
-<li><a href=#implementation>Implementation</a>
-<li><a href=#initialization>Initialization</a>
-<li><a href=#the-environment>The Environment</a>
-<li><a href=#interactions-with-unix>Interactions With UNIX</a>
-<li><a href=#garbage-collection>Garbage Collection</a>
-<li><a href=#future-work>Future Work</a>
-<li><a href=#conclusions>Conclusions</a>
-<li><a href=#acknowledgements>Acknowledgements</a>
-<li><a href=#footnotes>Footnotes</a>
-<li><a href=#errata>Errata</a>
-<li><a href=#references>References</a>
-<li><a href=#author-information>Author Information</a>
+<li><a class=local href=#introduction>Introduction</a>
+<li><a class=local href=#using-es-commands>Using <i>es</i> Commands</a>
+<li><a class=local href=#functions>Functions</a>
+<li><a class=local href=#variables>Variables</a>
+<li><a class=local href=#binding>Binding</a>
+<li><a class=local href=#settor-variables>Settor Variables</a>
+<li><a class=local href=#return-values>Return Values</a>
+<li><a class=local href=#exceptions>Exceptions</a>
+<li><a class=local href=#spoofing>Spoofing</a>
+<li><a class=local href=#implementation>Implementation</a>
+<li><a class=local href=#initialization>Initialization</a>
+<li><a class=local href=#the-environment>The Environment</a>
+<li><a class=local href=#interactions-with-unix>Interactions With UNIX</a>
+<li><a class=local href=#garbage-collection>Garbage Collection</a>
+<li><a class=local href=#future-work>Future Work</a>
+<li><a class=local href=#conclusions>Conclusions</a>
+<li><a class=local href=#acknowledgements>Acknowledgements</a>
+<li><a class=local href=#footnotes>Footnotes</a>
+<li><a class=local href=#errata>Errata</a>
+<li><a class=local href=#references>References</a>
+<li><a class=local href=#author-information>Author Information</a>
 </ul>
 
 <hr>
@@ -88,17 +89,17 @@ interpreter, it is really a programming language in which each
 statement runs a command. Because it must satisfy both the interactive
 and programming aspects of command execution, it is a strange
 language, shaped as much by history as by design.</blockquote>
-<p>&mdash; Brian Kernighan &amp; Rob Pike [<a href=#ref1>1</a>]
+<p>&mdash; Brian Kernighan &amp; Rob Pike [<a class=local href=#ref1>1</a>]
 
 <h2><a id=introduction>Introduction</a></h2>
 
 <p>
 A shell is both a programming language and the core of an interactive
 environment. The ancestor of most current shells is the 7th Edition
-Bourne shell[<a href=#ref2>2</a>], which is characterized by simple
+Bourne shell[<a class=local href=#ref2>2</a>], which is characterized by simple
 semantics, a minimal set of interactive features, and syntax that is
 all too reminiscent of Algol. One recent shell, <i>rc</i>
-[<a href=#ref3>3</a>], substituted a cleaner syntax but kept most of
+[<a class=local href=#ref3>3</a>], substituted a cleaner syntax but kept most of
 the Bourne shell's attributes. However, most recent developments in
 shells (e.g., <i>csh</i>, <i>ksh</i>, <i>zsh</i>) have focused on
 improving the interactive environment without changing the structure
@@ -111,7 +112,7 @@ shell semantics, <i>es</i> is an exploration of new semantics combined
 with <i>rc</i>-influenced syntax:  <i>es</i> has lexically scoped
 variables, first-class functions, and an exception mechanism, which
 are concepts borrowed from modern programming languages such as Scheme
-and ML.  [<a href=#ref4>4</a>, <a href=#ref5>5</a>]
+and ML.  [<a class=local href=#ref4>4</a>, <a class=local href=#ref5>5</a>]
 
 <p>
 In <i>es</i>, almost all standard shell constructs (e.g., pipes and
@@ -128,7 +129,7 @@ cache.
 At a superficial level, <i>es</i> looks like most UNIX
 shells. The syntax for pipes, redirection, background jobs, etc., is
 unchanged from the Bourne shell.  <i>Es</i>'s programming constructs
-are new, but reminiscent of <i>rc</i> and Tcl[<a href=#ref6>6</a>].
+are new, but reminiscent of <i>rc</i> and Tcl[<a class=local href=#ref6>6</a>].
 
 <p>
 <i>Es</i> is freely redistributable, and is available by anonymous ftp
@@ -188,7 +189,7 @@ fn apply cmd args {
 </figure>
 
 <p>
-For example: [<a href=#footnote1 id=footnote1-use>Footnote 1</a>]
+For example: [<a class=local href=#footnote1 id=footnote1-use>Footnote 1</a>]
 
 <figure>
 <pre>
@@ -269,7 +270,7 @@ Therefore, the construct
 <p>
 is just a way of inlining a function on the
 command-line. This is called a <em>lambda</em>.
-[<a href=#footnote2 name=footnote2-use>Footnote 2</a>]
+[<a class=local href=#footnote2 name=footnote2-use>Footnote 2</a>]
 It takes the form
 
 <figure>
@@ -566,7 +567,7 @@ lambda, or a list which mixes such values.
 <p>
 The return value of a command is accessed by
 prepending the command with <code>&lt;&gt;</code>:
-[<a href=#erratum2 name=erratum2-use>Errata note 2</a>]
+[<a class=local href=#erratum2 name=erratum2-use>Errata note 2</a>]
 
 <figure>
 <pre>
@@ -620,7 +621,7 @@ typically consists of a string which names the exception and other
 arguments which are specific to the named exception type. For example,
 the exception <code>error</code> is caught by the default interpreter
 loop, which treats the remaining arguments as an error message.
-[<a href=#erratum3 name=erratum3-use>Errata note 3</a>]
+[<a class=local href=#erratum3 name=erratum3-use>Errata note 3</a>]
 Thus:
 
 <figure>
@@ -629,7 +630,7 @@ es&gt; <i>fn in dir cmd {
   if {~ $#dir 0} {
     throw error 'usage: in dir cmd'
   }
-  fork # run in a subshell [<a href="#erratum4" name="erratum4-use">Errata note 4</a>]
+  fork # run in a subshell [<a class=local href="#erratum4" name="erratum4-use">Errata note 4</a>]
   cd $dir
   $cmd
 }</i>
@@ -799,8 +800,8 @@ fn cd {
 Spoofing can also be used for tasks which other shells cannot do; one
 example is timing each element of a pipeline by spoofing
 <code>%pipe</code>, along the lines of the pipeline profiler suggested
-by Jon Bentley[<a href=#ref7>7</a>]; see Figure 1.
-[<a href=#erratum5 name=erratum5-use>Errata note 5</a>]
+by Jon Bentley[<a class=local href=#ref7>7</a>]; see Figure 1.
+[<a class=local href=#erratum5 name=erratum5-use>Errata note 5</a>]
 
 <figure class=bigfig>
 <pre>
@@ -942,7 +943,7 @@ by a shell script to a C character string at compile time and stored
 internally. The script illustrates how the default actions for
 <i>es</i>'s parser is set up, as well as features such as the
 <code>path</code>/<code>PATH</code> aliasing mentioned above.
-[<a href=#erratum6 name=erratum6-use>Errata note 6</a>]
+[<a class=local href=#erratum6 name=erratum6-use>Errata note 6</a>]
 
 <p>
 Much of the script consists of lines like:
@@ -1110,7 +1111,7 @@ include pointers to themselves, either directly or indirectly. While
 this feature can be useful for programmers, it has the unfortunate
 consequence of making memory management in <i>es</i> more complex than
 that found in other shells. Simple memory reclamation strategies such
-as arena style allocation <a href="#ref8">[8]</a> or reference counting are unfortunately
+as arena style allocation <a class=local href="#ref8">[8]</a> or reference counting are unfortunately
 inadequate; a full garbage collection system is required to plug all
 memory leaks.
 
@@ -1162,7 +1163,7 @@ bug, we used a modified version of the garbage collector which has two
 key features: (1) a collection is initiated at every allocation when
 the collector is not disabled, and (2) after a collection finishes,
 access to all the memory from the old region is disabled.
-[<a href=#footnote3 name=footnote3-use>Footnote 3</a>]
+[<a class=local href=#footnote3 name=footnote3-use>Footnote 3</a>]
 Thus, any reference to a pointer in garbage collector space which
 could be invalidated by a collection immediately causes a memory
 protection fault. We strongly recommend this technique to anyone
@@ -1210,7 +1211,7 @@ a user to extend the syntax of the shell.
 We can imagine a system where the parser only recognizes the core
 language, and a set of exposed transformation rules would map the
 extended syntax which makes <i>es</i> feel like a shell, down to the
-core language. The <i>extend-syntax</i> [<a href=#ref9>9</a>] system
+core language. The <i>extend-syntax</i> [<a class=local href=#ref9>9</a>] system
 for Scheme provides a good example of how to design such a mechanism,
 but it, like most other macro systems designed for Lisp-like
 languages, does not mesh well with the free-form syntax that has
@@ -1298,7 +1299,7 @@ this paper and put up with us while <i>es</i> was under development.
 <h2><a id=footnotes>Footnotes</a></h2>
 
 <p>
-<a id=footnote1 href=#footnote1-use>1.</a>
+<a id=footnote1 class=local href=#footnote1-use>1.</a>
 
 In our examples, we use "<code>es&gt;</code>" as <i>es</i>'s
 prompt. The default prompt, which may be overridden, is
@@ -1308,7 +1309,7 @@ prompts, can be cut and pasted back to the shell for re-execution. In
 examples, an italic fixed width font indicates user input.</a>
 
 <p>
-<a id=footnote2 href=#footnote2-use>2.</a>
+<a id=footnote2 class=local href=#footnote2-use>2.</a>
 
 The keyword <code>@</code> introduces the lambda. Since <code>@</code>
 is not a special character in <i>es</i> it must be surrounded by white
@@ -1317,7 +1318,7 @@ lambda, but it was one of the few characters left on a standard
 keyboard which did not already have a special meaning.
 
 <p>
-<a id=footnote3 href=#footnote3-use>3.</a>
+<a id=footnote3 class=local href=#footnote3-use>3.</a>
 
 This disabling depends on operating system support.
 
@@ -1329,7 +1330,7 @@ the paper.  If you are aware of any undocumented differences, please
 contact the authors.
 
 <p>
-<a id=erratum1 href=#erratum1-use>1.</a>
+<a id=erratum1 class=local href=#erratum1-use>1.</a>
 
 Haahr's present affiliation is
 <a href="http://www.google.com/">Jive Technology</a>,
@@ -1337,7 +1338,7 @@ and he can be reached by email at
 <a href="mailto:haahr@jivetech.com">haahr@jivetech.com</a>.
 
 <p>
-<a id=erratum2 href=#erratum2-use>2.</a>
+<a id=erratum2 class=local href=#erratum2-use>2.</a>
 
 The <code>&lt;&gt</code> operator for obtaining the return value of a
 command has been renamed <code>&lt;=</code> to avoid conflicting with
@@ -1345,7 +1346,7 @@ the POSIX-compatible defintion of <code>&lt;&gt</code> as "open for
 reading and writing."
 
 <p>
-<a id=erratum3 href=#erratum3-use>3.</a>
+<a id=erratum3 class=local href=#erratum3-use>3.</a>
 
 <code>error</code> exceptions now have an additional piece of
 information.  The second word (the one after <code>error</code>) is
@@ -1354,7 +1355,7 @@ version of <code>in</code> below, the <code>throw</code> command has
 an extra <code>in</code> in it.
 
 <p>
-<a id=erratum4 href=#erratum4-use>4.</a>
+<a id=erratum4 class=local href=#erratum4-use>4.</a>
 
 This example users an obsolete version of the <code>fork</code>
 builtin.  The <code>in</code> function should now be
@@ -1374,7 +1375,7 @@ fn in dir cmd {
 </figure>
 
 <p>
-<a id=erratum5 href=#erratum5-use>5.</a>
+<a id=erratum5 class=local href=#erratum5-use>5.</a>
 
 The pipe timing example may not work on all systems.  It depends on
 having a version of <code>time</code> that understands <i>es</i>,
@@ -1384,7 +1385,7 @@ the <code>SHELL</code> environment variable.  <i>Es</i> will include a
 <code>BUITIN_TIME</code>.
 
 <p>
-<a id="erratum6" href="#erratum6-use">6.</a>
+<a id="erratum6" class=local href="#erratum6-use">6.</a>
 
 The initialization procedure as originally described lead to
 performance problems, for two reasons.  The first is the time needed
@@ -1462,7 +1463,7 @@ programming languages, window systems, and computer architecture. Paul
 received an A.B. in computer science from Princeton University in
 1990. He can be reached by electronic mail at <i>haahr@adobe.com</i>
 or by surface mail at Adobe Systems Incorporated, 1585 Charleston
-Road, Mountain View, CA 94039.  [<a href=#erratum1>Errata note 1</a>]
+Road, Mountain View, CA 94039.  [<a class=local href=#erratum1>Errata note 1</a>]
 
 <p>
 Byron Rakitzis is a system programmer at Network Appliance

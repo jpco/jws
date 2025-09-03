@@ -21,6 +21,7 @@ table.meaning td {
 </style>
 
 <title>jpco.io | linluwi li ken nimi sin pona</title>
+<meta name=description content="An argument that linluwi can be a good nimisin, if we use a definition of 'weaving' for it." />
 
 <; . script/build-nav.es /toki/linluwi.html >
 

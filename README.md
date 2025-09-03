@@ -4,6 +4,8 @@ This is my website.
 
 Maybe serving your personal site from a shell script isn't the best idea, but maybe I don't care.
 
+## Notes to self on deployment
+
 To run the server really locally:
 ```
 ./serve.es
@@ -23,3 +25,9 @@ gcloud builds submit --tag gcr.io/jpco-cloud/web:0.70 .
 # Cloud Run the new container version
 gcloud run deploy --platform managed --image=gcr.io/jpco-cloud/web:0.70
 ```
+
+## TODO
+
+- Make .html.es files display as HTML and not es in editors
+- Improve templating situation
+- Get more inspo from https://github.com/jneen/balls and clean up serve.es

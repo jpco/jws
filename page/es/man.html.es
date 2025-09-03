@@ -1,6 +1,7 @@
 <; cat tmpl/header.html >
 
 <title>jpco.io | es(1)</title>
+<meta name=description content="The man page for es, the extensible shell." />
 
 <; . script/build-nav.es /es/man.html >
 

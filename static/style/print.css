@@ -1,0 +1,30 @@
+/* special style specifically for printing. */
+
+/* hide useless elements */
+nav {
+	display: none;
+}
+.noprint {
+	display: none;
+}
+
+/* paper doesn't scroll */
+figure .scrollable {
+	max-width: initial;
+	overflow-x: initial;
+}
+figure pre {
+	max-width: initial;
+	overflow-x: initial;
+	white-space: pre-wrap;
+}
+
+/* make link targets visible, or ... */
+a[href]:not(.local)::after {
+	content: " (" attr(href) ")"
+}
+/* ... hide local links (have to mark them manually, sigh) */
+a[href].local {
+	text-decoration: none;
+	color: initial;
+}
