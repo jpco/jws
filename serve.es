@@ -130,7 +130,7 @@ catch @ exception {
 	if (
 		# debug page
 		{~ $reqpath /http-debug} {
-			reply 200 text/plain gzip
+			reply 200 text/plain
 			for (i = <=$&vars) if {~ $i head-*} {
 				echo <={~~ $i head-*}^: $$i
 			}
@@ -139,17 +139,17 @@ catch @ exception {
 			var gzip IN_DOCKER server-port
 		}
 
-		# built pages
+		# built pages. don't cache these
 		{access -f page/$reqpath^.es} {
-			serve-page page/$reqpath^.es cache
+			serve-page page/$reqpath^.es
 		}
 		{access -f page/$reqpath/index.html.es} {
-			serve-page page/$reqpath/index.html.es cache
+			serve-page page/$reqpath/index.html.es
 		}
 
 		# static files
 		{access -f static/$reqpath} {
-			serve static/$reqpath cache gzip
+			serve static/$reqpath cache
 		}
 
 		# 404
