@@ -14,7 +14,10 @@ if {~ $IN_DOCKER true} {
 	IN_DOCKER = false
 	server-port = 8181
 }
-# gzip support still experimental
+
+# binary-wide gzip support.
+# still experimental, and can be toggled either by the specific calls to
+# generate responses, as well as client-side by a 'gzip=false' query string.
 gzip = true
 
 
@@ -39,6 +42,7 @@ if {~ $NCAT_SUBSHELL_MODE ()} {
 let (q = <={~~ $reqpath *'?'*})
 if {!~ $q ()} {
 	(reqpath query) = $q
+	query = <={%split '&' $query}
 }
 
 let (header = ())
@@ -53,7 +57,9 @@ while {!~ <={header = <=%read} \r} {
 #
 
 fn accepts-gzip {
-	$gzip && {~ $head-accept-encoding *gzip* || ~ $head-Accept-Encoding *gzip*}
+	$gzip \
+	 && {~ $head-accept-encoding *gzip* || ~ $head-Accept-Encoding *gzip*}
+	 && {!~ $query 'gzip=false'}
 }
 
 # Prints basic http response headers to stdout.
@@ -117,6 +123,7 @@ fn serve-page file flags {
 #
 
 catch @ exception {
+	# TODO: this is messy, especially when an exception is generated mid-stream
 	reply 500 text/html
 	echo >[1=2] 'Internal server error:' $exception
 	. script/500.es $exception
