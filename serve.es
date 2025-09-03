@@ -16,8 +16,8 @@ if {~ $IN_DOCKER true} {
 }
 
 # binary-wide gzip support.
-# still experimental, and can be toggled either by the specific calls to
-# generate responses, as well as client-side by a 'gzip=false' query string.
+# can also be toggled either by the specific calls to generate responses,
+# or client-side by a 'gzip=false' query string.  also respects Accept-Encoding.
 gzip = true
 
 
@@ -98,8 +98,7 @@ fn serve file flags {
 		*.js	{mime-type = text/javascript}
 		*	{mime-type = `` \n {file -b --mime-type $file}}
 		)
-		# currently flags = either 'gzip' or ()
-		reply 200 $mime-type cache $flags
+		reply 200 $mime-type $flags
 	}
 	if {~ $flags gzip && accepts-gzip} {
 		gzip - < $file
@@ -132,31 +131,25 @@ catch @ exception {
 		# debug page
 		{~ $reqpath /http-debug} {
 			reply 200 text/plain gzip
-			{
-				for (i = <=$&vars) if {~ $i head-*} {
-					echo <={~~ $i head-*}^: $$i
-				}
-				echo
-				reply 200 text/plain gzip
-				var gzip IN_DOCKER server-port
-			} | if {accepts-gzip} {
-				gzip -
-			} {
-				cat
+			for (i = <=$&vars) if {~ $i head-*} {
+				echo <={~~ $i head-*}^: $$i
 			}
+			echo
+			reply 200 text/plain
+			var gzip IN_DOCKER server-port
 		}
 
 		# built pages
 		{access -f page/$reqpath^.es} {
-			serve-page page/$reqpath^.es cache gzip
+			serve-page page/$reqpath^.es cache
 		}
 		{access -f page/$reqpath/index.html.es} {
-			serve-page page/$reqpath/index.html.es cache gzip
+			serve-page page/$reqpath/index.html.es cache
 		}
 
 		# static files
 		{access -f static/$reqpath} {
-			serve static/$reqpath
+			serve static/$reqpath cache gzip
 		}
 
 		# 404
