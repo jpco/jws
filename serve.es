@@ -107,6 +107,7 @@ fn serve file flags {
 	}
 }
 
+# Serve a built html page.
 fn serve-page file flags {
 	reply 200 text/html $flags
 	if {~ $flags *gzip* && accepts-gzip} {
@@ -131,12 +132,15 @@ catch @ exception {
 		# debug page
 		{~ $reqpath /http-debug} {
 			reply 200 text/plain
+
+			# There's some redundancy here
 			for (i = <=$&vars) if {~ $i head-*} {
 				echo <={~~ $i head-*}^: $$i
 			}
-			echo
+			echo \n' === '\n
 			reply 200 text/plain
-			var gzip IN_DOCKER server-port
+			echo ' === '\n
+			vars
 		}
 
 		# built pages. don't cache these
