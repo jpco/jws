@@ -44,7 +44,7 @@ if {!~ $q ()} {
 let (header = ())
 while {!~ <={header = <=%read} \r} {
 	let (h = <={~~ $header *': '*\r})
-		$h(1) = $h(2)
+		head-$h(1) = $h(2)
 }
 
 
@@ -71,7 +71,7 @@ fn reply code type flags {
 	if {~ $flags cache && $IN_DOCKER} {
 		echo Cache-Control: public, max-age=86400
 	}
-	if {$gzip && ~ $flags gzip && ~ $Accept-Encoding *gzip*} {
+	if {$gzip && ~ $flags gzip && ~ $head-Accept-Encoding *gzip*} {
 		echo Content-Encoding: gzip
 	}
 	echo
@@ -91,7 +91,7 @@ fn serve file flags {
 		# currently flags = either 'gzip' or ()
 		reply 200 $mime-type cache $flags
 	}
-	if {$gzip && ~ $flags gzip && ~ $Accept-Encoding *gzip*} {
+	if {$gzip && ~ $flags gzip && ~ $head-Accept-Encoding *gzip*} {
 		gzip - < $file
 	} {
 		cat $file
@@ -100,7 +100,7 @@ fn serve file flags {
 
 fn serve-page file flags {
 	reply 200 text/html $flags
-	if {$gzip && ~ $flags *gzip* && ~ $Accept-Encoding *gzip*} {
+	if {$gzip && ~ $flags *gzip* && ~ $head-Accept-Encoding *gzip*} {
 		. script/build-page.es < $file | gzip -
 	} {
 		. script/build-page.es < $file
@@ -118,6 +118,23 @@ catch @ exception {
 	. script/500.es $exception
 } {
 	if (
+		# debug page
+		{~ $reqpath /http-debug} {
+			reply 200 text/plain gzip
+			{
+				for (i = <=$&vars) if {~ $i head-*} {
+					echo <={~~ $i head-*}^: $$i
+				}
+				echo
+				reply 200 text/plain gzip
+				var gzip IN_DOCKER server-port
+			} | if {$gzip && ~ $head-Accept-Encoding *gzip*} {
+				gzip -
+			} {
+				cat
+			}
+		}
+
 		# built pages
 		{access -f page/$reqpath^.es} {
 			serve-page page/$reqpath^.es cache gzip

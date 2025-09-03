@@ -17,9 +17,10 @@ RUN git clone --separate-git-dir=/tmp/git-dir --depth=1 https://github.com/jpco/
 
 FROM debian:stable-slim
 WORKDIR /usr/local/app
+# es install
 COPY --from=0 /usr/local/bin/es /usr/local/bin/es
 COPY --from=0 /usr/local/share/man/man1/es.1 /usr/local/share/man/man1/es.1
-# Clean install: step 2
+# Clean install step 2
 COPY --from=0 /jws/ .
 
 # Dirty install from local directory
