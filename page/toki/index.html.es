@@ -1,12 +1,13 @@
 <; cat tmpl/header.html >
 
+<link rel=preload href=/style/sitelenselikiwenjuniko.woff as=font type=font/woff crossorigin />
 <style>
 .sitelenpona {
 	font-family: "sitelenSeliKiwen";
 	font-size: 28pt;
 }
 .sitelenpona rp, rt {
-	font-family: serif;
+	font-family: initial;
 	font-size: 10pt;
 }
 /* TODO: don't do this */

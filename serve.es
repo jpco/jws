@@ -14,6 +14,8 @@ if {~ $IN_DOCKER true} {
 	IN_DOCKER = false
 	server-port = 8181
 }
+# gzip support still experimental
+gzip = true
 
 
 #
@@ -66,14 +68,17 @@ fn reply code type flags {
 	echo >[1=2] $method $reqpath '->' $version $code $(code-$code)
 	echo $version $code $(code-$code)
 	echo Content-Type: $type
-	if {$IN_DOCKER && ~ $flags cache} {
+	if {~ $flags cache && $IN_DOCKER} {
 		echo Cache-Control: public, max-age=86400
+	}
+	if {$gzip && ~ $flags gzip && ~ $Accept-Encoding *gzip*} {
+		echo Content-Encoding: gzip
 	}
 	echo
 }
 
 # Serve a static file, including the headers
-fn serve file {
+fn serve file flags {
 	let (mime-type = text/plain) {
 		# manually match the main file types, since file(1) doesn't
 		# always get it right in the way we need.
@@ -83,9 +88,23 @@ fn serve file {
 		*.js	{mime-type = text/javascript}
 		*	{mime-type = `` \n {file -b --mime-type $file}}
 		)
-		reply 200 $mime-type cache
+		# currently flags = either 'gzip' or ()
+		reply 200 $mime-type cache $flags
 	}
-	cat $file
+	if {$gzip && ~ $flags gzip && ~ $Accept-Encoding *gzip*} {
+		gzip - < $file
+	} {
+		cat $file
+	}
+}
+
+fn serve-page file flags {
+	reply 200 text/html $flags
+	if {$gzip && ~ $flags *gzip* && ~ $Accept-Encoding *gzip*} {
+		. script/build-page.es < $file | gzip -
+	} {
+		. script/build-page.es < $file
+	}
 }
 
 
@@ -99,14 +118,12 @@ catch @ exception {
 	. script/500.es $exception
 } {
 	if (
-		# "pages": es scripts wrapped in html templates.
+		# built pages
 		{access -f page/$reqpath^.es} {
-			reply 200 text/html cache
-			. script/read-page.es < page/$reqpath^.es
+			serve-page page/$reqpath^.es cache gzip
 		}
 		{access -f page/$reqpath/index.html.es} {
-			reply 200 text/html cache
-			. script/read-page.es < page/$reqpath/index.html.es
+			serve-page page/$reqpath/index.html.es cache gzip
 		}
 
 		# static files
