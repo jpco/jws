@@ -1,4 +1,6 @@
 #!/usr/local/bin/es -p
+#!/usr/local/bin/es -pe
+#!/home/jpco/git/es-fork/es -pe
 
 # This is a messy http server written in the extensible shell.
 # Its main benefit is that, other than the "server loop" section, it requires
@@ -29,9 +31,8 @@ gzip = true
 
 if {~ $NCAT_SUBSHELL_MODE ()} {
 	local (NCAT_SUBSHELL_MODE = yes)
-	forever {ncat -k -l -p $server-port -e $0 || exit 2}
+	forever {ncat -k -l -p $server-port -e $0 || exit 3}
 }
-
 
 #
 # Setup for reply logic.  Populate $method, $reqpath, $version, and variables
@@ -49,6 +50,7 @@ let (header = ())
 while {!~ <={header = <=%read} \r} {
 	let (h = <={~~ $header *': '*\r})
 		head-$h(1) = $h(2)
+	true
 }
 
 
@@ -110,7 +112,7 @@ fn serve file flags {
 # Serve a built html page.
 fn serve-page file flags {
 	reply 200 text/html $flags
-	if {~ $flags *gzip* && accepts-gzip} {
+	if {~ $flags gzip && accepts-gzip} {
 		. script/build-page.es < $file | gzip -
 	} {
 		. script/build-page.es < $file

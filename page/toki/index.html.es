@@ -21,48 +21,44 @@
 
 <; . script/build-nav.es /toki >
 
-<main>
-<h1><span lang=tok>toki li pona</span></h1>
+<main lang=tok>
+<h1><span>toki li pona</span></h1>
 <div class=time><time datetime=2025-08-29>2025-08-29</time></div>
 
-<p lang=tok>
+<!-- FIXME: printing this is not very good. -->
+
+<p>
 <ruby class=sitelenpona>
 󱤴<a href="http://tokipona.org">󱥬󱥔</a>󱤀
-<rp> &mdash; </rp>
-<rt>mi toki pona a</rt>
+<rp> &mdash; <rt>mi toki pona a
 </ruby>
 
-<p lang=tok>
+<p>
 <ruby class=sitelenpona>
 󱥬󱥔󱤧󱥔󱤼󱥩󱤴
-<rp> &mdash; </rp>
-<rt>toki pona li pona mute tawa mi</rt>
+<rp> &mdash; <rt>toki pona li pona mute tawa mi
 </ruby>
 
-<p lang=tok>
+<p>
 <ruby class=sitelenpona>
 󱤴󱥎󱤉󱥁: <a href=/toki/linluwi.html><span class=linluwi-hack>󱤩</span>󱤼󱤧󱤘󱥂󱥝󱥔</a>
-<rp> &mdash; </rp>
-<rt>mi pilin e ni: linluwi li ken nimi sin pona</rt>
+<rp> &mdash; <rt>mi pilin e ni: linluwi li ken nimi sin pona
 </ruby>
 
-<p lang=tok>
+<p>
 <ruby class=sitelenpona>
 󱤴󱥎󱤉󱥁: 󱤴󱥬󱤬󱥫󱤡󱤴󱥷󱤂󱤉󱥂󱤽
-<rp> &mdash; </rp>
-<rt>mi pilin e ni: mi toki lon tenpo la mi wile ala e nimi nanpa</rt>
+<rp> &mdash; <rt>mi pilin e ni: mi toki lon tenpo la mi wile ala e nimi nanpa
 </ruby>
 
-<p lang=tok>
+<p>
 <ruby class=sitelenpona>
 󱤴󱥷󱥠󱤉󱥎󱤄󱥁
-<rp> &mdash; </rp>
-<rt>mi wile sitelen e pilin ale ni</rt>
+<rp> &mdash; <rt>mi wile sitelen e pilin ale ni
 </ruby>
 
-<p lang=tok>
+<p>
 <ruby class=sitelenpona>
 󱤘󱤡󱤴󱥠󱤉󱥁󱤬󱥫󱤖
-<rp> &mdash; </rp>
-<rt>ken la mi sitelen e ni lon tenpo kama</rt>
+<rp> &mdash; <rt>ken la mi sitelen e ni lon tenpo kama
 </ruby>

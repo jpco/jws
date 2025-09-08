@@ -1,4 +1,8 @@
 /* structural elements/layout */
+body {
+	background-color: #fffff8;
+	color: #191816;
+}
 main {
 	max-width: 600pt;
 	margin-left: auto;
@@ -77,8 +81,8 @@ dt {
 /* dark mode colors */
 @media (prefers-color-scheme: dark) {
 	body {
-		color: white;
-		background-color: #191919;
+		color: #fffff8;
+		background-color: #191816;
 	}
 	svg {
 		stroke: white;

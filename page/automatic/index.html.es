@@ -22,4 +22,4 @@ html, body {
 }
 </style>
 
-<script src="/automatic.js"></script>
+<script src="/script/automatic.js"></script>

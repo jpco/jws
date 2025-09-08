@@ -19,12 +19,15 @@ figure pre {
 	white-space: pre-wrap;
 }
 
+/* get rid of link colors, and ... */
+a[href] {
+	color: initial;
+}
 /* make link targets visible, or ... */
 a[href]:not(.local)::after {
 	content: " (" attr(href) ")"
 }
-/* ... hide local links (have to mark them manually, sigh) */
+/* ... hide them (for local links) */
 a[href].local {
 	text-decoration: none;
-	color: initial;
 }

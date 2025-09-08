@@ -1,5 +1,7 @@
 <; cat tmpl/header.html >
 
+<!-- TODO: https://html.spec.whatwg.org/multipage/grouping-content.html#the-pre-element -->
+
 <title>jpco.io | A (re-)introduction to the extensible shell</title>
 <meta name=description content="Es is the extensible shell." />
 

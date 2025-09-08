@@ -38,7 +38,7 @@ table.meaning td {
 </g>
 </g>
 </svg>
-<figcaption><a href=#sp>Proposed sitelen pona glyph</a> for linluwi.</figcaption>
+<figcaption><a class=local href=#sp>Proposed sitelen pona glyph</a> for linluwi.</figcaption>
 </figure>
 
 <p>
@@ -94,7 +94,7 @@ This allows <span lang=tok>linluwi</span> to have a physical sense, referring to
 
 <p>
 With this meaning, weaving is <span lang=tok>linluwi</span>.
-Clothes made from fabric are <span lang=tok>len linluwi</span> (<span lang=tok>len</span> is discussed in more detail <a href=#len>below</a>).
+Clothes made from fabric are <span lang=tok>len linluwi</span> (<span lang=tok>len</span> is discussed in more detail <a class=local href=#len>below</a>).
 Chainmail is <span lang=tok>len awen pi linluwi pi sike kiwen</span>.
 Woven baskets?
 Those are <span lang=tok>poki linluwi</span>.
