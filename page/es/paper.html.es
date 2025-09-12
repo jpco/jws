@@ -8,6 +8,9 @@ figure.bigfig {
   border-top: 1px solid #bbb;
   border-bottom: 1px solid #bbb;
 }
+kbd {
+	font-style: oblique;
+}
 </style>
 
 <title>jpco.io | Es: A shell with higher-order functions</title></head>
@@ -144,9 +147,9 @@ familiar commands which all work in <i>es</i>:
 
 <figure>
 <pre>
-cd /tmp
+<code>cd /tmp
 rm Ex*
-ps aux | grep '^byron' | awk '{print $2}' | xargs kill -9
+ps aux | grep '^byron' | awk '{print $2}' | xargs kill -9</code>
 </pre>
 </figure>
 
@@ -166,9 +169,9 @@ is a simple function to print the date in <i>yy-mm-dd</i> format:
 
 <figure>
 <pre>
-fn d {
+<code>fn d {
   date +%y-%m-%d
-}
+}</code>
 </pre>
 </figure>
 
@@ -181,10 +184,10 @@ command to each argument in turn:
 
 <figure>
 <pre>
-fn apply cmd args {
+<code>fn apply cmd args {
   for (i = $args)
     $cmd $i
-}
+}</code>
 </pre>
 </figure>
 
@@ -193,11 +196,11 @@ For example: [<a class=local href=#footnote1 id=footnote1-use>Footnote 1</a>]
 
 <figure>
 <pre>
-es&gt; <i>apply echo testing 1.. 2.. 3..</i>
-testing
+<samp>es&gt; </samp><kbd>apply echo testing 1.. 2.. 3..</kbd>
+<samp>testing
 1..
 2..
-3..
+3..</samp>
 </pre>
 </figure>
 
@@ -208,11 +211,11 @@ leftovers are assigned to the last parameter. For example:
 
 <figure>
 <pre>
-es&gt; <i>fn rev3 a b c {
+<samp>es&gt; </samp><kbd>fn rev3 a b c {
 echo $c $b $a
-}</i>
-es&gt; <i>rev3 1 2 3 4 5</i>
-3 4 5 2 1
+}</kbd>
+<samp>es&gt; </samp><kbd>rev3 1 2 3 4 5</kbd>
+<samp>3 4 5 2 1</samp>
 </pre>
 </figure>
 
@@ -222,8 +225,8 @@ leftover parameters null:
 
 <figure>
 <pre>
-es&gt; <i>rev3 1</i>
-1
+<samp>es&gt; </samp><kbd>rev3 1</kbd>
+<samp>1</samp>
 </pre>
 </figure>
 
@@ -236,7 +239,7 @@ command line:
 
 <figure>
 <pre>
-es&gt; <i>apply @ i {cd $i; rm -f *} /tmp /usr/tmp</i>
+<samp>es&gt; </samp><kbd>apply @ i {cd $i; rm -f *} /tmp /usr/tmp</kbd>
 </pre>
 </figure>
 
@@ -250,11 +253,11 @@ be split up into two separate commands:
 
 <figure>
 <pre>
-es&gt; <i>fn cd-rm i {
+<samp>es&gt; </samp><kbd>fn cd-rm i {
   cd $i
   rm -f *
-}</i>
-es&gt; apply cd-rm /tmp /usr/tmp</i>
+}</kbd>
+<samp>es&gt; </samp><kbd>apply cd-rm /tmp /usr/tmp</kbd>
 </pre>
 </figure>
 
@@ -263,7 +266,7 @@ Therefore, the construct
 
 <figure>
 <pre>
-@ i {cd $i; rm -f *}
+<code>@ i {cd $i; rm -f *}</code>
 </pre>
 </figure>
 
@@ -274,7 +277,7 @@ command-line. This is called a <em>lambda</em>.
 It takes the form
 
 <figure>
-<code>@</code> <i>parameters</i> <code>{</code> <i>commands</i> <code>}</code>
+<code>@ <var>parameters</var> { <var>commands</var> }</code>
 </figure>
 
 <p>
@@ -283,7 +286,7 @@ happen." For example, it is possible to type:
 
 <figure>
 <pre>
-es&gt; <i>@ i {cd $i; rm -f *} /tmp</i>
+<samp>es&gt; </samp><kbd>@ i {cd $i; rm -f *} /tmp</kbd>
 </pre>
 </figure>
 
@@ -309,8 +312,8 @@ entirely equivalent:
 
 <figure>
 <pre>
-fn echon args {echo -n $args}
-fn-echon = @ args {echo -n $args}
+<code>fn echon args {echo -n $args}
+fn-echon = @ args {echo -n $args}</code>
 </pre>
 </figure>
 
@@ -325,9 +328,9 @@ dereferencing it explicitly with a dollar sign:
 
 <figure>
 <pre>
-es&gt; <i>silly-command = {echo hi}</i>
-es&gt; <i>$silly-command</i>
-hi
+<samp>es&gt; </samp><kbd>silly-command = {echo hi}</kbd>
+<samp>es&gt; </samp><kbd>$silly-command</kbd>
+<samp>hi</samp>
 </pre>
 </figure>
 
@@ -338,11 +341,11 @@ simple strings. In fact, the two can be intermixed:
 
 <figure>
 <pre>
-es&gt; <i>mixed = {ls} hello, {wc} world</i>
-es&gt; <i>echo $mixed(2) $mixed(4)</i>
-hello, world
-es&gt; <i>$mixed(1) | $mixed(3)</i>
-61 61 478
+es&gt; </samp><kbd>mixed = {ls} hello, {wc} world</kbd>
+es&gt; </samp><kbd>echo $mixed(2) $mixed(4)</kbd>
+<samp>hello, world</samp>
+es&gt; </samp><kbd>$mixed(1) | $mixed(3)</kbd>
+<samp>61 61 478</samp>
 </pre>
 </figure>
 
@@ -363,9 +366,9 @@ used:
 
 <figure>
 <pre>
-let (<i>var</i> = <i>value</i>) {
-  <i>commands which use $var</i>
-}
+<code>let (<var>var</var> = <var>value</var>) {
+  <var>commands which use $var</var>
+}</code>
 </pre>
 </figure>
 
@@ -381,11 +384,11 @@ values. For example,
 
 <figure>
 <pre>
-es&gt; <i>let (h=hello; w=world) {
+<samp>es&gt; </samp><kbd>let (h=hello; w=world) {
   hi = { echo $h, $w }
-}</i>
-es&gt; <i>$hi</i>
-hello, world
+}</kbd>
+<samp>es&gt; </samp><kbd>$hi</kbd>
+<samp>hello, world</samp>
 </pre>
 </figure>
 
@@ -398,14 +401,14 @@ functions:
 
 <figure>
 <pre>
-fn trace functions {
+<code>fn trace functions {
   for (func = $functions)
     let (old = $(fn-$func))
     fn $func args {
       echo calling $func $args
       $old $args
     }
-}
+}</code>
 </pre>
 </figure>
 
@@ -419,16 +422,16 @@ one per line:
 
 <figure>
 <pre>
-es&gt; <i>fn echo-nl head tail {
+<samp>es&gt; </samp><kbd>fn echo-nl head tail {
   if {!~ $#head 0} {
     echo $head
     echo-nl $tail
   }
-}</i>
-es&gt; <i>echo-nl a b c</i>
-a
+}</kbd>
+<samp>es&gt; </samp><kbd>echo-nl a b c</kbd>
+<samp>a
 b
-c
+c</samp>
 </pre>
 </figure>
 
@@ -437,15 +440,15 @@ Applying <code>trace</code> to this function yields:
 
 <figure>
 <pre>
-es&gt; <i>trace echo-nl</i>
-es&gt; <i>echo-nl a b c</i>
-calling echo-nl a b c
+<samp>es&gt; </samp><kbd>trace echo-nl</kbd>
+<samp>es&gt; </samp><kbd>echo-nl a b c</kbd>
+<samp>calling echo-nl a b c
 a
 calling echo-nl b c
 b
 calling echo-nl c
 c
-calling echo-nl
+calling echo-nl</samp>
 </pre>
 </figure>
 
@@ -453,19 +456,19 @@ calling echo-nl
 The reader should note that
 
 <figure>
-<code>!</code> <i>cmd</i>
+<code>! <var>cmd</var></code>
 </figure>
 
 <p>
 is <i>es</i>'s "not" command, which inverts the sense of the return
-value of <i>cmd</i>, and
+value of <var>cmd</var>, and
 
 <figure>
-<code>~</code> <i>subject</i> <i>pattern</i>
+<code>~ <var>subject</var> <var>pattern</var></code>
 </figure>
 
 <p>
-matches <i>subject</i> against <i>pattern</i> and returns true if the
+matches <var>subject</var> against <var>pattern</var> and returns true if the
 subject is the same as the pattern. (In fact, the matching is a bit
 more sophisticated, for the pattern may include wildcards.)
 
@@ -475,7 +478,7 @@ assignment known as <em>dynamic binding</em>.  The shell syntax for
 this is typically:
 
 <figure>
-<i>var</i><code>=</code><i>value</i> <i>command</i>
+<code><var>var</var>=<var>value</var> <var>command</var></code>
 </figure>
 
 <p>
@@ -485,9 +488,9 @@ the syntax:
 
 <figure>
 <pre>
-local (<i>var</i> = <i>value</i>) {
-  <i>commands which use $var</i>
-}
+<code>local (<var>var</var> = <var>value</var>) {
+  <var>commands which use $var</var>
+}</code>
 </pre>
 </figure>
 
@@ -496,21 +499,21 @@ The difference between the two forms of binding can be seen in an example:
 
 <figure>
 <pre>
-es&gt; <i>x = foo</i>
-es&gt; <i>let (x = bar) {
+<samp>es&gt; </samp><kbd>x = foo</kbd>
+<samp>es&gt; </samp><kbd>let (x = bar) {
   echo $x
   fn lexical { echo $x }
-}</i>
-bar
-es&gt; <i>lexical</i>
-bar
-es&gt; <i>local (x = baz) {
+}</kbd>
+<samp>bar
+es&gt; </samp><kbd>lexical</kbd>
+<samp>bar
+es&gt; </samp><kbd>local (x = baz) {
   echo $x
   fn dynamic { echo $x }
-}</i>
-baz
-es&gt; <i>dynamic</i>
-foo
+}</kbd>
+<samp>baz
+es&gt; </samp><kbd>dynamic</kbd>
+<samp>foo</samp>
 </pre>
 </figure>
 
@@ -526,7 +529,7 @@ changes value. A good example of settor variable use is the
 
 <figure>
 <pre>
-fn watch vars {
+<code>fn watch vars {
   for (var = $vars) {
     set-$var = @ {
       echo old $var '=' $$var
@@ -534,7 +537,7 @@ fn watch vars {
       return $*
     }
   }
-}
+}</code>
 </pre>
 </figure>
 
@@ -545,13 +548,13 @@ to be set, like this:
 
 <figure>
 <pre>
-es&gt; <i>watch x</i>
-es&gt; <i>x=foo bar</i>
-old x =
+<samp>es&gt; </samp><kbd>watch x</kbd>
+<samp>es&gt; </samp><kbd>x=foo bar</kbd>
+<samp>old x =
 new x = foo bar
-es&gt; <i>x=fubar</i>
-old x = foo bar
-new x = fubar
+es&gt; </samp><kbd>x=fubar</kbd>
+<samp>old x = foo bar
+new x = fubar</samp>
 </pre>
 </figure>
 
@@ -571,11 +574,11 @@ prepending the command with <code>&lt;&gt;</code>:
 
 <figure>
 <pre>
-es&gt; <i>fn hello-world {
+<samp>es&gt; </samp><kbd>fn hello-world {
   return 'hello, world'
-}</i>
-es&gt; <i>echo &lt;&gt;{hello-world}</i>
-hello, world
+}</kbd>
+<samp>es&gt; </samp><kbd>echo &lt;&gt;{hello-world}</kbd>
+<samp>hello, world</samp>
 </pre>
 </figure>
 
@@ -585,11 +588,11 @@ used to implement hierarchical lists:
 
 <figure>
 <pre>
-fn cons a d {
+<code>fn cons a d {
   return @ f { $f $a $d }
 }
 fn car p { $p @ a d { return $a } }
-fn cdr p { $p @ a d { return $d } }
+fn cdr p { $p @ a d { return $d } }</code>
 </pre>
 </figure>
 
@@ -603,10 +606,10 @@ the first or second parameter, respectively. For example:
 
 <figure>
 <pre>
-es&gt; <i>echo &lt;&gt;{car &lt;&gt;{cdr &lt;&gt;{
+<samp>es&gt; </samp><kbd>echo &lt;&gt;{car &lt;&gt;{cdr &lt;&gt;{
   cons 1 &lt;&gt;{cons 2 &lt;&gt;{cons 3 nil}}
-}}}</i>
-2
+}}}</kbd>
+<samp>2</samp>
 </pre>
 </figure>
 
@@ -626,18 +629,18 @@ Thus:
 
 <figure>
 <pre>
-es&gt; <i>fn in dir cmd {
+<samp>es&gt; </samp><kbd>fn in dir cmd {
   if {~ $#dir 0} {
     throw error 'usage: in dir cmd'
   }
   fork # run in a subshell [<a class=local href="#erratum4" name="erratum4-use">Errata note 4</a>]
   cd $dir
   $cmd
-}</i>
-es&gt; <i>in</i>
-usage: in dir cmd
-es&gt; <i>in /tmp ls</i>
-webster.socket yacc.312
+}</kbd>
+<samp>es&gt; </samp><kbd>in</kbd>
+<samp>usage: in dir cmd
+es&gt; </samp><kbd>in /tmp ls</kbd>
+<samp>webster.socket yacc.312</samp>
 </pre>
 </figure>
 
@@ -659,7 +662,7 @@ typically takes the form
 
 <figure>
 <pre>
-catch @ e args { <i>handler</i> } { <i>body</i> }
+<code>catch @ e args { <var>handler</var> } { <var>body</var> }</code>
 </pre>
 </figure>
 
@@ -673,7 +676,7 @@ lines of <code>in</code> above can be replaced with:
 
 <figure>
 <pre>
-catch @ e msg {
+<code>catch @ e msg {
   if {~ $e error} {
     echo &gt;[1=2] in $dir: $msg
   } {
@@ -682,7 +685,7 @@ catch @ e msg {
 } {
   cd $dir
   $cmd
-}
+}</code>
 </pre>
 </figure>
 
@@ -691,9 +694,9 @@ to better identify for a user where an error came from:
 
 <figure>
 <pre>
-es&gt; <i>in /temp ls</i>
-in /temp: chdir /temp:
-No such file or directory
+<samp>es&gt; </samp><kbd>in /temp ls</kbd>
+<samp>in /temp: chdir /temp:
+No such file or directory</samp>
 </pre>
 </figure>
 
@@ -706,7 +709,7 @@ for calls on built-in functions. For example:
 
 <figure>
 <pre>
-ls &gt; /tmp/foo
+<code>ls &gt; /tmp/foo</code>
 </pre>
 </figure>
 
@@ -715,7 +718,7 @@ is internally rewritten as
 
 <figure>
 <pre>
-%create 1 /tmp/foo {ls}
+<code>%create 1 /tmp/foo {ls}</code>
 </pre>
 </figure>
 
@@ -746,13 +749,13 @@ command is not run, similar to the C-shell's "noclobber" option:
 
 <figure>
 <pre>
-fn %create fd file cmd {
+<code>fn %create fd file cmd {
   if {test -f $file} {
     throw error $file exists
   } {
     $&amp;create $fd $file $cmd
   }
-}
+}</code>
 </pre>
 </figure>
 
@@ -764,14 +767,14 @@ appear as
 
 <figure>
 <pre>
-let (create = $fn-%create)
+<code>let (create = $fn-%create)
   fn %create fd file cmd {
     if {test -f $file} {
       throw error $file exists
     } {
       $create $fd $file $cmd
     }
-  }
+  }</code>
 </pre>
 </figure>
 
@@ -788,11 +791,11 @@ hypothetical command <code>title</code>) can be written as:
 
 <figure>
 <pre>
-let (cd = $fn-%cd)
+<code>let (cd = $fn-%cd)
 fn cd {
   $cd $*
   title `{pwd}
-}
+}</code>
 </pre>
 </figure>
 
@@ -805,7 +808,7 @@ by Jon Bentley[<a class=local href=#ref7>7</a>]; see Figure 1.
 
 <figure class=bigfig>
 <pre>
-es&gt; <i>let (pipe = $fn-%pipe) {
+<samp>es&gt; </samp><kbd>let (pipe = $fn-%pipe) {
   fn %pipe first out in rest {
     if {~ $#out 0} {
       time $first
@@ -813,9 +816,9 @@ es&gt; <i>let (pipe = $fn-%pipe) {
       $pipe {time $first} $out $in {%pipe $rest}
     }
   }
-}</i>
-es&gt; <i>cat paper9 | tr -cs a-zA-Z0-9 '\012' | sort | uniq -c | sort -nr | sed 6q</i>
- 213 the
+}</kbd>
+<samp>es&gt; </samp><kbd>cat paper9 | tr -cs a-zA-Z0-9 '\012' | sort | uniq -c | sort -nr | sed 6q</kbd>
+<samp> 213 the
  150 a
  120 to
  115 of
@@ -826,7 +829,7 @@ es&gt; <i>cat paper9 | tr -cs a-zA-Z0-9 '\012' | sort | uniq -c | sort -nr | sed
    2r   0.5u   0.2s   sort
    2r   0.4u   0.2s   uniq -c
    3r   0.2u   0.1s   sed 6q
-   3r   0.6u   0.2s   sort -nr
+   3r   0.6u   0.2s   sort -nr</samp>
 </pre>
 <figcaption>Figure 1: Timing pipeline elements</figcaption>
 </figure>
@@ -841,7 +844,7 @@ non-absolute file names which are used as commands.
 
 <figure class=bigfig>
 <pre>
-let (search = $fn-%pathsearch) {
+<code>let (search = $fn-%pathsearch) {
   fn %pathsearch prog {
     let (file = &lt;&gt;{$search $prog}) {
       if {~ $#file 1 &amp;&amp; ~ $file /*} {
@@ -856,7 +859,7 @@ fn recache {
   for (i = $path-cache)
     fn-$i =
   path-cache =
-}
+}</code>
 </pre>
 <figcaption>Figure 2: Path caching</figcaption>
 </figure>
@@ -868,7 +871,7 @@ see Figure 3.
 
 <figure class=bigfig>
 <pre>
-fn %interactive-loop {
+<code>fn %interactive-loop {
   let (result = 0) {
     catch @ e msg {
       if {~ $e eof} {
@@ -888,7 +891,7 @@ fn %interactive-loop {
       }
     }
   }
-}
+}</code>
 </pre>
 <figcaption>Figure 3: Default interactive loop</figcaption>
 </figure>
@@ -950,9 +953,9 @@ Much of the script consists of lines like:
 
 <figure>
 <pre>
-fn-%and = $&amp;and
+<code>fn-%and = $&amp;and
 fn-%append = $&amp;append
-fn-%background = $&amp;background
+fn-%background = $&amp;background</code>
 </pre>
 </figure>
 
@@ -966,9 +969,9 @@ the built-in shell functions to their hook variables:
 
 <figure>
 <pre>
-fn-. = $&amp;dot
+<code>fn-. = $&amp;dot
 fn-break = $&amp;break
-fn-catch = $&amp;catch
+fn-catch = $&amp;catch</code>
 </pre>
 </figure>
 
@@ -983,7 +986,7 @@ path searching (and other) conventions. For example,
 
 <figure>
 <pre>
-set-path = @ {
+<code>set-path = @ {
   local (set-PATH = )
     PATH = &lt;&gt;{%flatten : $*}
   return $*
@@ -992,7 +995,7 @@ set-PATH = @ {
   local (set-path = )
     path = &lt;&gt;{%fsplit : $*}
   return $*
-}
+}</code>
 </pre>
 </figure>
 
@@ -1034,7 +1037,7 @@ be preserved at unparsing. This is best illustrated by an example:
 
 <figure>
 <pre>
-es&gt; <i>let (a=b) fn foo {echo $a}</i>
+<samp>es&gt; </samp><kbd>let (a=b) fn foo {echo $a}</kbd>
 </pre>
 </figure>
 
@@ -1046,8 +1049,8 @@ explicit. It is encoded as:
 
 <figure>
 <pre>
-es&gt; <i>whatis foo</i>
-%closure(a=b)@ * {echo $a}
+<samp>es&gt; </samp><kbd>whatis foo</kbd>
+<samp>%closure(a=b)@ * {echo $a}</samp>
 </pre>
 </figure>
 
@@ -1340,9 +1343,9 @@ and he can be reached by email at
 <p>
 <a id=erratum2 class=local href=#erratum2-use>2.</a>
 
-The <code>&lt;&gt</code> operator for obtaining the return value of a
+The <code>&lt;&gt;</code> operator for obtaining the return value of a
 command has been renamed <code>&lt;=</code> to avoid conflicting with
-the POSIX-compatible defintion of <code>&lt;&gt</code> as "open for
+the POSIX-compatible defintion of <code>&lt;&gt;</code> as "open for
 reading and writing."
 
 <p>
@@ -1362,7 +1365,7 @@ builtin.  The <code>in</code> function should now be
 
 <figure>
 <pre>
-fn in dir cmd {
+<code>fn in dir cmd {
   if {~ $#dir 0} {
     throw error in 'usage: in dir cmd'
   }
@@ -1370,7 +1373,7 @@ fn in dir cmd {
     cd $dir
     $cmd
   }
-}
+}</code>
 </pre>
 </figure>
 
