@@ -1,6 +1,4 @@
 #!/usr/local/bin/es -p
-#!/usr/local/bin/es -pe
-#!/home/jpco/git/es-fork/es -pe
 
 # This is a messy http server written in the extensible shell.
 # Its main benefit is that, other than the "server loop" section, it requires
@@ -9,33 +7,26 @@
 #
 # Requires ncat (from nmap) to run.  Other netcats should work too with tweaks.
 
-# We use a :8080 if $IN_DOCKER, :8181 otherwise.
-if {~ $IN_DOCKER true} {
-	server-port = 8080
-} {
-	IN_DOCKER = false
-	server-port = 8181
-}
-
-# binary-wide gzip support.
-# can also be toggled either by the specific calls to generate responses,
-# or client-side by a 'gzip=false' query string.  also respects Accept-Encoding.
-gzip = true
-
-
 #
 # The server loop.  Tells ncat to run this script again when a request is
 # received, but when that happens, $NCAT_SUBSHELL_MODE is set, so we know we
 # don't need to run another server.
 #
+# We use :8080 within Docker, as hosting infra often expects it, and :8181
+# otherwise, as :8080 is usually taken locally.
+#
 
+let (server-port = <={if {~ $IN_DOCKER true} {result 8080} {result 8181}})
 if {~ $NCAT_SUBSHELL_MODE ()} {
 	local (NCAT_SUBSHELL_MODE = yes)
 	forever {ncat -k -l -p $server-port -e $0 || exit 3}
 }
 
+
 #
-# Setup for reply logic.  Populate $method, $reqpath, $version, and variables
+# This is where we start the per-request stuff!
+#
+# Parse the request.  Populate $method, $reqpath, $version, and variables
 # for any request headers.
 #
 
@@ -46,11 +37,11 @@ if {!~ $q ()} {
 	query = <={%split '&' $query}
 }
 
+# TODO: it would be nice if we made all the header names lowercase
 let (header = ())
 while {!~ <={header = <=%read} \r} {
 	let (h = <={~~ $header *': '*\r})
 		head-$h(1) = $h(2)
-	true
 }
 
 
@@ -58,6 +49,9 @@ while {!~ <={header = <=%read} \r} {
 # Helper functions.  Easier than doing all this catting manually every time.
 #
 
+# If gzip can be served for this response.  Requires static enablement here, the
+# right Accept-Encoding, and NOT 'gzip=false' in the request query.
+let (gzip = false)
 fn accepts-gzip {
 	$gzip \
 	 && {~ $head-accept-encoding *gzip* || ~ $head-Accept-Encoding *gzip*}
@@ -73,13 +67,14 @@ let (
 	code-418 = 'I''m a teapot'
 	code-500 = 'Internal Server Error'
 )
-fn reply code type flags {
+fn respond code type flags {
 	if {~ $#(code-$code) 0} {
 		echo >[1=2] WARNING: Unknown HTTP status code: $code
 	}
 	echo >[1=2] $method $reqpath '->' $version $code $(code-$code)
 	echo $version $code $(code-$code)
 	echo Content-Type: $type
+	# Only cache resources in "prod" mode in a Docker container
 	if {~ $flags cache && $IN_DOCKER} {
 		echo Cache-Control: public, max-age=86400
 	}
@@ -89,10 +84,10 @@ fn reply code type flags {
 	echo
 }
 
-# Serve a static file, including the headers
+# Serve a static file, including printing the headers
 fn serve file flags {
 	let (mime-type = text/plain) {
-		# manually match the main file types, since file(1) doesn't
+		# Manually match the main file types, since file(1) doesn't
 		# always get it right in the way we need.
 		match $file (
 		*.html	{mime-type = text/html}
@@ -100,7 +95,7 @@ fn serve file flags {
 		*.js	{mime-type = text/javascript}
 		*	{mime-type = `` \n {file -b --mime-type $file}}
 		)
-		reply 200 $mime-type $flags
+		respond 200 $mime-type $flags
 	}
 	if {~ $flags gzip && accepts-gzip} {
 		gzip - < $file
@@ -109,9 +104,9 @@ fn serve file flags {
 	}
 }
 
-# Serve a built html page.
+# Serve a "built" html page.
 fn serve-page file flags {
-	reply 200 text/html $flags
+	respond 200 text/html $flags
 	if {~ $flags gzip && accepts-gzip} {
 		. script/build-page.es < $file | gzip -
 	} {
@@ -121,26 +116,26 @@ fn serve-page file flags {
 
 
 #
-# Core routing/service logic.
+# Core routing/service logic
 #
 
 catch @ exception {
-	# TODO: this is messy, especially when an exception is generated mid-stream
-	reply 500 text/html
+	# FIXME: this is messy, especially when an exception is generated mid-response
+	respond 500 text/html
 	echo >[1=2] 'Internal server error:' $exception
 	. script/500.es $exception
 } {
 	if (
 		# debug page
 		{~ $reqpath /http-debug} {
-			reply 200 text/plain
+			respond 200 text/plain
 
 			# There's some redundancy here
 			for (i = <=$&vars) if {~ $i head-*} {
 				echo <={~~ $i head-*}^: $$i
 			}
 			echo \n' === '\n
-			reply 200 text/plain
+			respond 200 text/plain
 			echo ' === '\n
 			vars
 		}
@@ -160,7 +155,7 @@ catch @ exception {
 
 		# 404
 		{
-			reply 404 text/html
+			respond 404 text/html
 			. script/404.es $reqpath
 		}
 	)

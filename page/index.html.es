@@ -19,7 +19,7 @@ Isn't that surprising?
 
 <p>
 Much of my (non-work) focus on computers is dedicated to <a href=/es>the extensible shell <i>es</i></a>.
-I have a lot to say about <i>es</i>, and hopefully I'll find the time to put all that here.
+In fact, this page was served <a href=/server.html>by an <i>es</i> script</a>.
 
 <p>
 The favicon for this site is the word <span lang=tok>linluwi</span> as I would write it in <span lang=tok>sitelen pona</span>.
