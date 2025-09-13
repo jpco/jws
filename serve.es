@@ -46,7 +46,7 @@ while {!~ <={header = <=%read} \r} {
 
 
 #
-# Helper functions.  Easier than doing all this catting manually every time.
+# Page-serving functions.
 #
 
 # If gzip can be served for this response.  Requires static enablement here, the
@@ -104,42 +104,65 @@ fn serve file flags {
 	}
 }
 
+# Build an html page.
+fn build-page args {
+	let (line = (); cmdbuf = ()) {
+		while {!~ <={line = <=%read} ()} {
+			if {~ $line '<;'*'>'} {
+				cmdbuf = $cmdbuf <={~~ $line '<;'*'>'}
+			} {
+				if {!~ $#cmdbuf 0} {
+					local (* = $args)
+						eval <={%flatten \n $cmdbuf}
+					cmdbuf = ()
+				}
+				echo $line
+			}
+		}
+		if {!~ $#cmdbuf 0} {
+			eval <={%flatten \n $cmdbuf}
+		}
+	}
+}
+
 # Serve a "built" html page.
 fn serve-page file flags {
 	respond 200 text/html $flags
 	if {~ $flags gzip && accepts-gzip} {
-		. script/build-page.es < $file | gzip -
+		build-page < $file | gzip -
 	} {
-		. script/build-page.es < $file
+		build-page < $file
 	}
 }
 
 
 #
-# Core routing/service logic
+# Page-building functions, for use in the built pages themselves.
+#
+
+# Print the top nav bar on a page based on the path passed to it.
+fn build-nav path {
+	echo -n '<nav><pre><code>http://<a href=/>jpco.io</a>'
+	let (accum = '')
+	for (f = <={%split / $path}) {
+		accum = $accum^/^$^f
+		echo -n '/<a href="'^$accum^'">'^$^f^'</a>'
+	}
+	echo '</code></pre></nav>'
+}
+
+
+#
+# Core routing/service logic.
 #
 
 catch @ exception {
 	# FIXME: this is messy, especially when an exception is generated mid-response
 	respond 500 text/html
 	echo >[1=2] 'Internal server error:' $exception
-	. script/500.es $exception
+	build-page < page/505.html.es $exception
 } {
 	if (
-		# debug page
-		{~ $reqpath /http-debug} {
-			respond 200 text/plain
-
-			# There's some redundancy here
-			for (i = <=$&vars) if {~ $i head-*} {
-				echo <={~~ $i head-*}^: $$i
-			}
-			echo \n' === '\n
-			respond 200 text/plain
-			echo ' === '\n
-			vars
-		}
-
 		# built pages. don't cache these
 		{access -f page/$reqpath^.es} {
 			serve-page page/$reqpath^.es
@@ -156,7 +179,7 @@ catch @ exception {
 		# 404
 		{
 			respond 404 text/html
-			. script/404.es $reqpath
+			build-page < page/404.html.es $reqpath
 		}
 	)
 }

@@ -3,7 +3,7 @@
 <title>jpco.io</title>
 <meta name=description content="jpco's HTTP-powered WorldWideWeb site!  Open 24 hours at a low low price of $0.00!" />
 
-<; . script/build-nav.es / >
+<; build-nav / >
 
 <main>
 <p>

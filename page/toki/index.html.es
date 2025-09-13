@@ -19,7 +19,7 @@
 <title>jpco.io | toki li pona</title>
 <meta name=description content="toki pona lon lipu linluwi jpco.io." />
 
-<; . script/build-nav.es /toki >
+<; build-nav /toki >
 
 <main lang=tok>
 <h1><span>toki li pona</span></h1>

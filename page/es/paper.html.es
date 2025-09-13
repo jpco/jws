@@ -16,7 +16,7 @@ kbd {
 <title>jpco.io | Es: A shell with higher-order functions</title></head>
 <meta name=description content="Es: A shell with higher-order functions.  Written by Paul Haahr and Byron Rakitzis for Usenet 1993." />
 
-<; . script/build-nav.es /es/paper.html >
+<; build-nav /es/paper.html >
 
 <main>
 <h1><i>Es</i>: A shell with higher-order functions</h1>
