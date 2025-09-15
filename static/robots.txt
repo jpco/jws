@@ -1,5 +1,2 @@
-# /http-debug page doesn't count
-User-agent: *
-Disallow: /http-debug
-
+# Not much to see here
 Sitemap: https://jpco.io/sitemap.xml

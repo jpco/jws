@@ -12,11 +12,18 @@
 # received, but when that happens, $NCAT_SUBSHELL_MODE is set, so we know we
 # don't need to run another server.
 #
-# We use :8080 within Docker, as hosting infra often expects it, and :8181
-# otherwise, as :8080 is usually taken locally.
-#
 
-let (server-port = <={if {~ $IN_DOCKER true} {result 8080} {result 8181}})
+if {~ $IN_DOCKER true} {
+	server-port = 8080
+} {
+	server-port = 8181
+	IN_DOCKER = false
+}
+
+if {!~ $PORT ()} {
+	server-port = $PORT
+}
+
 if {~ $NCAT_SUBSHELL_MODE ()} {
 	local (NCAT_SUBSHELL_MODE = yes)
 	forever {ncat -k -l -p $server-port -e $0 || exit 3}
@@ -75,7 +82,7 @@ fn respond code type flags {
 	echo $version $code $(code-$code)
 	echo Content-Type: $type
 	# Only cache resources in "prod" mode in a Docker container
-	if {~ $flags cache && $IN_DOCKER} {
+	if {~ $flags cache && ~ $IN_DOCKER true} {
 		echo Cache-Control: public, max-age=86400
 	}
 	if {~ $flags gzip && accepts-gzip} {

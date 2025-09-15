@@ -1,6 +1,4 @@
-# jpco's web site, served by the extensible shell
-
-This is my website.
+# https://jpco.io/
 
 Maybe serving your personal site from a shell script isn't the best idea, but maybe I don't care.
 
@@ -28,6 +26,6 @@ gcloud run deploy --platform managed --image=gcr.io/jpco-cloud/web:0.70
 
 ## TODO
 
-- Make .html.es files display as HTML and not es in editors
+- Make .html.es files display as HTML and not es in vim by default
 - Improve templating situation
 - Get more inspo from https://github.com/jneen/balls and clean up serve.es
