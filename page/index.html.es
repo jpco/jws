@@ -30,7 +30,7 @@ You can email me at this domain.
 If for some reason you want to use PGP, this key will work:
 
 <figure class=centered>
-<pre class=scrollable>
+<pre>
 -----BEGIN PGP PUBLIC KEY BLOCK-----
 
 mQGNBGN5TCMBDACeNjtUkCnwMxV+SCK6AfSQ56Px1Jdi+sZHnJzMIZ7iS4RZUgKi

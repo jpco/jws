@@ -7,6 +7,11 @@ nav {
 .noprint {
 	display: none;
 }
+figure {
+	border: none;
+	padding-top: 0;
+	padding-bottom: 0;
+}
 
 /* paper doesn't scroll */
 figure .scrollable {

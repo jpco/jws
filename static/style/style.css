@@ -51,7 +51,12 @@ table {
 	text-align: center;
 }
 figure {
-	margin: 1em;
+	padding: 0;
+	padding-right: 2ex;
+	margin: 0;
+	border: 1px solid #eee;
+	border-radius: 2px;
+	background-color: #fbfbfb;
 }
 figure.centered {
 	text-align: center;
@@ -62,6 +67,8 @@ figure pre {
 	text-align: left;
 	display: inline-block;
 	margin: 0;
+	padding: 1ex;
+	padding-bottom: 0.5ex;
 }
 figure .scrollable {
 	max-width: 100%;
@@ -86,6 +93,10 @@ dt {
 	svg {
 		stroke: white;
 		fill: white;
+	}
+	figure {
+		border-color: #333;
+		background-color: #222;
 	}
 	a:link {
 		color: #a8b5ff;

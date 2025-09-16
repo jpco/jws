@@ -18,6 +18,10 @@ table.meaning td {
 	padding-left: 5pt;
 	padding-right: 5pt;
 }
+figure {
+	border: none;
+	background-color: initial;
+}
 </style>
 
 <title>jpco.io | linluwi li ken nimi sin pona</title>

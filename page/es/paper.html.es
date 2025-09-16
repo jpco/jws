@@ -2,11 +2,15 @@
 
 <style>
 figure.bigfig {
-  text-align: center;
-  padding-top: 1ex;
-  padding-bottom: 1ex;
-  border-top: 1px solid #bbb;
-  border-bottom: 1px solid #bbb;
+	text-align: center;
+	padding-top: 1ex;
+	padding-bottom: 1ex;
+}
+@media print {
+	figure.bigfig {
+		border-top: 1px solid #bbb;
+		border-bottom: 1px solid #bbb;
+	}
 }
 kbd {
 	font-style: oblique;
@@ -277,7 +281,9 @@ command-line. This is called a <em>lambda</em>.
 It takes the form
 
 <figure>
+<pre>
 <code>@ <var>parameters</var> { <var>commands</var> }</code>
+</pre>
 </figure>
 
 <p>
@@ -456,7 +462,9 @@ calling echo-nl</samp>
 The reader should note that
 
 <figure>
+<pre>
 <code>! <var>cmd</var></code>
+</pre>
 </figure>
 
 <p>
@@ -464,7 +472,9 @@ is <i>es</i>'s "not" command, which inverts the sense of the return
 value of <var>cmd</var>, and
 
 <figure>
+<pre>
 <code>~ <var>subject</var> <var>pattern</var></code>
+</pre>
 </figure>
 
 <p>
@@ -478,7 +488,9 @@ assignment known as <em>dynamic binding</em>.  The shell syntax for
 this is typically:
 
 <figure>
+<pre>
 <code><var>var</var>=<var>value</var> <var>command</var></code>
+</pre>
 </figure>
 
 <p>

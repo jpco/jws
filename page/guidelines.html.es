@@ -215,14 +215,12 @@ The MDN is a great source for documentation on <a href="https://developer.mozill
 Print CSS (for which the <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_media_queries/Printing">&ldquo;Printing&rdquo; MDN documentation</a> is valuable) is mostly a matter of setting <code>display: none;</code> on the appropriate elements, but for dealing with link unclickability, this is a good trick:
 
 <figure class=centered>
-<pre class=scrollable>
-<code>
-@media print {
+<pre>
+<code>@media print {
 	a[href]::after {
 		content: " (" attr(href) ")"
 	}
-}
-</code>
+}</code>
 </pre>
 <figcaption>CSS for displaying link targets in printed pages</figcaption>
 </figure>
