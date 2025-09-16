@@ -52,23 +52,26 @@ table {
 }
 figure {
 	padding: 0;
-	padding-right: 2ex;
 	margin: 0;
 	border: 1px solid #eee;
 	border-radius: 2px;
 	background-color: #fbfbfb;
 }
+figure pre {
+	max-width: calc(100% - 2ex);
+	overflow-x: auto;
+	text-align: left;
+	margin: 0;
+	padding: 1ex;
+}
 figure.centered {
 	text-align: center;
 }
-figure pre {
-	max-width: 100%;
-	overflow-x: auto;
-	text-align: left;
-	display: inline-block;
-	margin: 0;
-	padding: 1ex;
-	padding-bottom: 0.5ex;
+figure.centered * {
+	margin-left: auto;
+	margin-right: auto;
+	position: relative;
+	width: fit-content;
 }
 figure .scrollable {
 	max-width: 100%;
@@ -79,6 +82,7 @@ caption {
 }
 figcaption {
 	font-style: italic;
+	margin-bottom: 1ex;
 }
 dt {
 	margin-top: 15px;

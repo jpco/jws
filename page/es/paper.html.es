@@ -1,11 +1,6 @@
 <; cat tmpl/header.html >
 
 <style>
-figure.bigfig {
-	text-align: center;
-	padding-top: 1ex;
-	padding-bottom: 1ex;
-}
 @media print {
 	figure.bigfig {
 		border-top: 1px solid #bbb;
@@ -818,7 +813,7 @@ example is timing each element of a pipeline by spoofing
 by Jon Bentley[<a class=local href=#ref7>7</a>]; see Figure 1.
 [<a class=local href=#erratum5 name=erratum5-use>Errata note 5</a>]
 
-<figure class=bigfig>
+<figure class="bigfig centered">
 <pre>
 <samp>es&gt; </samp><kbd>let (pipe = $fn-%pipe) {
   fn %pipe first out in rest {
@@ -854,7 +849,7 @@ easily be added by any user who wants it. The function
 <code>%pathsearch</code> (see Figure 2) is invoked to lookup
 non-absolute file names which are used as commands.
 
-<figure class=bigfig>
+<figure class="bigfig centered">
 <pre>
 <code>let (search = $fn-%pathsearch) {
   fn %pathsearch prog {
@@ -881,7 +876,7 @@ One other piece of <i>es</i> which can be replaced is the interpreter
 loop. In fact, the default interpreter is written in <i>es</i> itself;
 see Figure 3.
 
-<figure class=bigfig>
+<figure class="bigfig centered">
 <pre>
 <code>fn %interactive-loop {
   let (result = 0) {
@@ -1372,7 +1367,7 @@ an extra <code>in</code> in it.
 <p>
 <a id=erratum4 class=local href=#erratum4-use>4.</a>
 
-This example users an obsolete version of the <code>fork</code>
+This example uses an obsolete version of the <code>fork</code>
 builtin.  The <code>in</code> function should now be
 
 <figure>
