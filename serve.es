@@ -82,7 +82,7 @@ fn respond code type flags {
 	echo $version $code $(code-$code)
 	echo Content-Type: $type
 	# Only cache resources in "prod" mode in a Docker container
-	if {~ $flags cache && ~ $IN_DOCKER true} {
+	if {~ $flags cache && $IN_DOCKER} {
 		echo Cache-Control: public, max-age=86400
 	}
 	if {~ $flags gzip && accepts-gzip} {
@@ -170,6 +170,15 @@ catch @ exception {
 	build-page < page/505.html.es $exception
 } {
 	if (
+		# draft built pages; only serve these locally
+		# before "real" pages so we can draft changes too
+		{!$IN_DOCKER && access -f draft/$reqpath^.es} {
+			serve-page draft/$reqpath^.es
+		}
+		{!$IN_DOCKER && access -f draft/$reqpath/index.html.es} {
+			serve-page draft/$reqpath/index.html.es
+		}
+
 		# built pages. don't cache these
 		{access -f page/$reqpath^.es} {
 			serve-page page/$reqpath^.es
