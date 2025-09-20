@@ -45,68 +45,75 @@ Which would allow us to do <em>something</em> like
 But this is getting a little ahead of ourselves.
 <em>Why</em> would we want this in the first place?
 
-<h2>Motivations</h2>
+<h2>Motivation</h2>
 
 <p>
-I'm interested in using pluggable primitives for the following:
+My imagined use cases for pluggable primitives fall into one of the three following categories.
 
-<ol>
-<li>
-<p>
-Additional behaviors.
+<h3>Extended behaviors</h3>
 
 <p>
 There are a number of behaviors which <i>es</i> could have and doesn't, out of a desire to keep <i>es</i> minimal.
 I am amenable to that.
-However, different people have different behaviors they'd consider useful to have in a shell, and <i>es</i> currently aims for what is essentially a lowest-common-denominator set of features.
+However, different people have different behaviors they consider useful to have in a shell, and <i>es</i> currently aims for what is essentially a lowest-common-denominator set of features.
 
 <p>
-I think pluggable primitives would be the right way to bridge that divide.
-Some functions and behaviors that could be added as optional extensions to <i>es</i>:
+I think pluggable primitives could be the right way to bridge that divide.
+Some functions and behaviors that could be added as extensions to <i>es</i>:
 
 <ul>
-<li><code>getpid(3)</code> and <code>getcwd(3)</code>
-<li>TODO: Other stuff
+<li>Small behaviors, like miscellaneous calls like <code>getcwd(3)</code> or <code>getpid(3)</code>, regexes, or arithmetic (though, in my opinion, arithmetic works best as a glomming-time construct, not a primitive)
+<li>Larger additions, like job control or alternative input libraries
+<li>Abilities outside what a shell can typically do, such as networking facilities
 </ul>
 
 <p>
-Some behaviors, like job control primitives or alternative input libraries, also require changes to the &ldquo;core&rdquo; shell to be possible.
+This is, generally, the category that zsh (see <code>zshmodules(1)</code>) has fairly well covered.
+
+<p>
+Some of these items, especially the larger ones, require changes in the core shell runtime to be possible or useful.
 Changes to the core shell will be discussed later.
 
-<li>
-<p>
-Per-OS functionality.
+<h3>OS specialization</h3>
 
 <p>
 <i>Es</i> is highly portable, and that's a very good thing.
 
 <p>
-That said, like the previous bullet point, using maximally-portable code in all cases for everything leads to lowest-common-denominator features and behaviors, as the shell is bound to the feature set of the POSIX.1-2001 specification.
+That said, like the previous bullet point, erring towards portability in all things is often functionally equivalent to erring towards the lowest common denominator, as the shell is bound to use the feature set of the POSIX.1-2001 specification.
 
 <p>
-With pluggable primitives, <i>es</i> could make use of non-standard and OS-specific APIs.
+With pluggable primitives, <i>es</i> could be kept portable in its core, while in plugged-in primitives make use of non-standard and OS-specific APIs.
 
 <p>
-For example: With the right OS support, like via <a href="https://docs.freebsd.org/en/books/handbook/jails/">jails</a> or <a href="https://wiki.freebsd.org/Capsicum">capsicum</a> or <a href="https://man7.org/linux/man-pages/man2/seccomp.2.html">seccomp</a>, could the idea of a restricted shell be made actually meaningful?
+For example: With the right OS support, such as <a href="https://docs.freebsd.org/en/books/handbook/jails/">jails</a> or <a href="https://wiki.freebsd.org/Capsicum">capsicum</a> or <a href="https://man7.org/linux/man-pages/man2/seccomp.2.html">seccomp</a>, could the idea of a restricted shell be made actually meaningful?
 
 <p>
 What kind of <a href="https://www.haiku-os.org/blog/humdinger/2017-11-05_scripting_the_gui_with_hey/">Haiku GUI scripting</a> could be made possible, or at least more ergonomic, with built-in shell support?
 
 <p>
-There are a lot more fancy things&mdash;like a <em>lot</em> more&mdash;which are inaccessable to <i>es</i> essentially only because of the word &ldquo;portable&rdquo;, and that doesn't have to be the case.
+These cases overlap with the previous point, but it bears emphasizing that pluggable primitives in <i>es</i> could support specialization to these kinds of per-OS behaviors, without making the core shell a rat's nest of <code>#ifdef</code>s.
 
-<li>
-<p>
-Primitive versioning.
+<h3>Versioned primitives</h3>
 
 <p>
-I also believe that pluggable primitives could be used to support active development without breaking backwards compatibility.
+This is the most radical use case, but in addition to the above, I also believe that a well-designed system for pluggable primitives could be used to support active and backwards-incompatible updates to the shell without actually breaking backwards compatibility.
 
 <p>
-This would require, as its major step, migrating existing primitives and related functionality out of the shell and into a set of pluggable primitives.
+This would require, as its major step, migrating existing shell primitives and related functionality out of the &ldquo;core&rdquo; shell and into a set of pluggable primitives.
 
-</ol>
+<p>
+It would also require some form of primitive versioning and namespacing, and some way to say &ldquo;when I specify <code>$&amp;time</code> I mean precisely <em>this</em> <code>$&amp;time</code>&rdquo;.
+
+<p>
+I am picturing this would enable a way to, essentially, opt-in to &ldquo;the future&rdquo;, with the potential breakage that might entail.
+Scripts (and users) which have no need of &ldquo;the future&rdquo; can continue to use older designs for primitives without trouble.
+
+<p>
+A specific case would be the recent rewrite of <code>$&amp;time</code> that was recently done.
 
 <h2>Namespacing and versioning</h2>
 
 <h2>Changes to core <i>es</i></h2>
+
+<h2>Prior art</h2>

@@ -313,7 +313,6 @@ Support for other capabilities as well &mdash; and it might be nice to write up 
 
 	<ul>
 	<li><code>body-hyperlinks</code> (&lt;a href&gt; markup)
-	<li><code>synchronous</code>/<code>private-synchronous</code>/<code>x-canonical-private-synchronous</code>/<code>x-dunst-stack-tag</code>
 	<li><code>persistence</code>
 	</ul>
 
