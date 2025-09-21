@@ -39,6 +39,12 @@ blockquote {
 	border-left: 2px solid gray;
 	font-style: oblique;
 }
+hr {
+	width: 50%;
+	margin: 24px auto;
+	border-top: 1px solid #999;
+	border-bottom: none;
+}
 
 /* figures and such */
 svg {
