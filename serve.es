@@ -48,7 +48,11 @@ if {!~ $q ()} {
 let (header = ())
 while {!~ <={header = <=%read} \r} {
 	let (h = <={~~ $header *': '*\r})
+	if {!~ $#h 0} {
 		head-$h(1) = $h(2)
+	} {
+		echo >[1=2] surprising request line: $header
+	}
 }
 
 
