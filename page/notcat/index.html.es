@@ -14,7 +14,10 @@ Notcat is a <a href="https://wiki.archlinux.org/title/Desktop_notifications">D-B
 It is small, fast, low-dependency, and tries hard to do just one thing well.
 
 <p>
-Notcat can do one of two things when it receives a notification.  It can either print the notification to standard output when invoked like:
+Notcat can do one of two things when it receives a notification.
+By default, it will print the notification to standard output.
+This can be controlled by a number of <em>format arguments</em>, which are filled with particular details of the notification.
+For example, when a notification is received, the following notcat invocation prints the notification's summary (<code>%s</code>), a space, and then the notification's body (<code>%B</code>):
 
 <figure>
 <pre>
@@ -23,7 +26,10 @@ Notcat can do one of two things when it receives a notification.  It can either 
 </figure>
 
 <p>
-or it can run subcommands, with notification details passed to those commands either as arguments or as environment variables (with the <code>-e</code> flag, as follows):
+Notcat can also run subcommands, with notification details passed to those commands either in the command's argv or as environment variables, with the <code>-e</code> option.
+
+<p>
+Subcommands can be run when a notification is received, when a notification is closed, or when all notifications have closed and the notification queue is &ldquo;empty&rdquo;.
 
 <figure>
 <pre>
@@ -33,14 +39,13 @@ or it can run subcommands, with notification details passed to those commands ei
 
 <p>
 Notcat is built on its own notification server library called notlib.
-Both are written in C99 and notlib depends on GLib's D-Bus bindings.
+Both are written in C99 and depend on GLib's D-Bus bindings.
 The <a href="https://github.com/jpco/notcat">notcat repository</a> and <a href="https://github.com/jpco/notlib">notlib repository</a> are both hosted on GitHub and are licensed under the GPLv3 and LGPLv3, respectively.
 
 <h2>Format arguments</h2>
 
 <p>
-Notcat, by default, prints received notifications to standard output.
-How these notifications are printed can be controlled by a number of different format arguments.
+The format arguments available for notcat are as follows.
 
 <dl>
 <dt><code>%%</code></dt>
@@ -81,7 +86,7 @@ How these notifications are printed can be controlled by a number of different f
 </dl>
 
 <p>
-Notcat also supports simple conditionals of the form <code>%(?<var>K</var>:<var>expr</var>)</code>, which evaluates and prints <var>expr</var> if and only if the key <var>K</var> is set and not a default value.
+Notcat also supports simple conditionals of the form <code>%(?<var>K</var>:<var>expr</var>)</code>, which evaluates and prints <var>expr</var> if and only if the key <var>K</var> is set and is not its default value.
 
 <p>
 An example of using a few of these features together:
@@ -111,7 +116,9 @@ It is not hard to end up needing more sophisticated behavior than just printing 
 To support that, notcat provides the arguments <code>--on-notify</code>, <code>--on-close</code>, and <code>--on-empty</code>.
 
 <p>
-<code>--on-notify</code> is triggered whenever a notification is created.  <code>--on-close</code> is triggered whenever a notification is closed.  <code>--on-empty</code> is triggered after <code>--on-close</code> whenever there are no more open notifications.
+<code>--on-notify</code> is triggered whenever a notification is sent to notcat.
+<code>--on-close</code> is triggered whenever a notification is closed, either manually or because it expired.
+<code>--on-empty</code> is triggered after <code>--on-close</code> if there are no more open notifications left.
 
 <p>
 The default values for these are
@@ -124,7 +131,7 @@ The default values for these are
 
 <p>
 A value of exactly <code>echo</code> refers to notcat's internal notification-printing logic.
-Any other value is understood to be an external command, which is run via <code>posix_spawnp(3)</code> with the format arguments filled in and passed as arguments to the command.
+Any other value is understood to be an external command, which is invoked using <code>posix_spawnp(3)</code> with the format arguments filled in and passed as arguments to the command.
 For example,
 
 <figure>
@@ -137,7 +144,7 @@ For example,
 will search for <code>my-script.es</code> in <code>$PATH</code>, and run the resulting binary with a single argument set to the notification's summary.
 
 <p>
-If the <code>-s</code> argument is passed to notcat, then a shell is used to interpret the command.
+If the <code>-s</code> argument is passed to notcat, then the command is invoked using <code>$SHELL -c</code>.
 For example, one could just count the characters in the formatted notification with the following:
 
 <figure>
@@ -157,8 +164,7 @@ Using this, the equivalent to the previous command would be:
 </figure>
 
 <p>
-This can be a nice way to add legibility to subcommands like as shell scripts.
-Because the environment variables aren't formatted like the format arguments are, it also allows those subcommands to do their own formatting.
+This can be an easy way to add legibility to larger subcommands like shell scripts.
 
 <h2>Client commands</h2>
 
@@ -200,9 +206,9 @@ Listens for <a href="https://specifications.freedesktop.org/notification-spec/1.
 Sends a notification to the notification server.
 
 <p>
-The <var>summary</var> and <var>body</var> arguments, as well as the <code>aAchiItU</code> flags, configure the notification (the man page actually describes what each of those flags does).
-<code>-p</code> specifies printing the ID of the created notification to standard output.
-<code>--sync</code> specifies waiting to exit until the notification is closed.  If <code>--sync</code> is given and an action is invoked on the notification, then notcat will also print the key of any action that was invoked.
+The <var>summary</var> and <var>body</var> arguments, as well as the <code>aAchiItU</code> flags, configure the notification (the man page describes the meaning of each of these flags).
+<code>-p</code> configures notcat to print the ID of the created notification to standard output.
+<code>--sync</code> configures notcat to wait until the notification is closed before exiting.  Notcat will also print the key of any actions invoked on the notification waiting for it to be closed.
 </dd>
 </dl>
 
@@ -218,9 +224,9 @@ The following example includes the <code>notcat invoke</code> command, which rel
 <h2>Example usage</h2>
 
 <p>
-The following describes notcat used in practice on my laptop.
-This setup is to display notifications within <a href="https://github.com/Alexays/Waybar">waybar</a>.
-The waybar config to define the notcat server is:
+The following describes notcat as it can be used in practice.
+This setup displays notifications within <a href="https://github.com/Alexays/Waybar">waybar</a>.
+The waybar config which runs the notcat server is this:
 
 <figure>
 <pre>
@@ -232,10 +238,10 @@ The waybar config to define the notcat server is:
 </figure>
 
 <p>
-Let's take this <code>"exec"</code> snippet from right to left.
+Let's take this <code>"exec"</code> from right to left.
 
 <p>
-The <code>'%i' '%s%(?B: - %b)'</code> format arguments tell notcat that each notification should be formatted as two arguments.  The first is the notification's ID.  The second is the notification summary, followed&mdash;if the body is non-empty when &ldquo;cooked&rdquo;&mdash;with a hyphen and the raw text contents of the body.
+The <code>'%i' '%s%(?B: - %b)'</code> format arguments tell notcat that each notification should be formatted as two arguments.  The first argument is the notification's ID.  The second is the notification summary, followed&mdash;if the body is non-empty when &ldquo;cooked&rdquo;&mdash;with a hyphen and the raw text contents of the body.
 
 <p>
 These two arguments are passed to <code>tee-note.es</code> on notify and empty events.
@@ -253,13 +259,13 @@ This script writes the first argument, the notification ID, to the file <code>/t
 
 <p>
 Note that waybar interprets Pango markup, which includes all the basic markup elements required by the notifications standard.
-This is why we use <code>%b</code>: so that notcat does not try to handle or strip markup, instead passing it through to waybar to render.
+This is why we use <code>%b</code> as the body format argument: so that notcat does not try to handle or strip markup, instead passing it straight through to waybar to render.
 
 <p>
-Because the format arguments include the markup-aware <code>%B</code> in a conditional, notcat advertises the <code>body-markup</code> capability automatically.  Because waybar also correctly handles links marked up with <code>&lt;a href=""&gt;</code>, we manually advertise the <code>body-hyperlinks</code> capability, since notcat cannot automatically detect that support.
-And that's all the configuration we give notcat.
+Because the format arguments include the markup-aware <code>%B</code> in a conditional, notcat advertises the <code>body-markup</code> capability automatically.  Because waybar also correctly handles links marked up with <code>&lt;a href=""&gt;</code>, we use <code>--capabilities=body-hyperlinks</code> to manually advertise the <code>body-hyperlinks</code> capability, since notcat cannot automatically detect that support.
 
 <p>
+And that's all the configuration we give the notcat server.
 Moving on to the next line: what is the <code>"on-click": "act-note.es"</code>?
 
 <p>
@@ -301,11 +307,11 @@ More format sequences and environment variables, especially around hints, action
 
 <li>
 <p>
-More facilities for escaping characters within things like conditionals
+More robust behavior in conditionals, especially allowing character escaping and better control over argument-splitting
 
 <li>
 <p>
-Better <code>body-markup</code> support, since notcat only currently handles stripping tags and un-escaping &amp;amp; codes
+Better <code>body-markup</code> support, since notcat only currently handles stripping tags and un-escaping <code>&amp;amp;</code> codes
 
 <li>
 <p>

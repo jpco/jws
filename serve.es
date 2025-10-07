@@ -47,11 +47,9 @@ if {!~ $q ()} {
 # TODO: it would be nice if we made all the header names lowercase
 let (header = ())
 while {!~ <={header = <=%read} \r} {
-	let (h = <={~~ $header *': '*\r})
-	if {!~ $#h 0} {
-		head-$h(1) = $h(2)
-	} {
-		echo >[1=2] surprising request line: $header
+	let ((n v) = <={~~ $header *': '*\r})
+	if {!~ $#n 0} {
+		head-$n = $v
 	}
 }
 
