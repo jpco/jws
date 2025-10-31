@@ -171,13 +171,13 @@ This degree of flexibility is remarkable: this kind of pre-parsing was never imp
 
 <p>
 <i>Es</i> was mostly developed over the course of 1992-1995.
-The major development went through the release of version 0.84; 0.88 was released after a hiatus from the original authors, and then both of them got too busy with life and &ldquo;real&rdquo; work to continue on the shell.
+The bulk of development went through the release of version 0.84; 0.88 was released after the authors had taken a break, and then after that release both of them got too busy with life and jobs to continue work on the shell.
 
 <p>
 After that, maintainership passed through a couple hands, leading eventually to the current maintainer James Haggerty, but development was largely focused on keeping <i>es</i> functional and available over the decades as OSes, build systems, and code-hosting practices have evolved.
 
 <p>
-This has left the shell as an incomplete experiment: Paul and Byron didn't have time to achieve a good amount of what they planned on, and even if they had, their near- to medium-term plans certainly didn't sum up to everything the shell could be made to do.
+This has left <i>es</i> as an incomplete experiment: Paul and Byron didn't have time to achieve a good amount of what they planned on, and even if they had, their near- to medium-term plans certainly didn't sum up to everything the shell could be made to do.
 
 <p>
 However: at its core <i>es</i> has a simple and powerful design which removes a huge amount of the friction of shell scripting.
@@ -193,15 +193,15 @@ So what would best be done with <i>es</i> now?
 There are a few major themes where I would like to see improvement, and would be willing to dedicate effort to make that happen.
 
 <p>
-First of all, I would love to <strong>get more usage in the shell</strong>.
-As more people use <i>es</i>, more creativity is applied to using and customizing the shell, and benefits of its flexibility compound.
+First of all, I would love to <strong>get more users of the shell</strong>.
+As more people use <i>es</i>, more creativity is applied to using and customizing it, and benefits of its flexibility compound.
 Packaging <i>es</i> for more OSes and Linux distros will help, as would more writing about the shell and more documentation online.
 
 <p>
-Quite a bit of existing knowledge about <i>es</i> is wrapped up inside the old mailing list or the source code, and users shouldn't be reasonably expected to dig around GitHub or years worth of old mail to understand a piece of software enough to use it effectively.
+Quite a bit of existing knowledge about <i>es</i> is wrapped up inside the old mailing list or the source code, and users shouldn't be reasonably expected to dig around git commit history or years worth of old mail archives to understand a piece of software enough to use it effectively.
 
 <p>
-Tooling support would be helpful as well; syntax highlighting for editors, maybe even some kind of LSP integration, as well as reviving (and documenting) the <code>esdebug</code> script.
+Tooling support would be helpful as well; syntax highlighting for popular editors, maybe even some kind of LSP integration (cf. Elvish), as well as reviving (and documenting) the <code>esdebug</code> script.
 
 <p>
 I would also like to <strong>close the gaps</strong> where <i>es</i> is unable to perform common shell behaviors today.

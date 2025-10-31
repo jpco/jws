@@ -169,7 +169,7 @@ catch @ exception {
 	# FIXME: this is messy, especially when an exception is generated mid-response
 	respond 500 text/html
 	echo >[1=2] 'Internal server error:' $exception
-	build-page < page/505.html.es $exception
+	build-page < page/500.html.es $exception
 } {
 	if (
 		# draft built pages; only serve these locally

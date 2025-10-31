@@ -26,9 +26,7 @@ For example, when a notification is received, the following notcat invocation pr
 </figure>
 
 <p>
-Notcat can also run subcommands, with notification details passed to those commands either in the command's argv or as environment variables, with the <code>-e</code> option.
-
-<p>
+Notcat can also run subcommands, with notification details passed to those commands as arguments, or as environment variables when notcat is given the <code>-e</code> flag.
 Subcommands can be run when a notification is received, when a notification is closed, or when all notifications have closed and the notification queue is &ldquo;empty&rdquo;.
 
 <figure>
@@ -289,15 +287,13 @@ reads the ID from <code>/tmp/notcat.id</code>, and, if it's non-empty, calls <co
 <h2>Limitations and TODOs</h2>
 
 <p>
-Many applications depend on libnotify while notcat doesn't want or need it, so sometimes notcat seems to not work just because libnotify isn't installed on the system and clients are confused.
+While notcat doesn't want or need libnotify, many other applications do, so sometimes notcat seems to be broken just because libnotify isn't installed on the system and clients are confused.
 (This has bitten me in particular with web notifications from Firefox.)
 
 <p>
 Because notcat isn't a graphical application, certain things like icons and images are unlikely to ever be supported in a real way.
-Sound is also pretty unlikely.
-
-<p>
-However, there are other things which notcat could support and it doesn't now.
+Sound is also unlikely.
+However, there are other things which notcat could support and doesn't now.
 
 <ul>
 
