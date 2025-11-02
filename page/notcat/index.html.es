@@ -1,7 +1,7 @@
 <; cat tmpl/header.html >
 
 <title>jpco.io | The notcat notification server</title>
-<meta name=description content="notcat is a D-Bus notification server which prints or executes subcommands when a notification is received." />
+<meta name=description content="notcat is a D-Bus notification server which prints or executes subcommands when a notification is received.">
 
 <; build-nav /notcat >
 
@@ -323,3 +323,4 @@ Support for other capabilities as well &mdash; and it might be nice to write up 
 Better D-Bus error reporting
 
 </ul>
+</main>

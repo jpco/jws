@@ -25,7 +25,7 @@ figure {
 </style>
 
 <title>jpco.io | linluwi li ken nimi sin pona</title>
-<meta name=description content="An argument that linluwi can be a good nimisin, if we use a definition of 'weaving' for it." />
+<meta name=description content="An argument that linluwi can be a good nimisin, if we use a definition of 'weaving' for it.">
 
 <; build-nav /toki/linluwi.html >
 
@@ -127,7 +127,9 @@ A commune can be <span lang=tok>linluwi tomo</span>.
 Let's consult <a href="https://theepicosity.github.io/lipu-pi-ijo-pi-toki-pona/ante/smell.html"><span lang=tok>kule epiku Atawan</span>'s rules of thumb for good <span lang=tok>nimi sin</span></a>.
 
 <ol>
-<li>Be universal</li>
+<li>
+<p>
+Be universal
 
 <p>
 Explicitly, this rule says &ldquo;[a]ny random person on earth should be able to know what the word is referring to.&rdquo;
@@ -140,17 +142,26 @@ Unlike the internet, weaving is absolutely ancient; archaeological evidence conf
 Weaving is practiced all over the world, with traditional and indiginous cultures practicing distinctive, unique forms of linluwi passed down since time immemorial.
 Moreover, <span lang=tok>linluwi</span> is ubiquitous: I am reasonably confident that you, the reader, have several different types of <span lang=tok>linluwi</span> in your home right now.
 
-<li>Be physical</li>
+<li>
+<p>
+Be physical
+
 <p>
 This is the whole motivation for the proposed definition here.
 The weaving-related definition is primarily physical while the &ldquo;internet&rdquo; or abstract &ldquo;network&rdquo; definition isn't very much so (you can hold a computer in your hand, but can you hold <em>the internet</em> in your hand?)
 
-<li>Be useful</li>
+<li>
+<p>
+Be useful
+
 <p>
 Despite its awkward definition so far, <span lang=tok>linluwi</span> has refused to die, and I believe that is because it just happens to be very useful to talk about the internet when one is using the internet.
 I also like to think the new definition makes the word even more useful, since as already shown, the abstract concept of a network applies to quite a lot of things.
 
-<li>Be different</li>
+<li>
+<p>
+Be different
+
 <p>
 This deserves some discussion.
 It's time to address <em lang=tok>len</em>.
@@ -273,6 +284,7 @@ In the physical metaphor, one can picture how the <span lang=tok>linluwi</span> 
 <g transform="translate(11.5 12.5) scale(0.3 0.3)">
 <path d="M21.883 12l-7.527 6.235.644.765 9-7.521-9-7.479-.645.764 7.529 6.236h-21.884v1h21.883z"/>
 </g>
+
 <g transform="translate(1255.3 -50.718)">
 <path d="m-1222 72.394c0.1016 0.2032 0.254 0.3048 0.4318 0.3302s0.3048-0.0762 0.381-0.2794c0.051-0.2032 0.127-1.2446 0.2032-3.1496 0.076-1.8796 0.2032-3.683 0.381-5.4102 0.1778-1.7018 0.2794-2.8448 0.2794-3.429 0-0.381-0.051-0.6096-0.1016-0.7366-0.051-0.1016-0.2032-0.1778-0.4064-0.2286-0.3302-0.0762-0.5588-0.0254-0.7112 0.1778-0.127 0.1524-0.2794 1.0922-0.4826 2.794s-0.381 3.4544-0.4826 5.207c-0.051 0.889-0.025 1.8288 0.076 2.7686 0.1016 0.9398 0.2286 1.6002 0.4318 1.9558zm5.4356 0.0762c0.1524 0.3048 0.3302 0.4318 0.5334 0.4064 0.1778-0.0508 0.3048-0.254 0.4064-0.6096 0.1524-0.635 0.381-3.7592 0.7366-9.3726 0.1016-1.7272 0.1016-2.7178 0-2.9972-0.127-0.3302-0.3048-0.5588-0.508-0.6858-0.2032-0.1524-0.4064-0.1778-0.5842-0.0508 0 0.0254-0.025 0.0254-0.025 0.0254-0.1524 0.0762-0.2794 0.4826-0.3302 1.2192-0.051 0.7366-0.1778 3.2004-0.3302 7.4422-0.025 0.2794-0.025 0.508-0.025 0.635-0.051 1.397-0.076 2.3622-0.051 2.8956 0 0.5334 0.076 0.9144 0.1778 1.0922zm-10.795 0.5334c0.3048 0.4572 0.5334 0.5842 0.7366 0.4064 0.2286-0.2286 0.254-0.762 0.1016-1.6002-0.1524-0.635-0.2032-1.5748-0.1778-2.7686 0.025-1.1938 0.127-2.413 0.2794-3.6068 0.2032-1.4224 0.3302-2.7178 0.4064-3.8608 0.051-0.7366 0.051-1.2192 0.025-1.4478-0.025-0.2286-0.1016-0.4064-0.2286-0.508-0.3048-0.2286-0.5842-0.254-0.8382-0.0508-0.2794 0.2032-0.4318 0.5334-0.4826 1.016-0.4826 4.0132-0.7112 6.8834-0.6858 8.5852 0.025 1.7272 0.3048 2.9972 0.8636 3.8354z"/>
 <path d="m-1211.9 68.863c0.1524 0.1778 0.2794 0.2794 0.3302 0.3048 0.076 0.0254 0.2286-0.0254 0.4572-0.1524 0.3556-0.2032 0.4318-0.635 0.254-1.3208-0.2032-0.6604-0.635-1.4478-1.3462-2.3368-0.508-0.6858-1.016-1.1176-1.4732-1.3462s-1.1176-0.3302-2.032-0.3302-1.8034 0.1778-2.667 0.508c-0.8382 0.3302-1.9304 0.9398-3.2512 1.8034-1.143 0.7366-2.159 1.2192-2.9972 1.397-0.8636 0.2032-1.7018 0.1524-2.54-0.1524-0.8128-0.3302-1.778-0.9398-2.8702-1.8796-0.4064-0.3556-0.7112-0.5842-0.9144-0.6858-0.2286-0.1016-0.4318-0.1524-0.6858-0.127-0.2286 0.0254-0.381 0.0508-0.4572 0.127-0.051 0.0762-0.076 0.1778-0.076 0.3048 0.051 0.3048 0.3556 0.7366 0.889 1.2954 0.5334 0.5334 1.143 1.0414 1.8034 1.524 0.6858 0.4826 1.2192 0.762 1.6256 0.8636 1.1176 0.254 2.2352 0.254 3.3782 0 1.1684-0.2286 2.2606-0.7112 3.302-1.4224 2.5654-1.7018 4.5212-2.4638 5.842-2.2606 0.3302 0.0508 0.5842 0.127 0.7874 0.254s0.4572 0.3556 0.762 0.6858c0.4826 0.5588 0.8636 1.143 1.1684 1.7272s0.5588 0.9906 0.7112 1.2192z"/>
@@ -285,8 +297,10 @@ In the physical metaphor, one can picture how the <span lang=tok>linluwi</span> 
 <g transform="translate(1292.3 -50.718)">
 <path d="m-1218.4 70.26c-0.9398 0-2.032 0.0254-3.2766 0.1016-0.8382 0.0762-1.8542 0.0762-3.048-0.0254-1.1938-0.0508-1.9558-0.1524-2.286-0.2794-0.127-0.0254-0.1778-0.9906-0.2032-2.8702-0.025-1.905 0-3.81 0.076-5.6896 0.076-1.9304 0.1778-2.8956 0.3048-2.9718 0.076-0.0508 0.508-0.1016 1.3208-0.127s1.7526-0.0508 2.794-0.0508h1.4986c0.3556 0 0.7366 0.0254 1.1684 0.0508s0.7366 0.0508 0.9652 0.0762 0.4572 0.0762 0.7366 0.1524 0.4572 0.1778 0.5842 0.2286c0.127 0.1016 0.254 0.2032 0.4064 0.381s0.254 0.3302 0.3302 0.4826c0.051 0.1524 0.127 0.3556 0.2286 0.6604 0.076 0.254 0.1524 0.5334 0.2032 0.7874 0.051 0.254 0.1016 0.5842 0.1778 1.016 0.127 0.8382 0.2794 2.3368 0.4318 4.5212 0.127 2.1844 0.1524 3.3782 0.076 3.5814-0.076 0.1778-0.254 0.2032-0.5842 0.1016-0.3302-0.0762-0.9652-0.127-1.905-0.127zm-8.89 5.1054c0.1524 0.2286 0.3302 0.3556 0.5334 0.3556 0.2032 0.0254 0.381-0.1016 0.5334-0.3302 0.127-0.2286 0.051-0.635-0.2032-1.2446-0.254-0.6096-0.4318-1.1684-0.508-1.7018l-0.127-0.7874 1.3716 0.0254c0.9398 0.0254 1.778 0.0508 2.5146 0.127l1.1176 0.127 0.2286 1.7018c0.127 0.8636 0.2794 1.4478 0.4572 1.778 0.1524 0.3048 0.3556 0.4064 0.635 0.3048 0.127-0.0508 0.2286-0.2032 0.254-0.4318 0.025-0.2286 0.025-0.762 0-1.6002l-0.076-1.9304 1.1176-0.1524c0.6096-0.0762 1.27-0.0762 1.9558 0.0254s1.1176 0.254 1.2954 0.4572c0.127 0.1778 0.254 0.7366 0.381 1.7272 0.076 0.4318 0.127 0.7874 0.2032 1.0922 0.2286 0.7874 0.4826 1.0414 0.8128 0.7112 0.076-0.0508 0.127-0.2032 0.1524-0.508 0.025-0.254 0.025-0.7112 0.051-1.3208 0-0.5842 0-1.397-0.025-2.3876-0.051-4.191-0.254-7.3406-0.635-9.4742s-0.9906-3.5052-1.778-4.1402c-0.4826-0.381-1.0668-0.6096-1.778-0.6858-0.7366-0.0762-2.159-0.127-4.2926-0.1016-1.6764 0.0254-2.794 0.0508-3.3782 0.0762-0.5842 0.0508-1.016 0.1524-1.2954 0.2794l-0.635 0.3302-0.025 4.7752c-0.025 4.3942 0.051 7.4676 0.2032 9.1948 0.1524 1.778 0.4572 2.9972 0.9398 3.7084z"/>
 </g>
+</g>
 
 </svg>
 </div>
 <figcaption><span lang=tok>linluwi</span>, helpfully demonstrating how to make a <span lang=tok>len</span> from <span lang=tok>linja mute</span>.</figcaption>
 </figure>
+</main>

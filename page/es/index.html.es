@@ -1,7 +1,7 @@
 <; cat tmpl/header.html >
 
 <title>jpco.io | A (re-)introduction to the extensible shell</title>
-<meta name=description content="Es is the extensible shell." />
+<meta name=description content="Es is the extensible shell.">
 
 <; build-nav /es >
 
@@ -44,7 +44,7 @@ These together make variables significantly more straightforward to use than in 
 <figure>
 <pre>
 <samp>; </samp><kbd>args = -l 'Long Document.pdf'</kbd>
-<samp>; </smap><kbd>ls $args</kbd>
+<samp>; </samp><kbd>ls $args</kbd>
 <samp>-rw-r--r-- 1 jpco jpco 12345 Aug 31 15:44 'Long Document.pdf'</samp>
 </pre>
 </figure>
@@ -231,3 +231,4 @@ In particular, drawing from the rich tradition of Scheme interpretation methods 
 <li>Serving a website with a shell script is fun and easy
 <li>Better documentation of the internals: GC, exceptions, etc.
 </ul>
+</main>

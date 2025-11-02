@@ -1,7 +1,7 @@
 <; cat tmpl/header.html >
 
 <title>jpco.io | Internal server error</title>
-<meta name=description content="500 internal server error" />
+<meta name=description content="500 internal server error">
 
 <; build-nav >
 
@@ -13,3 +13,4 @@ An unhandled exception has been raised:
 </code>
 
 <marquee style="margin-top: 10em;">Oh&nbsp;nooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo!&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo!</marquee>
+</main>

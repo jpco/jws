@@ -1,7 +1,7 @@
 <; cat tmpl/header.html >
 
 <title>jpco.io | Guidelines for a website</title>
-<meta name=description content="Fallible thoughts on making a good website from somebody who really doesn't know how to make a good website." />
+<meta name=description content="Fallible thoughts on making a good website from somebody who really doesn't know how to make a good website.">
 
 <; build-nav /guidelines.html >
 
@@ -249,3 +249,4 @@ Note that <code>pre</code> doesn't prevent translation by itself.
 <p>
 Okay, that's all for now.
 This is a living page so expect it to change over time as I slowly get less wrong.
+</main>

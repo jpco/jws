@@ -1,7 +1,7 @@
 <; cat tmpl/header.html >
 
 <title>jpco.io | Web notifications tests</title>
-<meta name=description content="Web notifications API tests" />
+<meta name=description content="Web notifications API tests">
 
 <style>
 .hidden {
@@ -35,7 +35,7 @@ First you'll have to give permission for notifications.
 });</script></pre>
 </figure>
 
-<hr />
+<hr>
 
 <p>
 Now you can create a basic notification.
@@ -50,14 +50,14 @@ Now you can create a basic notification.
 });</script></pre>
 </figure>
 
-<hr />
+<hr>
 
 <p>
 Notifications can track when things happen to them.
 
 <p>
 <button id=tracker>Another notification!</button>
-<span class=hidden id=tracker-message>
+<span class=hidden id=tracker-message></span>
 
 <figure>
 <pre>
@@ -81,7 +81,7 @@ Notifications can track when things happen to them.
 });</script></pre>
 </figure>
 
-<hr />
+<hr>
 
 <p>
 They can also be closed from the page.
@@ -111,7 +111,7 @@ They can also be closed from the page.
 });</script></pre>
 </figure>
 
-<hr />
+<hr>
 
 <p>
 Notifications can have "tags", which means they replace other notifications with the same tag.
@@ -133,3 +133,4 @@ document.getElementById("incrementer").addEventListener("click", () => {
     };
 });</script></pre>
 </figure>
+</main>

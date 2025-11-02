@@ -1,7 +1,7 @@
 <; cat tmpl/header.html >
 
 <title>jpco.io</title>
-<meta name=description content="jpco's HTTP-powered WorldWideWeb site!  Open 24 hours at a low low price of $0.00!" />
+<meta name=description content="jpco's HTTP-powered WorldWideWeb site!  Open 24 hours at a low low price of $0.00!">
 
 <; build-nav / >
 
@@ -74,3 +74,4 @@ cXwo+X3GJtz7HEUfjt7U1EknTWU1KqEdwDgox24QkPx/n3YdReXU4oIAHESZHTrB
 -----END PGP PUBLIC KEY BLOCK-----
 </pre>
 </figure>
+</main>

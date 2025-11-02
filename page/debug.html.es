@@ -1,7 +1,7 @@
 <; cat tmpl/header.html >
 
 <title>jpco.io | debug</title>
-<meta name=description content="server debug page" />
+<meta name=description content="server debug page">
 
 <; build-nav /debug.html >
 
@@ -34,3 +34,4 @@
 <; vars >
 </pre>
 </figure>
+</main>

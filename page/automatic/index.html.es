@@ -1,7 +1,7 @@
 <; cat tmpl/header.html >
 
 <title>jpco.io | Automatic</title>
-<meta name=description content=experiment />
+<meta name=description content=experiment>
 
 <canvas width=800 height=500 id=automatic></canvas>
 <canvas width=800 height=500 id=automatic-debug></canvas>

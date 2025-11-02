@@ -12,8 +12,8 @@ kbd {
 }
 </style>
 
-<title>jpco.io | Es: A shell with higher-order functions</title></head>
-<meta name=description content="Es: A shell with higher-order functions.  Written by Paul Haahr and Byron Rakitzis for Usenet 1993." />
+<title>jpco.io | Es: A shell with higher-order functions</title>
+<meta name=description content="Es: A shell with higher-order functions.  Written by Paul Haahr and Byron Rakitzis for Usenet 1993.">
 
 <; build-nav /es/paper.html >
 
@@ -1489,3 +1489,4 @@ to rule his home life. Byron can be reached at
 or at
 <a href="http://www.netapp.com/">Network Appliance Corporation</a>,
 2901 Tasman Drive, Suite 208, Santa Clara, CA 95054.
+</main>

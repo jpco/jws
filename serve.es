@@ -31,30 +31,6 @@ if {~ $NCAT_SUBSHELL_MODE ()} {
 
 
 #
-# This is where we start the per-request stuff!
-#
-# Parse the request.  Populate $method, $reqpath, $version, and variables
-# for any request headers.
-#
-
-(method reqpath version) = <={%split ' ' <={~~ <=%read *\r}}
-let (q = <={~~ $reqpath *'?'*})
-if {!~ $q ()} {
-	(reqpath query) = $q
-	query = <={%split '&' $query}
-}
-
-# TODO: it would be nice if we made all the header names lowercase
-let (header = ())
-while {!~ <={header = <=%read} \r} {
-	let ((n v) = <={~~ $header *': '*\r})
-	if {!~ $#n 0} {
-		head-$n = $v
-	}
-}
-
-
-#
 # Page-serving functions.
 #
 
@@ -71,6 +47,7 @@ fn accepts-gzip {
 # Let's just support the codes we actually need.
 let (
 	code-200 = 'OK'
+	code-301 = 'Moved Permanently'
 	code-302 = 'Found'
 	code-404 = 'Not Found'
 	code-418 = 'I''m a teapot'
@@ -82,6 +59,9 @@ fn respond code type flags {
 	}
 	echo >[1=2] $method $reqpath '->' $version $code $(code-$code)
 	echo $version $code $(code-$code)
+	if {~ $code 3??} {
+		echo Location: $destination
+	}
 	echo Content-Type: $type
 	# Only cache resources in "prod" mode in a Docker container
 	if {~ $flags cache && $IN_DOCKER} {
@@ -144,11 +124,6 @@ fn serve-page file flags {
 	}
 }
 
-
-#
-# Page-building functions, for use in the built pages themselves.
-#
-
 # Print the top nav bar on a page based on the path passed to it.
 fn build-nav path {
 	echo -n '<nav><pre><code>http://<a href=/>jpco.io</a>'
@@ -162,16 +137,45 @@ fn build-nav path {
 
 
 #
+# This is where the logic starts!
+#
+# Parse the request.  Populate $method, $reqpath, $version, and variables
+# for any request headers.
+#
+
+(method reqpath version) = <={%split ' ' <={~~ <=%read *\r}}
+let (q = <={~~ $reqpath *'?'*})
+if {!~ $q ()} {
+	(reqpath query) = $q
+	query = <={%split '&' $query}
+}
+
+# TODO: it would be nice if we made all the header names lowercase
+let (header = ())
+while {!~ <={header = <=%read} \r} {
+	let ((n v) = <={~~ $header *': '*\r})
+	if {!~ $#n 0} {
+		head-$n = $v
+	}
+}
+
+
+#
 # Core routing/service logic.
 #
 
 catch @ exception {
 	# FIXME: this is messy, especially when an exception is generated mid-response
-	respond 500 text/html
-	echo >[1=2] 'Internal server error:' $exception
+	echo >[1=2] 'Exception while serving:' $exception
 	build-page < page/500.html.es $exception
 } {
 	if (
+		{~ $head-host www.jpco.io || ~ $head-Host www.jpco.io} {
+			destination = https://jpco.io$reqpath
+			respond 301 text/plain
+			echo Redirecting to $destination ...
+		}
+
 		# draft built pages; only serve these locally
 		# before "real" pages so we can draft changes too
 		{!$IN_DOCKER && access -f draft/$reqpath^.es} {

@@ -1,6 +1,6 @@
 <; cat tmpl/header.html >
 
-<link rel=preload href=/style/sitelenselikiwenjuniko.woff as=font type=font/woff crossorigin />
+<link rel=preload href=/style/sitelenselikiwenjuniko.woff as=font type=font/woff crossorigin>
 <style>
 .sitelenpona {
 	font-family: "sitelenSeliKiwen";
@@ -17,7 +17,7 @@
 </style>
 
 <title>jpco.io | toki li pona</title>
-<meta name=description content="toki pona lon lipu linluwi jpco.io." />
+<meta name=description content="toki pona lon lipu linluwi jpco.io.">
 
 <; build-nav /toki >
 
@@ -62,3 +62,4 @@
 󱤘󱤡󱤴󱥠󱤉󱥁󱤬󱥫󱤖
 <rp> &mdash; <rt>ken la mi sitelen e ni lon tenpo kama
 </ruby>
+</main>
