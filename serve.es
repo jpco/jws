@@ -34,21 +34,11 @@ if {~ $NCAT_SUBSHELL_MODE ()} {
 # Page-serving functions.
 #
 
-# If gzip can be served for this response.  Requires static enablement here, the
-# right Accept-Encoding, and NOT 'gzip=false' in the request query.
-let (gzip = false)
-fn accepts-gzip {
-	$gzip \
-	 && {~ $head-accept-encoding *gzip* || ~ $head-Accept-Encoding *gzip*}
-	 && {!~ $query 'gzip=false'}
-}
-
 # Prints basic http response headers to stdout.
 # Let's just support the codes we actually need.
 let (
 	code-200 = 'OK'
 	code-301 = 'Moved Permanently'
-	code-302 = 'Found'
 	code-404 = 'Not Found'
 	code-418 = 'I''m a teapot'
 	code-500 = 'Internal Server Error'
@@ -67,9 +57,6 @@ fn respond code type flags {
 	if {~ $flags cache && $IN_DOCKER} {
 		echo Cache-Control: public, max-age=86400
 	}
-	if {~ $flags gzip && accepts-gzip} {
-		echo Content-Encoding: gzip
-	}
 	echo
 }
 
@@ -86,11 +73,7 @@ fn serve file flags {
 		)
 		respond 200 $mime-type $flags
 	}
-	if {~ $flags gzip && accepts-gzip} {
-		gzip - < $file
-	} {
-		cat $file
-	}
+	cat $file
 }
 
 # Build an html page.
@@ -117,11 +100,7 @@ fn build-page args {
 # Serve a "built" html page.
 fn serve-page file flags {
 	respond 200 text/html $flags
-	if {~ $flags gzip && accepts-gzip} {
-		build-page < $file | gzip -
-	} {
-		build-page < $file
-	}
+	build-page < $file
 }
 
 # Print the top nav bar on a page based on the path passed to it.
@@ -170,6 +149,7 @@ catch @ exception {
 	build-page < page/500.html.es $exception
 } {
 	if (
+		# redirect www.jpco.io to jpco.io
 		{~ $head-host www.jpco.io || ~ $head-Host www.jpco.io} {
 			destination = https://jpco.io$reqpath
 			respond 301 text/plain
