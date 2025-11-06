@@ -94,6 +94,13 @@ dt {
 	margin-top: 15px;
 }
 
+/* for pages which are basically one big <pre> element */
+pre#main-block {
+	margin: auto;
+	width: fit-content;
+	white-space: pre-wrap;
+}
+
 /* dark mode colors */
 @media (prefers-color-scheme: dark) {
 	body {

@@ -9,6 +9,6 @@
 <p>
 This is the script that served this request, written in <a href=/es><i>es</i></a>.
 
-<pre style="margin: auto; width: fit-content; white-space: pre-wrap;">
+<pre id=main-block>
 <; sed -e 's/&/\&amp;/g' -e 's/</\&lt;/g' < serve.es >
 </main>
