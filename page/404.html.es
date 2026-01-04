@@ -6,8 +6,8 @@
 <; build-nav $* >
 
 <main>
+<h1>Not found</h2>
 <p>
-Path
+Nothing was found at the path:
 <; echo $* >
-not found.
 </main>

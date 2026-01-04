@@ -1,7 +1,7 @@
 <; cat tmpl/header.html >
 
 <title>jpco.io | Exceptions in the extensible shell</title>
-<meta name=description content="This page explores the use of the exception mechanism in the extensible shell es" />
+<meta name=description content="This page explores the use of the exception mechanism in the extensible shell es">
 
 <; build-nav /es/exceptions.html >
 

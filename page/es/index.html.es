@@ -17,6 +17,8 @@ The best (if slightly out-of-date) introductions to the shell are <a href=/es/pa
 
 <p>
 The current version of <i>es</i> is hosted on <a href="https://github.com/wryun/es-shell">the GitHub repository</a>.
+It is written in ANSI C, with some <a href=/es/runtime-quirks.html>somewhat unique quirky aspects</a> to its codebase.
+It should be portable to any OS which implements the POSIX.1-2001 standard.
 
 <h2>What is <i>es</i>?</h2>
 
@@ -193,7 +195,7 @@ So what would best be done with <i>es</i> now?
 There are a few major themes where I would like to see improvement, and would be willing to dedicate effort to make that happen.
 
 <p>
-First of all, I would love to <strong>get more users of the shell</strong>.
+First of all, I would love to get more users of the shell.
 As more people use <i>es</i>, more creativity is applied to using and customizing it, and benefits of its flexibility compound.
 Packaging <i>es</i> for more OSes and Linux distros will help, as would more writing about the shell and more documentation online.
 
@@ -204,11 +206,11 @@ Quite a bit of existing knowledge about <i>es</i> is wrapped up inside the old m
 Tooling support would be helpful as well; syntax highlighting for popular editors, maybe even some kind of LSP integration (cf. Elvish), as well as reviving (and documenting) the <code>esdebug</code> script.
 
 <p>
-I would also like to <strong>close the gaps</strong> where <i>es</i> is unable to perform common shell behaviors today.
+I would also like to close the gaps where <i>es</i> is unable to perform common shell behaviors today.
 It's not wrong for <i>es</i> to be small and minimal by default, but a shell that's supposedly extensible should be able to support, say, job control, or customizable interactive behaviors.
 
 <p>
-I am also interested in <strong>pushing <i>es</i>' extensibility even further</strong>.
+I am also interested in pushing <i>es</i>' extensibility even further.
 While the shell is already extensible, some major chunks of the shell are hard-coded in ways that they don't have to be; for example, <a href="https://github.com/wryun/es-shell/pull/79">most of the existing main() function could be scripted within the shell</a>.
 
 <p>
@@ -217,7 +219,7 @@ This would allow the shell to perform novel and OS-specific behaviors, like inte
 Careful design around versioning could also enable a good backwards-compatibility story without hamstringing the shell's ability to change over time.
 
 <p>
-Lastly, there is a lot of opportunity to make <strong>improvements to the runtime</strong> to support all of the above, as well as to make the shell faster to run.
+Lastly, there is a lot of opportunity to make improvements to the runtime to support all of the above, as well as to make the shell faster to run.
 <i>Es</i> was never optimized in either runtime or memory to a meaningful degree, so there is significant low-hanging fruit there.
 
 <p>
@@ -229,6 +231,5 @@ In particular, drawing from the rich tradition of Scheme interpretation methods 
 <li>Effective <i>es</i>
 <li>The shell-forward desktop
 <li>Serving a website with a shell script is fun and easy
-<li>Better documentation of the internals: GC, exceptions, etc.
 </ul>
 </main>
