@@ -65,7 +65,7 @@ map @ i { cd $i; rm -f * } /tmp /var/tmp</code>
 </figure>
 
 <p>
-In this example, <code>@ i { cd $i; rm -f * }</code> is a <em>lambda expression</em>&mdash;an inline function&mdash;which takes a argument <code>i</code>, <code>cd</code>s to it, and then <code>rm -f</code>s everything in the directory.
+In this example, <code>@ i { cd $i; rm -f * }</code> is a <em>lambda expression</em>&mdash;an inline function&mdash;which takes an argument <code>i</code>, <code>cd</code>s to it, and then <code>rm -f</code>s everything in the directory.
 
 <p>
 Nearly everything in <i>es</i> is a function under the hood, and functions are just variables whose names start with <code>fn-</code>.
@@ -219,7 +219,7 @@ This would allow the shell to perform novel and OS-specific behaviors, like inte
 Careful design around versioning could also enable a good backwards-compatibility story without hamstringing the shell's ability to change over time.
 
 <p>
-Lastly, there is a lot of opportunity to make improvements to the runtime to support all of the above, as well as to make the shell faster to run.
+There is a lot of opportunity to make improvements to the runtime to support all of the above, as well as to make the shell faster to run.
 <i>Es</i> was never optimized in either runtime or memory to a meaningful degree, so there is significant low-hanging fruit there.
 
 <p>
