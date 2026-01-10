@@ -11,4 +11,5 @@ This is the script that served this request, written in <a href=/es><i>es</i></a
 
 <pre id=main-block>
 <; sed -e 's/&/\&amp;/g' -e 's/</\&lt;/g' < serve.es >
+</pre>
 </main>
