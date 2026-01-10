@@ -223,6 +223,7 @@ The following example includes the <code>notcat invoke</code> command, which rel
 
 <p>
 The following describes notcat as it can be used in practice.
+(If you want to test notifications on your system, <a href=/notcat/web-test.html>this page exercises some core notification features</a> from the browser.)
 This setup displays notifications within <a href="https://github.com/Alexays/Waybar">waybar</a>.
 The waybar config which runs the notcat server is this:
 
