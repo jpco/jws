@@ -13,34 +13,34 @@
 <i>Es</i> is the extensible shell.
 
 <p>
-The best (if slightly out-of-date) introductions to the shell are <a href=/es/paper.html>the original <i>es</i> paper</a> presented at Usenix 1993 or the <a href=/es/man.html><i>es</i> man page</a>, but I'll provide a shorter, incomplete introduction to the shell here, the state of the shell after three decades, and some ideas on what interesting work there is left to be done.
+The best (if slightly out-of-date) introductions to the shell are <a href=/es/paper.html>the original <i>es</i> paper</a> presented at Usenix 1993 or the <a href=/es/man.html><i>es</i> man page</a>, but I'll provide a shorter, incomplete introduction to the shell here, the state of the shell after three decades of existence, and some ideas on what interesting work there still is to be done.
 
 <p>
 The current version of <i>es</i> is hosted on <a href="https://github.com/wryun/es-shell">the GitHub repository</a>.
-It is written in ANSI C, with some <a href=/es/runtime-quirks.html>somewhat unique quirky aspects</a> to its codebase.
-It should be portable to any OS which implements the POSIX.1-2001 standard.
+It is written in ANSI C, though a <a href=/es/runtime-quirks.html>somewhat quirky form</a> due to some extensive preprocessor macro use implementing some of its features.
+It should be portable to any OS which implements a reasonable portion of the POSIX.1-2001 standard.
 
 <h2>What is <i>es</i>?</h2>
 
 <p>
 <i>Es</i> is a Unix shell first developed in the early 1990s by Byron Rakitzis and Paul Haahr, based directly on <a href="https://github.com/rakitzis/rc">Rakitzis' earlier port of the shell <i>rc</i></a> from Plan 9 to Unix.
-As the paper puts it,
+As the Usenix paper puts it,
 
 <blockquote>
 [w]hile rc was an experiment in adding modern syntax to Bourne shell semantics, es is an exploration of new semantics combined with rc-influenced syntax: es has lexically scoped variables, first-class functions, and an exception mechanism, which are concepts borrowed from modern programming languages such as Scheme and ML.
 </blockquote>
 
 <p>
-Simple <i>es</i> commands closely resemble other shells, with pipes, redirections, <code>$variables</code>, wildcards, backgrounding, and more. Redirection syntax particularly resembles <i>rc</i>.
+Simple <i>es</i> commands closely resemble other shells, with the typical syntax for things such as pipes, redirections, <code>$variables</code>, wildcards, and backgrounding. The redirection syntax particularly resembles <i>rc</i>.
 
 <figure>
 <pre>
-<code>make -npq &gt;[2] /dev/null | grep '.*:'</code>
+<code>make -p &gt;[2] /dev/null | grep -o '^[^#].*:'</code>
 </pre>
 </figure>
 
 <p>
-Also like <i>rc</i>, <i>es</i> has list-typed variables, no implicit rescanning, and no double quotes.
+Also like <i>rc</i>, <i>es</i> has list-typed variables, no automatic rescanning, and no double quotes.
 These together make variables significantly more straightforward to use than in POSIX-compatible shells.
 
 <figure>
@@ -52,7 +52,8 @@ These together make variables significantly more straightforward to use than in 
 </figure>
 
 <p>
-From Scheme, <i>es</i> draws features like first-class functions and lexical scope.
+Where <i>es</i> differs from <i>rc</i> is in its influence from functional languages.
+In particular, from Scheme, <i>es</i> draws features like higher-order functions and lexical scope.
 
 <figure>
 <pre>
@@ -60,33 +61,43 @@ From Scheme, <i>es</i> draws features like first-class functions and lexical sco
   for (i = $args)
     $cmd $i
 }
-map @ i { cd $i; rm -f * } /tmp /var/tmp</code>
+map @ i {cd $i; rm -f *} /tmp /var/tmp</code>
 </pre>
 </figure>
 
 <p>
-In this example, <code>@ i { cd $i; rm -f * }</code> is a <em>lambda expression</em>&mdash;an inline function&mdash;which takes an argument <code>i</code>, <code>cd</code>s to it, and then <code>rm -f</code>s everything in the directory.
-
-<p>
-Nearly everything in <i>es</i> is a function under the hood, and functions are just variables whose names start with <code>fn-</code>.
-Like other variables, functions can be redefined.
+In this example, <code>@ i {cd $i; rm -f *}</code> is a <em>lambda expression</em>&mdash;an inline function&mdash;which takes an argument <code>i</code>, <code>cd</code>s to the directory named in <code>$i</code>, and then <code>rm -f</code>s everything in the directory.
+Blocks of code (&ldquo;code fragments&rdquo;) can also be passed around in variables, represented as <code>{commands in curly braces}</code>.
+These blocks of code function like lambda expressions, except that they bind no arguments.
 
 <figure>
 <pre>
-<samp>; </samp><kbd>echo {command &gt; file}</kbd>
-<samp>{%create &lt;={%one file} {command}}
-; </samp><kbd>echo $fn-%create</kbd>
-<samp>%openfile w
-; </samp><kbd># this is not very useful</kbd>
-<samp>; </samp><kbd>fn-%create = echo</kbd>
-<samp>; </samp><kbd>command &gt; file</kbd>
-<samp>1 file {command}</samp>
+<samp>; </samp><kbd>var = {echo first} {echo second}</kbd>
+<samp>; </samp><kbd>$var(1)  # invoke the first element of $var</kbd>
+<samp>first
+; </samp><kbd>$var(2)  # invoke the second element of $var</kbd>
+<samp>second</samp>
+</pre>
+</figure>
+
+<p>
+
+
+<p>
+Nearly everything in <i>es</i> is a function under the hood, and functions are just variables whose names start with the prefix <code>fn-</code>.
+
+<figure>
+<pre>
+<samp>; </samp><kbd>echo {ls | wc -l}</kbd>
+<samp>{%pipe {ls} 1 0 {wc -l}}
+; </samp><kbd>echo $fn-%pipe</kbd>
+<samp>$&amp;pipe
 </pre>
 </figure>
 
 <p>
 This lets users redefine large swaths of the shell's behavior.
-For example, the <code>%write-history</code> function is called by the shell to write a command to history after reading it.
+For example, the <code>%write-history</code> function is called by the shell to write a command to the shell history after reading it.
 To make the shell avoid writing duplicate commands to history, one can write:
 
 <figure>
@@ -110,7 +121,7 @@ We can go through this example line-by-line.
 <code>let (write = $fn-%write-history; last-cmd = ())</code>
 
 <p>
-This creates a lexical binding of the variable <code>write</code> to the current definition of <code>%write-history</code>, and of the variable <code>last-cmd</code> to <code>()</code> (the empty list).
+This creates a (lexical) binding of the current definition of <code>%write-history</code> to the variable <code>write</code>, and of <code>()</code>&mdash;the empty list&mdash;to the variable <code>last-cmd</code>.
 
 <li>
 <p>
@@ -122,7 +133,8 @@ Thanks to the <code>write</code> variable bound with the <code>let</code> in the
 This is a very common idiom in <i>es</i>, used for &ldquo;spoofing&rdquo; functions, or creating new definitions to suit preferences or create situational benefit.
 
 <p>
-That <code>let</code> also bound the <code>last-cmd</code> variable; it's only bound to the empty list initially, but because that binding is created outside the body of the function, its value will persist across calls.
+Note also that when the <code>last-cmd</code> variable was bound, the binding was created outside of this function.
+That means the binding, and therefore the definition of <code>last-cmd</code>, exists across function calls.
 
 <li>
 <p>
@@ -203,10 +215,10 @@ Packaging <i>es</i> for more OSes and Linux distros will help, as would more wri
 Quite a bit of existing knowledge about <i>es</i> is wrapped up inside the old mailing list or the source code, and users shouldn't be reasonably expected to dig around git commit history or years worth of old mail archives to understand a piece of software enough to use it effectively.
 
 <p>
-Tooling support would be helpful as well; syntax highlighting for popular editors, maybe even some kind of LSP integration (cf. Elvish), as well as reviving (and documenting) the <code>esdebug</code> script.
+Tooling support would be helpful as well; syntax highlighting for popular editors, maybe even some kind of LSP integration (cf. Elvish), as well as fixing up and documenting the <code>esdebug</code> script.
 
 <p>
-I would also like to close the gaps where <i>es</i> is unable to perform common shell behaviors today.
+I would also like to close the gaps where <i>es</i> is unable to perform table-stakes shell behaviors today.
 It's not wrong for <i>es</i> to be small and minimal by default, but a shell that's supposedly extensible should be able to support, say, job control, or customizable interactive behaviors.
 
 <p>
@@ -225,11 +237,13 @@ There is a lot of opportunity to make improvements to the runtime to support all
 <p>
 In particular, drawing from the rich tradition of Scheme interpretation methods could enable powerful things like tail-call optimization, better exception support without <code>setjmp(3)</code>/<code>longjmp(3)</code> (enabling better cross-language interaction), more efficient memory use, improved speed, and even features like continuations or lightweight threading.
 
-<h2>To write</h2>
+<h2>Pages to write</h2>
+
 <ul>
 <li>Job control and the extensible shell
+<li>Input in the extensible shell
 <li>Effective <i>es</i>
 <li>The shell-forward desktop
-<li>Serving a website with a shell script is fun and easy
 </ul>
+
 </main>
