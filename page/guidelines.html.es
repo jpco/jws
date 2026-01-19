@@ -59,7 +59,7 @@ Well, some universally good things are compactness and accessibility.
 
 <p>
 By compactness I mean the amount of data your browser downloads shouldn't be much bigger than it has to.
-Plenty of people have written about this before; Maciej Cegłowski did <a href="https://idlewords.com/talks/website_obesity.htm">the canonical talk on the &ldquo;website obesity crisis&rdquo;</a> (sadly, apparently, half-broken at this time).
+Plenty of people have written about this before; Maciej Cegłowski did <a href="https://idlewords.com/talks/website_obesity.htm">the canonical talk on the &ldquo;website obesity crisis&rdquo;</a>, which itself refers to half a dozen pages bemoaning, and at the same time exhibiting, page bloat.
 Dan Luu has done some great writing on this as well, focusing on the impacts of bloated sites on both <a href="http://danluu.com/web-bloat/">slow and intermittent internet</a> and <a href="http://danluu.com/slow-device/">slow devices</a>.
 Incidentally, <a href="http://danluu.com">danluu.com</a> itself is a very good, if extreme, example of a compact website.
 
@@ -89,7 +89,7 @@ Some folks want that nice dyslexia-friendly font with the fat bottom.
 Some people want a classy, newspaper-like serif.
 Some people want Comic Sans.
 No joke, my manager uses Comic Sans as his default browser font.
-And more power to him!
+More power to him.
 
 <p>
 Moving on to other ways a person would access a website.
@@ -192,9 +192,8 @@ Okay, so we have an idea of what we want a website to be like.
 How do we actually make that?
 
 <p>
-Well, in terms of the actual site serving, that's coming from a shell script (specifically a script written in <a href=/es>es</a>.
-That has some benefits, but it's a story for a different page.
-The site is currently dead simple, but for pages that are a bit more dynamic, something like <a href="https://htmx.org/">htmx</a> seems fairly ideal.
+Well, <a href=/es/web-server.html>the web server is a shell script</a> (specifically, an <a href=/es>es</a> script), with a very simple self-written sort of templating built in.
+The site is currently dead simple and static, but for pages that are a bit more dynamic, a design built around something like <a href="https://htmx.org/">htmx</a> seems fairly ideal.
 
 <p>
 As far as the stuff that runs in the browser goes:
@@ -204,9 +203,9 @@ The overall HTML structure is inspired by <a href="http://lofi.limo/blog/write-h
 Doing markup in this way is nice for the server, too, since it can just smash files together pretty blindly without being markup-aware.
 
 <p>
-This <a href="https://www.patrickweaver.net/blog/a-blog-post-with-every-html-element/">page from Patrick Weaver</a> is a nice high-level view on more or less all the HTML elements.
+This <a href="https://www.patrickweaver.net/blog/a-blog-post-with-every-html-element/">page from Patrick Weaver</a> is a fun high-level view on more or less all the HTML elements.
 For screen readers and mouse-based navigation, using the fancy semantic elements is a Good Thing.
-Also, try to make the text context of links contain meaningful text content, instead of &ldquo;click here&rdquo; or whatever.
+Also, for the sake some of these clients, try to make the text content of links meaningful text referring to the destination, instead of something weak like &ldquo;click here&rdquo;.
 
 <p>
 The MDN is a great source for documentation on <a href="https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/CSS_layout/Responsive_Design">responsive design</a>, and as far as strategies go, mobile-first is the right one.
@@ -235,7 +234,7 @@ But, since this site has some content that <a href=/toki>isn't in English</a>, d
 Note this also improves text rendering: hyphenation is based on language, so declaring the language being used helps avoid weirdness.
 
 <p>
-Declaring the encoding with <code>&lt;meta charset=UTF-8 /&gt;</code> is good too.
+Declaring the encoding with <code>&lt;meta charset=UTF-8&gt;</code> is good too.
 UTF-8 is the only encoding to use on the web these days.
 
 <p>

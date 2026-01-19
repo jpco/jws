@@ -188,62 +188,74 @@ This degree of flexibility is remarkable: this kind of pre-parsing was never imp
 The bulk of development went through the release of version 0.84; 0.88 was released after the authors had taken a break, and then after that release both of them got too busy with life and jobs to continue work on the shell.
 
 <p>
-After that, maintainership passed through a couple hands, leading eventually to the current maintainer James Haggerty, but development was largely focused on keeping <i>es</i> functional and available over the decades as OSes, build systems, and code-hosting practices have evolved.
+After that, maintainership passed through a couple hands, leading eventually to the current maintainer James Haggerty, but development was largely focused on keeping <i>es</i> functional over the decades as OSes, build systems, and code-hosting practices have evolved.
 
 <p>
-This has left <i>es</i> as an incomplete experiment: Paul and Byron didn't have time to achieve a good amount of what they planned on, and even if they had, their near- to medium-term plans certainly didn't sum up to everything the shell could be made to do.
+This left <i>es</i> as an incomplete experiment: Paul and Byron didn't have time to achieve a good amount of what they planned on, and even if they had, their near- to medium-term plans certainly didn't sum up to everything the shell could be made to do.
 
 <p>
-However: at its core <i>es</i> has a simple and powerful design which removes a huge amount of the friction of shell scripting.
-Its ethos of providing fewer and more powerful language and runtime mechanisms makes it relatively easy to know top to bottom, and surprisingly easy to modify its internals.
-It is, genuinely, an extremely elegant piece of software that I am very glad to use every day.
+Recently, however, there has been more activity.
+A few of us have worked over the last year or two largely to shore up <i>es</i>' portability and reliability, including adding a test suite and supporting stricter compiler flags as well as more static analysis tools.
 
 <h2><i>Es</i> futures</h2>
 
 <p>
-So what would best be done with <i>es</i> now?
+So what's next for <i>es</i>?
+Well, there are a couple active projects I am pursuing.
 
 <p>
-There are a few major themes where I would like to see improvement, and would be willing to dedicate effort to make that happen.
+Near-term, I would like to improve how <i>es</i> reads commands from its input.
+<i>Es</i> currently can be built with support for <a href="https://tiswww.case.edu/php/chet/readline/rltop.html">readline</a>, but that support is somewhat limited&mdash;things like programmable tab completion simply can't be achieved.
+Some work in how memory is managed should enable things like programmable tab completion or even swapping out readline for other libraries entirely.
+Given there are multiple <i>es</i> forks featuring custom, hand-rolled line editing capabilities, making this easier to swap out seems ideal.
 
 <p>
-First of all, I would love to get more users of the shell.
-As more people use <i>es</i>, more creativity is applied to using and customizing it, and benefits of its flexibility compound.
-Packaging <i>es</i> for more OSes and Linux distros will help, as would more writing about the shell and more documentation online.
+I would also like to add some form of job control to the shell.
+There is a long history of fighting job control in both <i>es</i> and <i>rc</i>, but I believe that it can be done in a way where, with a little more flexibility added to existing behaviors, users can handle process groups effectively and build a job-control system of their own.
 
 <p>
-Quite a bit of existing knowledge about <i>es</i> is wrapped up inside the old mailing list or the source code, and users shouldn't be reasonably expected to dig around git commit history or years worth of old mail archives to understand a piece of software enough to use it effectively.
+Both of these projects are at least in part in the service of a somewhat larger goal, which is to grow the <i>es</i> community.
+<i>Es</i>, I think, has real design strengths which have appealed to people (like myself) even during periods when development on the shell is largely inert.
 
 <p>
-Tooling support would be helpful as well; syntax highlighting for popular editors, maybe even some kind of LSP integration (cf. Elvish), as well as fixing up and documenting the <code>esdebug</code> script.
+Allowing people to interact with their shell in ways that are familiar to them (that is, job control and fancy programmable input), and doing so in ways that are consistent with or even extend the shell's existing design, serves to both make the shell more practically useful and demonstrate its design works.
 
 <p>
-I would also like to close the gaps where <i>es</i> is unable to perform table-stakes shell behaviors today.
-It's not wrong for <i>es</i> to be small and minimal by default, but a shell that's supposedly extensible should be able to support, say, job control, or customizable interactive behaviors.
+Ideally though, I don't want to add too much to upstream <i>es</i>.
+The current feature set is pretty good.
+Whatever is added should function as a sort of meta feature, enabling not only some particular use but a whole new category of extensibility.
 
 <p>
-I am also interested in pushing <i>es</i>' extensibility even further.
-While the shell is already extensible, some major chunks of the shell are hard-coded in ways that they don't have to be; for example, <a href="https://github.com/wryun/es-shell/pull/79">most of the existing main() function could be scripted within the shell</a>.
+This is why, for example, I'm not just interested in adding programmable readline completion, but making it so that input to the shell is <em>completely</em> programmable.
+This extends the existing <i>es</i> tendency of making internal shell behaviors external, complementing <code>%interactive-loop</code> and <code>%batch-loop</code>, but also makes it more feasible to do things like call readline in other contexts, or write other line-editing libraries which can read input in other ways.
 
 <p>
-The primitives which back most <i>es</i> commands can also be made extensible through dynamic library loading, which has been well standardized and is supported across Unices.
-This would allow the shell to perform novel and OS-specific behaviors, like interacting with networks, performing <a href="https://www.haiku-os.org/blog/humdinger/2017-11-05_scripting_the_gui_with_hey/">GUI scripting</a>, or <a href="https://wiki.freebsd.org/Capsicum">sandboxing chunks of scripts</a>.
-Careful design around versioning could also enable a good backwards-compatibility story without hamstringing the shell's ability to change over time.
+In addition to extensibility, I would like to try to follow through a bit on <i>es</i>' programmability.
+A couple examples here include:
+<ul>
+<li>replacing the current <code>-e</code> behavior, which functions similarly to other shells, exiting if any command returns falsey, with a behavior where any false results are instead thrown as exceptions.
+<li>enabling handling files in a style more like &ldquo;real&rdquo; programming languages do, in addition to the current shell-style file handling.
+</ul>
 
 <p>
-There is a lot of opportunity to make improvements to the runtime to support all of the above, as well as to make the shell faster to run.
-<i>Es</i> was never optimized in either runtime or memory to a meaningful degree, so there is significant low-hanging fruit there.
+Lastly, I would like to write more things to document aspects of <i>es</i>, making it easier to get a strong grasp of the shell without having to dive into the code itself or trawl the old mailing list just to have an idea of how certain things work or why they were implemented the way they were.
 
 <p>
-In particular, drawing from the rich tradition of Scheme interpretation methods could enable powerful things like tail-call optimization, better exception support without <code>setjmp(3)</code>/<code>longjmp(3)</code> (enabling better cross-language interaction), more efficient memory use, improved speed, and even features like continuations or lightweight threading.
-
-<h2>Pages to write</h2>
-
+Some pages I ought to get around to writing include:
 <ul>
 <li>Job control and the extensible shell
-<li>Input in the extensible shell
-<li>Effective <i>es</i>
-<li>The shell-forward desktop
+<li>Extensible shell input
+<li>Effective <i>es</i> scripting
+<li>A shell-forward desktop
 </ul>
+
+<p>
+All in all, I'd like to have a good enough foundation for <i>es</i>, along with documentation and tooling support, that people can really get to hacking on it.
+Over the years, while the upstream shell has been quiet, multiple forks have spun up, proving that motivation to do something with <i>es</i> has never gone away.
+
+<p>
+And, to me, it makes a ton of sense why.  At its core, es has a simple and powerful design which removes a huge amount of the friction of shell scripting, which is otherwise one of the most powerful ways to use a computer.
+<i>Es</i>' ethos of providing a few powerful and orthogonal language and runtime mechanisms makes it relatively easy to know top to bottom, and surprisingly easy to modify its internals.
+It is, genuinely, an extremely elegant piece of software that I am very glad to use every day.
 
 </main>
