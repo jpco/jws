@@ -37,7 +37,10 @@ blockquote {
 	margin-left: 1em;
 	padding-left: 1em;
 	border-left: 2px solid gray;
-	font-style: oblique;
+	font-style: italic;
+}
+blockquote em {
+	font-style: initial;
 }
 hr {
 	width: 50%;

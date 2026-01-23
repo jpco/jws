@@ -219,7 +219,7 @@ A particular feature of notcat, on both the client and server side, is support f
 This extension to the typical Desktop Notifications API allows action invocation to happen through the same API as other notification-related methods.
 The following example includes the <code>notcat invoke</code> command, which relies on this capability.
 
-<h2>Example usage</h2>
+<h2 id=usage>Example usage</h2>
 
 <p>
 The following describes notcat as it can be used in practice.

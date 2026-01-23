@@ -215,7 +215,8 @@ There is a long history of fighting job control in both <i>es</i> and <i>rc</i>,
 
 <p>
 Both of these projects are at least in part in the service of a somewhat larger goal, which is to grow the <i>es</i> community.
-<i>Es</i>, I think, has real design strengths which have appealed to people (like myself) even during periods when development on the shell is largely inert.
+<i>Es</i>, I think, has real design strengths which have appealed to people (like myself) even during periods when development on the shell was stalled.
+The several individual forks of <i>es</i> demonstrate this&mdash;but, in my opinion, those forks are also unfortunate, as they don't contribute to the <i>es</i> project as a whole.
 
 <p>
 Allowing people to interact with their shell in ways that are familiar to them (that is, job control and fancy programmable input), and doing so in ways that are consistent with or even extend the shell's existing design, serves to both make the shell more practically useful and demonstrate its design works.
@@ -244,9 +245,11 @@ Lastly, I would like to write more things to document aspects of <i>es</i>, maki
 Some pages I ought to get around to writing include:
 <ul>
 <li>Job control and the extensible shell
-<li>Extensible shell input
 <li>Effective <i>es</i> scripting
-<li>A shell-forward desktop
+<li>The life of an <i>es</i> command
+<li>The <i>es</i> runtime
+<li>Extensible shell input
+<li>Exceptions in <i>es</i>
 </ul>
 
 <p>
@@ -256,6 +259,6 @@ Over the years, while the upstream shell has been quiet, multiple forks have spu
 <p>
 And, to me, it makes a ton of sense why.  At its core, es has a simple and powerful design which removes a huge amount of the friction of shell scripting, which is otherwise one of the most powerful ways to use a computer.
 <i>Es</i>' ethos of providing a few powerful and orthogonal language and runtime mechanisms makes it relatively easy to know top to bottom, and surprisingly easy to modify its internals.
-It is, genuinely, an extremely elegant piece of software that I am very glad to use every day.
+It is, genuinely, an extremely elegant piece of software that <a href=/es/desktop.html>I am very glad to use every day</a>.
 
 </main>
