@@ -5,8 +5,9 @@ fn deploy image {
 	gcloud run deploy --platform managed --image=$image
 }
 
-if {!~ `` \n {git status --porcelain} ''} {
+if {!~ `` \n {git status --porcelain} ()} {
 	echo >[1=2] commit and push before you deploy
+	git status
 	exit 1
 }
 
