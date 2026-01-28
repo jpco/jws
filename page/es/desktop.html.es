@@ -34,15 +34,15 @@ So when <code>login</code> starts a login shell, after <code>.esrc</code> does t
 <pre>
 <code>let (x-wayland = true)
 if {!pgrep river &gt; /dev/null} {
-	fortune | cowsay -f `{echo &lt;={%flatten \n /usr/share/cowsay/cows/*} | shuf -n 1}
-	mv -f /var/log/river/session /var/log/river/session.old
-	exec {river &lt;={
-		if {!$x-wayland} {
-			result -no-xwayland
-		} {
-			result ()
-		}
-	}} &gt; /var/log/river/session &gt;[2=1]
+  fortune | cowsay -f `{echo &lt;={%flatten \n /usr/share/cowsay/cows/*} | shuf -n 1}
+  mv -f /var/log/river/session /var/log/river/session.old
+  exec {river &lt;={
+    if {!$x-wayland} {
+      result -no-xwayland
+    } {
+      result ()
+    }
+  }} &gt; /var/log/river/session &gt;[2=1]
 }</code>
 </pre>
 </figure>
@@ -63,9 +63,7 @@ The following is an excerpted version of my river config, skipping the not-very-
 
 <figure>
 <pre>
-<code>#!/usr/local/bin/es -x
-
-# start the terminal server.  This prevents the junk below from impacting the environment
+<code># start the terminal server.  This prevents the junk below from impacting the environment
 foot -Ss &amp;
 
 # core utilities
@@ -73,22 +71,22 @@ riverctl map normal Super Return spawn footclient
 riverctl map normal Super Space spawn 'rofi -show combi'
 
 for ((media-key bin args notif) = (
-	XF86AudioRaiseVolume	pamixer		'--unmute --increase 5'	'"Set volume" "$(pamixer --get-volume-human)"'
-	XF86AudioLowerVolume	pamixer		'--decrease 5'		'"Set volume" "$(pamixer --get-volume-human)"'
-	XF86AudioMute		pamixer		'--mute --set-volume 0'	'"Audio muted"'
-	XF86MonBrightnessDown	brightnessctl	'-e set 5%-'		'"Set brightness" "$(brightnessctl get)"'
-	XF86MonBrightnessUp	brightnessctl	'-e set 5%+'		'"Set brightness" "$(brightnessctl get)"'
+  XF86AudioRaiseVolume	pamixer		'--unmute --increase 5'	'"Set volume" "$(pamixer --get-volume-human)"'
+  XF86AudioLowerVolume	pamixer		'--decrease 5'		'"Set volume" "$(pamixer --get-volume-human)"'
+  XF86AudioMute		pamixer		'--mute --set-volume 0'	'"Audio muted"'
+  XF86MonBrightnessDown	brightnessctl	'-e set 5%-'		'"Set brightness" "$(brightnessctl get)"'
+  XF86MonBrightnessUp	brightnessctl	'-e set 5%+'		'"Set brightness" "$(brightnessctl get)"'
 )) {
-	riverctl map normal None $media-key spawn &lt;={
-		%flatten ' ' $bin $args '&amp;&amp;' \
-		notcat send -a $bin -h canonical:^$bin -u low $notif
-	}
+  riverctl map normal None $media-key spawn &lt;={
+    %flatten ' ' $bin $args '&amp;&amp;' \
+    notcat send -a $bin -h canonical:^$bin -u low $notif
+  }
 }
 
 waybar &amp;
 
 get-online &amp;&amp; {
-	forever { sync-mail.es; sleep 60 }
+  forever { sync-mail.es; sleep 60 }
 } &amp;
 
 # layout settings
@@ -120,15 +118,15 @@ My entire waybar config looks like this:
 <figure>
 <pre>
 <code>{
-	"margin": "0 10",
-	"modules-left": ["custom/notcat"],
-	"modules-right": ["battery", "clock"],
-	"clock": { "timezone": "America/Los_Angeles" },
+  "margin": "0 10",
+  "modules-left": ["custom/notcat"],
+  "modules-right": ["battery", "clock"],
+  "clock": { "timezone": "America/Los_Angeles" },
 
-	"custom/notcat": {
-		"exec": "echo; notcat --capabilities=body-markup,body-hyperlinks --on-notify=tee-note.es --on-empty=tee-note.es '%i' '%s%(?B: - %b)'",
-		"on-click": "act-note.es"
-	}
+  "custom/notcat": {
+    "exec": "echo; notcat --capabilities=body-markup,body-hyperlinks --on-notify=tee-note.es --on-empty=tee-note.es '%i' '%s%(?B: - %b)'",
+    "on-click": "act-note.es"
+  }
 }</code>
 </pre>
 </figure>
@@ -169,36 +167,34 @@ We see the <code>rofi-pass.es</code> script here:
 
 <figure>
 <pre>
-<code>#!/usr/local/bin/es
-
-# prints gpg files in the 'base' directory, recursing down directories
+<code># prints gpg files in the 'base' directory, recursing down directories
 fn rec-ls base prefix {
-	for (ff = $base/*)
-	let (f = &lt;={~~ $ff $base/*}) {
-		if {!access $ff} {	# probably a globbing problem
-			return
-		}
-		if {access -d $ff} {
-			rec-ls $ff $^prefix/$f
-		} {
-			echo &lt;={~~ $^prefix/$f /*.gpg}
-		}
-	}
+  for (ff = $base/*)
+  let (f = &lt;={~~ $ff $base/*}) {
+    if {!access $ff} {  # probably a globbing problem
+      return
+    }
+    if {access -d $ff} {
+      rec-ls $ff $^prefix/$f
+    } {
+      echo &lt;={~~ $^prefix/$f /*.gpg}
+    }
+  }
 }
 
 fn get-pass path {
-	while {pgrep -x rofi &lt; /dev/null &lt;[2] /dev/null} {
-		sleep 0.1
-	}
+  while {pgrep -x rofi &lt; /dev/null &lt;[2] /dev/null} {
+    sleep 0.1
+  }
 
-	local (PINENTRY_USER_DATA = rofi)
-		pass -c $path
+  local (PINENTRY_USER_DATA = rofi)
+    pass -c $path
 }
 
 if {!~ $* ()} {
-	get-pass $* &gt; /dev/null &gt;[2=1] &amp;
+  get-pass $* &gt; /dev/null &gt;[2=1] &amp;
 } {
-	rec-ls ~/.password-store
+  rec-ls ~/.password-store
 }</code>
 </pre>
 </figure>
@@ -223,12 +219,10 @@ This configures gpg to use the <code>pinentry-switch.es</code> script for pinent
 
 <figure>
 <pre>
-<code>#!/usr/local/bin/es
-
-if {~ $PINENTRY_USER_DATA 'rofi'} {
-	/home/jpco/.local/bin/pinentry-rofi.es
+<code>if {~ $PINENTRY_USER_DATA 'rofi'} {
+  /home/jpco/.local/bin/pinentry-rofi.es
 } {
-	/usr/bin/pinentry-tty
+  /usr/bin/pinentry-tty
 }</code>
 </pre>
 </figure>
@@ -243,10 +237,7 @@ This script is an extremely rough-and-ready implementation against <a href="http
 
 <figure>
 <pre>
-<code>#!/usr/local/bin/es
-
-
-command- = {throw continue}
+<code>command- = {throw continue}
 command-BYE = {exit}
 
 prompt = ()
@@ -259,58 +250,58 @@ error = ()
 command-SETERROR = @ {error = $*^\n}
 
 command-GETINFO = @ info {
-	match $info (
-		flavor	{echo D rofi}
-		version	{echo D 0.1}
-		ttyinfo	{echo D - - -}
-		pid	{echo D $pid}
-	)
+  match $info (
+    flavor  {echo D rofi}
+    version  {echo D 0.1}
+    ttyinfo  {echo D - - -}
+    pid  {echo D $pid}
+  )
 }
 
 command-GETPIN = {
-	let (message = `` \n {sed (
-		-e 's|%0A|\n|g'
-		-e 's|%22||g'
-		-e 's|key:|key:\n|g'
-		-e 's|&gt;|&gt;\n|g'
-		-e 's|&lt;|\&amp;lt;|g'
-		-e 's|&gt;|\&amp;gt;|g'
-		-e 's|,created|,\ncreated|g'
-		-e 's|_ERO_|&lt;span fgcolor=''#ab4642''&gt;|g'
-		-e 's|_ERC_|&lt;/span&gt;\n|g'
-	) &lt;&lt;&lt; $^error^$^desc^\n})
-	let (password = `` \n {
-		rofi -dmenu -input /dev/null -password -lines 0 \
-			-p $^prompt -mesg &lt;={%flatten \n $message}
-	}) {
-		if {!~ $^password ''} {
-			echo D $password
-		}
-	}
+  let (message = `` \n {sed (
+    -e 's|%0A|\n|g'
+    -e 's|%22||g'
+    -e 's|key:|key:\n|g'
+    -e 's|&gt;|&gt;\n|g'
+    -e 's|&lt;|\&amp;lt;|g'
+    -e 's|&gt;|\&amp;gt;|g'
+    -e 's|,created|,\ncreated|g'
+    -e 's|_ERO_|&lt;span fgcolor=''#ab4642''&gt;|g'
+    -e 's|_ERC_|&lt;/span&gt;\n|g'
+  ) &lt;&lt;&lt; $^error^$^desc^\n})
+  let (password = `` \n {
+    rofi -dmenu -input /dev/null -password -lines 0 \
+      -p $^prompt -mesg &lt;={%flatten \n $message}
+  }) {
+    if {!~ $^password ''} {
+      echo D $password
+    }
+  }
 }
 
 echo OK get to it
 
 let ((line cmd rest) = ())
 while {!~ &lt;={line = &lt;=%read} ()} {
-	if {~ $line *^$ifs^*} {
-		(cmd rest) = &lt;={~~ $line *^$ifs^*}
-	} {
-		cmd = $line
-	}
-	catch @ e rest {
-		if {~ $e exit} {
-			echo OK bye now
-		} {~ $e continue} {
-			throw retry
-		}
-		throw $e $rest
-	} {
-		if {!~ $#(command-^$cmd) 0} {
-			$(command-^$cmd) $rest
-		}
-		echo OK
-	}
+  if {~ $line *^$ifs^*} {
+    (cmd rest) = &lt;={~~ $line *^$ifs^*}
+  } {
+    cmd = $line
+  }
+  catch @ e rest {
+    if {~ $e exit} {
+      echo OK bye now
+    } {~ $e continue} {
+      throw retry
+    }
+    throw $e $rest
+  } {
+    if {!~ $#(command-^$cmd) 0} {
+      $(command-^$cmd) $rest
+    }
+    echo OK
+  }
 }</code>
 </pre>
 </figure>

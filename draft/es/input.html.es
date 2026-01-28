@@ -37,26 +37,28 @@ When the shell is started (or a script is run with <code>.</code>) the shell cre
 <figure>
 <pre>
 <code>struct Input {
-	int (*get)(Input *self);	/* fetch a character from the input buffer */
-	int (*fill)(Input *self);	/* fill the input buffer from a source */
-	int (*rfill)(Input *self);	/* temporary pointer for `fill` during pushback */
-	void (*cleanup)(Input *self);	/* clean up after the input is exhausted */
+	int (*get)(Input *self);        /* fetch a character from the input buffer */
+	int (*fill)(Input *self);       /* fill the input buffer from a source */
+	int (*rfill)(Input *self);      /* temporary pointer for `fill` during pushback */
+	void (*cleanup)(Input *self);   /* clean up after the input is exhausted */
 	Input *prev;
-	const char *name;		/* input name -- e.g., filename */
-	unsigned char *buf, *bufend, *bufbegin, *rbuf;	/* buffer pointers */
-	size_t buflen;			/* buffer size */
-	int unget[MAXUNGET];		/* pushback buffer */
-	int ungot;			/* pushback counter */
-	int lineno;			/* line number */
-	int fd;				/* file descriptor (if relevant) */
-	int runflags;			/* roughly corresponds with es flags -inxv */
+	const char *name;               /* input name -- e.g., filename */
+	unsigned char *buf, *bufend, *bufbegin, *rbuf;  /* buffer pointers */
+	size_t buflen;                  /* buffer size */
+	int unget[MAXUNGET];            /* pushback buffer */
+	int ungot;                      /* pushback counter */
+	int lineno;                     /* line number */
+	int fd;                         /* file descriptor (if relevant) */
+	int runflags;                   /* bitmap indicating es flags -inxv */
 };</code>
 </pre>
 </figure>
 
 <p>
-This object is populated with the appropriate fields, and function pointers, depending on whether the input is a string or file.
-Then the shell dynamically binds the <code>%dispatch</code> function to a definition it selects based on the runflags, which are themselves based on the <code>-inxv</code> flags the user used for the shell or <code>.</code> call.
+This object is populated with the appropriate values, and function pointers, in order to read from the input string or file.
+
+<p>
+Then the shell dynamically binds the <code>%dispatch</code> function to a definition it selects based on the <code>Input</code>'s <code>runflags</code> field, which is itself based on the <code>-inxv</code> flags the user used for the shell or <code>.</code> call.
 Then, depending on if the interactive runflag is present or not, the shell calls either <code>%interactive-loop</code> or <code>%batch-loop</code>.
 Finally, at this point, users have some control over what happens.
 
@@ -167,20 +169,21 @@ Actually, a more complete version of <code>%parse</code> (one which externally r
 
 <figure>
 <pre>
-<code>fn %parse {
+<code>fn %parse prompt {
 	if %is-interactive {
-		let (in = (); p = $*(1))
-		let (code = &lt;={$&amp;parse {
-			let (r = &lt;={%read-line $p}) {
-				in = $in $r
-				p = $*(2)
-				result $r
+		let (in = (); p = $prompt(1))
+		unwind-protect {
+			$&amp;parse {
+				let (r = &lt;={$&amp;readline $p}) {
+					in = $in $r
+					p = $prompt(2)
+					result $r
+				}
 			}
-		}}) {
+		} {
 			if {!~ $#fn-%write-history 0} {
 				%write-history &lt;={%flatten \n $in}
 			}
-			result $code
 		}
 	} {
 		$&amp;parse $&amp;read

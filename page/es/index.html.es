@@ -58,8 +58,8 @@ In particular, from Scheme, <i>es</i> draws features like higher-order functions
 <figure>
 <pre>
 <code>fn map cmd args {
-  for (i = $args)
-    $cmd $i
+	for (i = $args)
+		$cmd $i
 }
 map @ i {cd $i; rm -f *} /tmp /var/tmp</code>
 </pre>
@@ -104,10 +104,10 @@ To make the shell avoid writing duplicate commands to history, one can write:
 <pre>
 <code>let (write = $fn-%write-history; last-cmd = ())
 fn %write-history cmd {
-  if {!~ $cmd $last-cmd} {
-    $write $cmd
-    last-cmd = $cmd
-  }
+	if {!~ $cmd $last-cmd} {
+		$write $cmd
+		last-cmd = $cmd
+	}
 }</code>
 </pre>
 </figure>
@@ -257,7 +257,8 @@ All in all, I'd like to have a good enough foundation for <i>es</i>, along with 
 Over the years, while the upstream shell has been quiet, multiple forks have spun up, proving that motivation to do something with <i>es</i> has never gone away.
 
 <p>
-And, to me, it makes a ton of sense why.  At its core, es has a simple and powerful design which removes a huge amount of the friction of shell scripting, which is otherwise one of the most powerful ways to use a computer.
+And, to me, it makes a ton of sense why.
+At its core, es has a simple and powerful design which removes a huge amount of the friction of shell scripting, which is otherwise one of the most powerful ways to use a computer.
 <i>Es</i>' ethos of providing a few powerful and orthogonal language and runtime mechanisms makes it relatively easy to know top to bottom, and surprisingly easy to modify its internals.
 It is, genuinely, an extremely elegant piece of software that <a href=/es/desktop.html>I am very glad to use every day</a>.
 

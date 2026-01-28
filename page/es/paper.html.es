@@ -49,7 +49,7 @@ shell which supports new paradigms for programmers.
 <b>Note:</b>
 This web page is an HTML version of a paper which was presented at the
 Winter 1993 Usenix Conference in San Diego, California.
-The paper corresponds to an out-of-date release of <i>es</i>;  see
+The paper corresponds to an out-of-date release of <i>es</i>; see
 the Errata section for changes which affect parts of the paper.
 <a href="https://github.com/wryun/es-shell">
 Source code for the current version of <i>es</i></a> is available on
@@ -111,10 +111,10 @@ to innovation in programming languages.
 <p>
 While <i>rc</i> was an experiment in adding modern syntax to Bourne
 shell semantics, <i>es</i> is an exploration of new semantics combined
-with <i>rc</i>-influenced syntax:  <i>es</i> has lexically scoped
+with <i>rc</i>-influenced syntax: <i>es</i> has lexically scoped
 variables, first-class functions, and an exception mechanism, which
 are concepts borrowed from modern programming languages such as Scheme
-and ML.  [<a class=local href=#ref4>4</a>, <a class=local href=#ref5>5</a>]
+and ML. [<a class=local href=#ref4>4</a>, <a class=local href=#ref5>5</a>]
 
 <p>
 In <i>es</i>, almost all standard shell constructs (e.g., pipes and
@@ -169,7 +169,7 @@ is a simple function to print the date in <i>yy-mm-dd</i> format:
 <figure>
 <pre>
 <code>fn d {
-  date +%y-%m-%d
+	date +%y-%m-%d
 }</code>
 </pre>
 </figure>
@@ -184,8 +184,8 @@ command to each argument in turn:
 <figure>
 <pre>
 <code>fn apply cmd args {
-  for (i = $args)
-    $cmd $i
+	for (i = $args)
+		$cmd $i
 }</code>
 </pre>
 </figure>
@@ -253,8 +253,8 @@ be split up into two separate commands:
 <figure>
 <pre>
 <samp>es&gt; </samp><kbd>fn cd-rm i {
-  cd $i
-  rm -f *
+	cd $i
+	rm -f *
 }</kbd>
 <samp>es&gt; </samp><kbd>apply cd-rm /tmp /usr/tmp</kbd>
 </pre>
@@ -368,7 +368,7 @@ used:
 <figure>
 <pre>
 <code>let (<var>var</var> = <var>value</var>) {
-  <var>commands which use $var</var>
+	<var>commands which use $var</var>
 }</code>
 </pre>
 </figure>
@@ -386,7 +386,7 @@ values. For example,
 <figure>
 <pre>
 <samp>es&gt; </samp><kbd>let (h=hello; w=world) {
-  hi = { echo $h, $w }
+	hi = { echo $h, $w }
 }</kbd>
 <samp>es&gt; </samp><kbd>$hi</kbd>
 <samp>hello, world</samp>
@@ -403,12 +403,12 @@ functions:
 <figure>
 <pre>
 <code>fn trace functions {
-  for (func = $functions)
-    let (old = $(fn-$func))
-    fn $func args {
-      echo calling $func $args
-      $old $args
-    }
+	for (func = $functions)
+		let (old = $(fn-$func))
+		fn $func args {
+			echo calling $func $args
+			$old $args
+		}
 }</code>
 </pre>
 </figure>
@@ -424,10 +424,10 @@ one per line:
 <figure>
 <pre>
 <samp>es&gt; </samp><kbd>fn echo-nl head tail {
-  if {!~ $#head 0} {
-    echo $head
-    echo-nl $tail
-  }
+	if {!~ $#head 0} {
+		echo $head
+		echo-nl $tail
+	}
 }</kbd>
 <samp>es&gt; </samp><kbd>echo-nl a b c</kbd>
 <samp>a
@@ -496,7 +496,7 @@ the syntax:
 <figure>
 <pre>
 <code>local (<var>var</var> = <var>value</var>) {
-  <var>commands which use $var</var>
+	<var>commands which use $var</var>
 }</code>
 </pre>
 </figure>
@@ -508,15 +508,15 @@ The difference between the two forms of binding can be seen in an example:
 <pre>
 <samp>es&gt; </samp><kbd>x = foo</kbd>
 <samp>es&gt; </samp><kbd>let (x = bar) {
-  echo $x
-  fn lexical { echo $x }
+	echo $x
+	fn lexical { echo $x }
 }</kbd>
 <samp>bar
 es&gt; </samp><kbd>lexical</kbd>
 <samp>bar
 es&gt; </samp><kbd>local (x = baz) {
-  echo $x
-  fn dynamic { echo $x }
+	echo $x
+	fn dynamic { echo $x }
 }</kbd>
 <samp>baz
 es&gt; </samp><kbd>dynamic</kbd>
@@ -537,13 +537,13 @@ changes value. A good example of settor variable use is the
 <figure>
 <pre>
 <code>fn watch vars {
-  for (var = $vars) {
-    set-$var = @ {
-      echo old $var '=' $$var
-      echo new $var '=' $*
-      return $*
-    }
-  }
+	for (var = $vars) {
+		set-$var = @ {
+			echo old $var '=' $$var
+			echo new $var '=' $*
+			return $*
+		}
+	}
 }</code>
 </pre>
 </figure>
@@ -582,7 +582,7 @@ prepending the command with <code>&lt;&gt;</code>:
 <figure>
 <pre>
 <samp>es&gt; </samp><kbd>fn hello-world {
-  return 'hello, world'
+	return 'hello, world'
 }</kbd>
 <samp>es&gt; </samp><kbd>echo &lt;&gt;{hello-world}</kbd>
 <samp>hello, world</samp>
@@ -596,7 +596,7 @@ used to implement hierarchical lists:
 <figure>
 <pre>
 <code>fn cons a d {
-  return @ f { $f $a $d }
+	return @ f { $f $a $d }
 }
 fn car p { $p @ a d { return $a } }
 fn cdr p { $p @ a d { return $d } }</code>
@@ -614,7 +614,7 @@ the first or second parameter, respectively. For example:
 <figure>
 <pre>
 <samp>es&gt; </samp><kbd>echo &lt;&gt;{car &lt;&gt;{cdr &lt;&gt;{
-  cons 1 &lt;&gt;{cons 2 &lt;&gt;{cons 3 nil}}
+	cons 1 &lt;&gt;{cons 2 &lt;&gt;{cons 3 nil}}
 }}}</kbd>
 <samp>2</samp>
 </pre>
@@ -637,12 +637,12 @@ Thus:
 <figure>
 <pre>
 <samp>es&gt; </samp><kbd>fn in dir cmd {
-  if {~ $#dir 0} {
-    throw error 'usage: in dir cmd'
-  }
-  fork # run in a subshell [<a class=local href="#erratum4" name="erratum4-use">Errata note 4</a>]
-  cd $dir
-  $cmd
+	if {~ $#dir 0} {
+		throw error 'usage: in dir cmd'
+	}
+	fork # run in a subshell [<a class=local href="#erratum4" name="erratum4-use">Errata note 4</a>]
+	cd $dir
+	$cmd
 }</kbd>
 <samp>es&gt; </samp><kbd>in</kbd>
 <samp>usage: in dir cmd
@@ -684,14 +684,14 @@ lines of <code>in</code> above can be replaced with:
 <figure>
 <pre>
 <code>catch @ e msg {
-  if {~ $e error} {
-    echo &gt;[1=2] in $dir: $msg
-  } {
-    throw $e $msg
-  }
+	if {~ $e error} {
+		echo &gt;[1=2] in $dir: $msg
+	} {
+		throw $e $msg
+	}
 } {
-  cd $dir
-  $cmd
+	cd $dir
+	$cmd
 }</code>
 </pre>
 </figure>
@@ -757,11 +757,11 @@ command is not run, similar to the C-shell's "noclobber" option:
 <figure>
 <pre>
 <code>fn %create fd file cmd {
-  if {test -f $file} {
-    throw error $file exists
-  } {
-    $&amp;create $fd $file $cmd
-  }
+	if {test -f $file} {
+		throw error $file exists
+	} {
+		$&amp;create $fd $file $cmd
+	}
 }</code>
 </pre>
 </figure>
@@ -775,13 +775,13 @@ appear as
 <figure>
 <pre>
 <code>let (create = $fn-%create)
-  fn %create fd file cmd {
-    if {test -f $file} {
-      throw error $file exists
-    } {
-      $create $fd $file $cmd
-    }
-  }</code>
+	fn %create fd file cmd {
+		if {test -f $file} {
+			throw error $file exists
+		} {
+			$create $fd $file $cmd
+		}
+	}</code>
 </pre>
 </figure>
 
@@ -800,8 +800,8 @@ hypothetical command <code>title</code>) can be written as:
 <pre>
 <code>let (cd = $fn-%cd)
 fn cd {
-  $cd $*
-  title `{pwd}
+	$cd $*
+	title `{pwd}
 }</code>
 </pre>
 </figure>
@@ -816,13 +816,13 @@ by Jon Bentley[<a class=local href=#ref7>7</a>]; see Figure 1.
 <figure class="bigfig centered">
 <pre>
 <samp>es&gt; </samp><kbd>let (pipe = $fn-%pipe) {
-  fn %pipe first out in rest {
-    if {~ $#out 0} {
-      time $first
-    } {
-      $pipe {time $first} $out $in {%pipe $rest}
-    }
-  }
+	fn %pipe first out in rest {
+		if {~ $#out 0} {
+			time $first
+		} {
+			$pipe {time $first} $out $in {%pipe $rest}
+		}
+	}
 }</kbd>
 <samp>es&gt; </samp><kbd>cat paper9 | tr -cs a-zA-Z0-9 '\012' | sort | uniq -c | sort -nr | sed 6q</kbd>
 <samp> 213 the
@@ -852,20 +852,20 @@ non-absolute file names which are used as commands.
 <figure class="bigfig centered">
 <pre>
 <code>let (search = $fn-%pathsearch) {
-  fn %pathsearch prog {
-    let (file = &lt;&gt;{$search $prog}) {
-      if {~ $#file 1 &amp;&amp; ~ $file /*} {
-        path-cache = $path-cache $prog
-        fn-$prog = $file
-      }
-      return $file
-    }
-  }
+	fn %pathsearch prog {
+		let (file = &lt;&gt;{$search $prog}) {
+			if {~ $#file 1 &amp;&amp; ~ $file /*} {
+				path-cache = $path-cache $prog
+				fn-$prog = $file
+			}
+			return $file
+		}
+	}
 }
 fn recache {
-  for (i = $path-cache)
-    fn-$i =
-  path-cache =
+	for (i = $path-cache)
+		fn-$i =
+	path-cache =
 }</code>
 </pre>
 <figcaption>Figure 2: Path caching</figcaption>
@@ -879,25 +879,25 @@ see Figure 3.
 <figure class="bigfig centered">
 <pre>
 <code>fn %interactive-loop {
-  let (result = 0) {
-    catch @ e msg {
-      if {~ $e eof} {
-        return $result
-      } {~ $e error} {
-        echo &gt;[1=2] $msg
-      } {
-        echo &gt;[1=2] uncaught exception: $e $msg
-      }
-      throw retry
-    } {
-      while {} {
-        %prompt
-        let (cmd = &lt;&gt;{%parse $prompt}) {
-          result = &lt;&gt;{$cmd}
-        }
-      }
-    }
-  }
+	let (result = 0) {
+		catch @ e msg {
+			if {~ $e eof} {
+				return $result
+			} {~ $e error} {
+				echo &gt;[1=2] $msg
+			} {
+				echo &gt;[1=2] uncaught exception: $e $msg
+			}
+			throw retry
+		} {
+			while {} {
+				%prompt
+				let (cmd = &lt;&gt;{%parse $prompt}) {
+					result = &lt;&gt;{$cmd}
+				}
+			}
+		}
+	}
 }</code>
 </pre>
 <figcaption>Figure 3: Default interactive loop</figcaption>
@@ -994,14 +994,14 @@ path searching (and other) conventions. For example,
 <figure>
 <pre>
 <code>set-path = @ {
-  local (set-PATH = )
-    PATH = &lt;&gt;{%flatten : $*}
-  return $*
+	local (set-PATH = )
+		PATH = &lt;&gt;{%flatten : $*}
+	return $*
 }
 set-PATH = @ {
-  local (set-path = )
-    path = &lt;&gt;{%fsplit : $*}
-  return $*
+	local (set-path = )
+		path = &lt;&gt;{%fsplit : $*}
+	return $*
 }</code>
 </pre>
 </figure>
