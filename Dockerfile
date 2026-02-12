@@ -3,7 +3,7 @@ WORKDIR /
 
 # es install.
 RUN	apt-get update && \
-	apt-get install -y git make gcc libtool autoconf automake bison && \
+	apt-get install -y git make gcc libtool autoconf automake && \
 	git clone https://github.com/wryun/es-shell && \
 	cd es-shell && \
 	libtoolize -i && \

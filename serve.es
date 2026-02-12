@@ -129,13 +129,26 @@ if {!~ $q ()} {
 	query = <={%split '&' $query}
 }
 
-# TODO: it would be nice if we made all the header names lowercase
-let (header = ())
-while {!~ <={header = <=%read} \r} {
-	let ((n v) = <={~~ $header *': '*\r})
-	if {!~ $#n 0} {
-		head-$n = $v
+# this whole bit is structured to try to minimize the number of fork/execs
+let (header-names = (); header-values = ()) {
+	# read in headers
+	while {!~ <={header = <=%read} \r} {
+		let ((n v) = <={~~ $header *': '*\r})
+		if {!~ $#n 0} {
+			header-names = $header-names $^n
+			header-values = $header-values $^v
+		}
 	}
+	# convert to lowercase, if necessary
+	if {~ $header-names *[A-Z]*} {
+		local (lhns = $header-names) {
+			eval `` '' {var lhns | awk '{print tolower($0)}'}
+			header-names = $lhns
+		}
+	}
+	# set the header variables
+	for (n = $header-names; v = $header-values)
+		head-$n = $v
 }
 
 
@@ -150,7 +163,7 @@ catch @ exception {
 } {
 	if (
 		# redirect www.jpco.io to jpco.io
-		{~ $head-host www.jpco.io || ~ $head-Host www.jpco.io} {
+		{~ $head-host www.jpco.io} {
 			destination = https://jpco.io$reqpath
 			respond 301 text/plain
 			echo Redirecting to $destination ...

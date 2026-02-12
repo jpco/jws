@@ -115,26 +115,39 @@ We read the method, the path (which we call <code>reqpath</code> to avoid collid
 
 <p>
 We have to handle the <code>\r\n</code>s in the request explicitly, which is annoying, but not too much of a problem.
-Fortunately, <code>ncat</code> inserts <code>\r</code>s as necessary so we don't have to think about them when writing the responses.
+Fortunately, for responses, <code>ncat</code> inserts <code>\r</code>s as necessary so we don't have to think about them in our <code>echo</code> calls.
 After the first line, and a bit of handling for query strings, we move on to reading the headers.
 
 <figure>
 <pre>
-<code># TODO: it would be nice if we made all the header names lowercase
-let (header = ())
-while {!~ &lt;={header = &lt;=%read} \r} {
-	let ((n v) = &lt;={~~ $header *': '*\r})
-	if {!~ $#n 0} {
-		head-$n = $v
+<code># this whole bit is structured to try to minimize the number of fork/execs
+let (header-names = (); header-values = ()) {
+	# read in headers
+	while {!~ &lt;={header = &lt;=%read} \r} {
+		let ((n v) = &lt;={~~ $header *': '*\r})
+		if {!~ $#n 0} {
+			header-names = $header-names $^n
+			header-values = $header-values $^v
+		}
 	}
-}</code>
+	# convert to lowercase, if necessary
+	if {~ $header-names *[A-Z]*} {
+		local (lhns = $header-names) {
+			eval `` '' {var lhns | awk '{print tolower($0)}'}
+			header-names = $lhns
+		}
+	}
+	# set the header variables
+	for (n = $header-names; v = $header-values)
+		head-$n = $v
+}
+</code>
 </pre>
 </figure>
 
 <p>
-Here we read in headers and save the header values within variables of the form <code>head-$name</code>, so that <code>$head-Host</code> contains something like <code>jpco.io</code>.
-The TODO here refers to the fact that HTTP headers are case-insensitive, so the headers <code>Host</code> or <code>host</code> (or, technically validly, <code>hOsT</code>) should be handled uniformly, but <i>es</i> is all case-sensitive.
-So right now we don't handle that well.
+Here we read in headers and save the header values within variables of the form <code>head-$name</code>, so that <code>$head-host</code> contains something like <code>jpco.io</code>.
+There is some extra handling to enforce that case-insensitive headers (<code>host</code>, <code>Host</code>, <code>hOsT</code>) are all made into lower-case variables (<code>$head-host</code>); this uses <code>awk</code>, which incurs some overhead due to the extra fork/execs, but is structured to limit the number of necessary calls to either zero or one.
 
 <h3>Routing</h3>
 
@@ -146,7 +159,7 @@ The whole router is just one big <code>if</code> statement.
 <pre>
 <code>if (
 	# redirect www.jpco.io to jpco.io
-	{~ $head-host www.jpco.io || ~ $head-Host www.jpco.io} {
+	{~ $head-host www.jpco.io} {
 		destination = https://jpco.io$reqpath
 		respond 301 text/plain
 		echo Redirecting to $destination ...
@@ -189,7 +202,7 @@ Here's where it all comes together.
 <ul>
 <li>If the request is coming to <code>www.jpco.io</code>, redirect it to <code>jpco.io</code>.
 <li>If we're in &ldquo;dev mode&rdquo; and not in a Docker container, serve the request as a page if it matches a file in the draft directory.
-<li>If the request matches a file in the page directory, serve it as a page.
+<li>If the request matches a file in the <code>page/</code> directory, serve it as a dynamically-built page.
 <li>If the request matches a static resource, serve it verbatim.
 <li>Otherwise, serve the 404 page with a 404 code, since we didn't find anything.
 </ul>
@@ -208,7 +221,7 @@ When I'm working on changes to the site, I can run this script as
 <p>
 and it works great.
 Pages are always served live, so all I have to do is save the page I'm working on and reload.
-The server is also always served live thanks to <code>ncat -e $0</code>, so unless I'm making a change to that little loop, I don't even need to re-run the server script when I make a change.
+The server is also always served live thanks to <code>ncat -e $0</code>, so unless I'm making a change to the small server-loop section at the very top, I don't even need to re-run the server script after making a change.
 
 <p>
 In &ldquo;prod&rdquo;, I package up the contents of the repo from HEAD as well as a fresh <i>es</i> built from HEAD and the couple of binary dependencies (<code>ncat</code>, <code>man</code>, <code>file</code>) into a Docker container and serve it from Google Cloud Run.
@@ -237,7 +250,7 @@ I didn't write this server to serve <em>any</em> web site, I wrote it to serve <
 <p>
 What I really want is exactly what this server gives me.
 I want a really convenient environment to write new pages in without bothering with any sort of recompilation flow.
-I want a router that is extremely simple but more flexible than files in directories.
+I want a router that is extremely simple but more flexible than a pure directory structure-based setup.
 And I want all of it without some kind of goofy toolchain, framework, or runtime dependencies that do more to get in my way than help me serve this extremely simple site.
 I'm not a web developer so whenever I'm not actively working on this site, I'm not really thinking about any web technologies, so using fancy special-purpose tools is a net increase to my cognitive load, not the other way around.
 
@@ -245,6 +258,9 @@ I'm not a web developer so whenever I'm not actively working on this site, I'm n
 Admittedly, there's also some aesthetic joy to it.
 I prefer <a href=/guidelines.html>a website that's pretty bare</a>, and I like to stay &ldquo;close to the metal&rdquo; of HTTP.
 I like to have that little bit of extra control, since I'm not doing anything particularly fancy or high-stakes.
-And I also just like to be able to say that I'm serving my personal web site from a shell script.
+And, honestly, I also just like to be able to say that I'm serving my personal web site from a shell script.
+
+<p>
+<em>TODO:</em> Discuss similar projects.
 
 </main>

@@ -29,4 +29,5 @@ gcloud run deploy --platform managed --image=gcr.io/jpco-cloud/web:0.70
 ## TODO
 
 - Improve templating situation
-- Get more inspo from https://github.com/jneen/balls and clean up serve.es
+- Get inspo from https://github.com/jneen/balls
+- Get even better inspo from http://werc.cat-v.org/
