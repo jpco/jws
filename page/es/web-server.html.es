@@ -260,7 +260,72 @@ I prefer <a href=/guidelines.html>a website that's pretty bare</a>, and I like t
 I like to have that little bit of extra control, since I'm not doing anything particularly fancy or high-stakes.
 And, honestly, I also just like to be able to say that I'm serving my personal web site from a shell script.
 
+<h2>Related work</h2>
+
 <p>
-<em>TODO:</em> Discuss similar projects.
+I am, of course, far from the first person to want to use a shell script to serve web pages.
+Following are a few relevant example projects which try to be general web frameworks or servers written using different shells.
+This site's server is slightly different than these general libraries, being intended as a special-purpose single-site server, but the other projects have interesting lessons to teach besides.
+
+<h3>Bash on Balls</h3>
+
+<p>
+When I first mentioned this site to a buddy, he said &ldquo;oh, like balls?&rdquo; and then after a brief second of confusion linked to <a href="https://github.com/jneen/balls">balls</a>.
+
+<p>
+Balls (Bash on Balls) is a whole web &ldquo;framework&rdquo; written in Bash, including CGI and other support, but at its core, it has a similar loop as this script, using a (more traditional) <code>nc</code> pipeline to manage networking:
+
+<figure class="bigfig centered">
+<pre>
+<code>http_sock=$BALLS_TMP/balls.http.$$.sock
+[ -p $http_sock ] || mkfifo $http_sock
+
+while true; do
+	cat $http_sock | nc -l -p $BALLS_PORT | (
+		http::parse_request
+		balls::route &gt; $http_sock
+	)
+done</code>
+</pre>
+<figcaption>The core server loop in balls, using <code>nc</code>.</figcaption>
+</figure>
+
+<p>
+Requests that <code>nc</code> receives it prints to its standard output, and anything it receives on standard input it sends as a reply.
+This requres the <code>$http_sock</code> file exist so that the <code>balls::route</code> function can communicate with the <code>nc</code> command earlier in the pipeline.
+I do think that this could be done in a more &ldquo;advanced bash&rdquo; way these days using a coprocess, but Bash's big fancy networking feature, its socket programming <code>/dev/tcp</code> paths, apparently can't be used to listen for connections.
+
+<h3>ZWS</h3>
+
+<p>
+An even older project exists called <a href="http://www.chodorowski.com/projects/zws/">ZWS</a> which does something very similar in zsh.
+This project is mostly notable because zsh's kitchen-sink nature means that it has a module, <code>zsh/net/tcp</code>, which contains a large number of functions related to TCP, including one, <code>tcp_proxy</code>, which performs logic like <code>ncat -e</code> entirely as a shell built-in.
+
+<figure class="bigfig centered">
+<pre>
+<code>zmodload zsh/net/tcp
+autoload -U tcp_proxy
+
+tcp_proxy $opts[-p] serve</code>
+</pre>
+<figcaption>The core server loop in ZWS, using <code>tcp_proxy</code> and the <code>serve</code> function.</figcaption>
+</figure>
+
+<p>
+If <i>es</i> were to add loadable primitives or a module system of some kind, networking would be an early use case to explore, and zsh seems to be the major precedent on built-in networking.
+Notably, <a href="https://sourceforge.net/p/zsh/code/ci/master/tree/Src/Modules/tcp.c">the actual built-in part of zsh's TCP handling</a> only seems to define the <code>ztcp</code> command, and everything else is a function adding sugar on top.
+
+<h3>werc and rc-httpd</h3>
+
+<p>
+The last, and most relevant, work in this space is <a href="http://werc.cat-v.org/">the werc web &ldquo;anti-framework&rdquo;</a> used heavily in the Plan 9 space these days.
+Werc is not itself a web server, but it does come packaged with the rc-httpd server, which is very similar to the one used for this site.
+
+<p>
+A particular distinction of rc-httpd is that it does not do (or control) the networking or main loop at all, but instead simply expects to be called with files already managed for each request; typically, presumably, because this would be done with one of the <a href="https://man.aiju.de/8/listen"><code>listen(8)</code></a> utilities in Plan 9.
+Like a lot of the design choices made in Plan 9, the outcome seems to be a net simplification of each program.
+
+<p>
+If there were a &ldquo;web framework&rdquo; written for <i>es</i>, then werc would be the obvious model to follow first.
 
 </main>
