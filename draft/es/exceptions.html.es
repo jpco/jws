@@ -37,18 +37,18 @@ Depending on its type, an exception often carries with it information of some ki
 <pre>
 <code>let (result = ())
 catch @ e rest {
-    if {~ $e eof} {
-        result $result
-    } {
-        throw retry
-    }
-} {
-    forever {
-        let (code = &lt;=%parse)
-	if {!~ $#code 0} {
-	    result = &lt;=$code
+	if {~ $e eof} {
+		result $result
+	} {
+		throw retry
 	}
-    }
+} {
+	forever {
+		let (code = &lt;=%parse)
+		if {!~ $#code 0} {
+			result = &lt;=$code
+		}
+	}
 }</code>
 </pre>
 <figcaption>A simple read-eval-print loop which handles the <code>eof</code> exception.</figcaption>
@@ -61,11 +61,11 @@ In addition to raw <code>catch</code>, <i>es</i> has an <code>unwind-protect</co
 <pre>
 <code>let (file = `mktemp)
 unwind-protect {
-    # no matter what act-on does ...
-    act-on $file
+	# no matter what act-on does ...
+	act-on $file
 } {
-    # ... this rm is nearly guaranteed to run
-    rm -f $file
+	# ... this rm is nearly guaranteed to run
+	rm -f $file
 }</code>
 </pre>
 </figure>
@@ -78,12 +78,12 @@ break, retry, return
 <p>
 exit
 
-<h2>The <code>signal</code> exceptions</h2>
+<h2>The <code>signal</code> exception</h2>
 
 <p>
 signal
 
-<h2>The <code>error</code> and <code>false</code> exception</h2>
+<h2>The <code>error</code> and <code>false</code> exceptions</h2>
 
 <p>
 error, false

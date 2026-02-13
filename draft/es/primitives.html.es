@@ -23,11 +23,11 @@ That would be wrapped in a function like
 <figure>
 <pre>
 <code>fn use dir {
-    if {!~ $dir $primdirs} {
-        $&amp;loadlib $dir/lib.so
-        . $dir/script.es
-        primdirs = $primdirs $dir
-    }
+	if {!~ $dir $primdirs} {
+		$&amp;loadlib $dir/lib.so
+		. $dir/script.es
+		primdirs = $primdirs $dir
+	}
 }</code>
 </pre>
 </figure>
