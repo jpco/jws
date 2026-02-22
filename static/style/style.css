@@ -8,7 +8,7 @@ main {
 	margin-right: auto;
 	padding: 10px;
 
-	font-variant-numeric: oldstyle-nums proportional-nums;
+	font-variant-numeric: oldstyle-nums proportional-nums ordinal;
 	tab-size: 2;
 }
 nav {
@@ -34,10 +34,14 @@ p {
 code, samp, kbd {
 	hyphens: none;
 	font-variant-ligatures: none;
-	font-variant-numeric: normal lining-nums tabular-nums;
+	font-variant-numeric: normal;
+}
+ul li {
+	list-style-type: "—  ";
 }
 h1 {
 	text-align: center;
+	font-variant-ligatures: common-ligatures discretionary-ligatures historical-ligatures;
 }
 h2, h3, h4, h5, h6 {
 	font-variant-ligatures: common-ligatures discretionary-ligatures historical-ligatures;

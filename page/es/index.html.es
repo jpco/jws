@@ -87,7 +87,7 @@ These blocks of code function like lambda expressions, except that they bind no 
 
 <p>
 Many constructs within <i>es</i> are implemented as functions which take lambda expressions and/or code fragments as arguments.
-For example, the builtin command <code>catch</code>, which is core to <i>es</i>&rsquo; exception mechanism, takes a lambda expression for its catcher, and a code fragment for its body.
+For example, the builtin command <code>catch</code>, which is core to <a href=/es/exceptions.html><i>es</i>&rsquo; exception mechanism</a>, takes a lambda expression for its catcher, and a code fragment for its body.
 
 <figure>
 <pre>
@@ -310,7 +310,6 @@ Some pages I ought to get around to writing include:
 <li>The life of an <i>es</i> command
 <li>The <i>es</i> runtime
 <li>Extensible shell input
-<li>Exceptions in <i>es</i>
 </ul>
 
 <p>
