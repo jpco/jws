@@ -10,16 +10,16 @@
 <div class=time><time datetime=2026-01-23>2026-01-23</time></div>
 
 <p>
-This is just a short description of the desktop (technically, laptop) setup that I've converged onto over the years.
+This is just a short description of the desktop (technically, laptop) setup that I&rsquo;ve converged onto over the years.
 Because of my long-abiding interest in <a href=/es><i>es</i></a>, I have tended to make choices that lean into using it as much as I can.
 
 <p>
-You might notice I also have slightly strange preferences&mdash;in general, I prefer my computer to do as little as possible, because I don't mind adding behavior to a too-minimal system, but dialing back annoying behaviors from a feature-rich one annoys the hell out of me.
+You might notice I also have slightly strange preferences&mdash;in general, I prefer my computer to do as little as possible, because I don&rsquo;t mind adding behavior to a too-minimal system, but dialing back annoying behaviors from a feature-rich one annoys the hell out of me.
 
 <p>
 For example, for logging in, I just use a getty (on Archlinux, <code>agetty(8)</code>) and <code>login(1)</code>.
-I don't even have a lock screen; I prefer to just make the logging-in process quick and easy in the first place.
-Moreover, <code>login</code> doesn't try to do anything funny; it just starts a login <i>es</i> shell.
+I don&rsquo;t even have a lock screen; I prefer to just make the logging-in process quick and easy in the first place.
+Moreover, <code>login</code> doesn&rsquo;t try to do anything funny; it just starts a login <i>es</i> shell.
 
 <p>
 As users of <i>es</i> know, the <code>.esrc</code> script run by login shells is especially important, as <i>es</i> (like <i>rc</i> before it) only has that single script for customization and does everything else by passing strings down through the environment.
@@ -52,7 +52,7 @@ This prints a cute little creature-uttered <code>fortune(1)</code>, and then sta
 River is an interesting compositor in a few ways, but I initially chose to use it primarily because it looked to me like &ldquo;the Wayland <a href="https://github.com/baskerville/bspwm">bspwm</a>&rdquo;, especially because the two share a critical design choice: configuration happens via a script.
 
 <blockquote>
-<em>TODO:</em> Add an obligatory screenshot here to (1) fix how annoying it is that a page about a desktop setup doesn't have any screenshots, and (2) prove that, visually, the setup isn't very interesting at all.
+<em>TODO:</em> Add an obligatory screenshot here to (1) fix how annoying it is that a page about a desktop setup doesn&rsquo;t have any screenshots, and (2) prove that, visually, the setup isn&rsquo;t very interesting at all.
 </blockquote>
 
 <p>
@@ -102,9 +102,9 @@ After the <code>foot</code> server, this script adds keybindings to spawn <code>
 Then, we spawn a <code>waybar(5)</code>, and finally <code>rivertile(1)</code>.
 
 <p>
-<code>rivertile</code> is part of what makes river interesting; it's a separate program which communicates over a custom Wayland protocol to control the window management of the graphical session.
+<code>rivertile</code> is part of what makes river interesting; it&rsquo;s a separate program which communicates over a custom Wayland protocol to control the window management of the graphical session.
 Other programs can be used in place of <code>rivertile</code>, as long as they implement the same protocol.
-In theory a shell script could do it, if there were a helper program to translate between plain text and the Wayland protocol (like <code>ncat(1)</code> does for <a href=/es/web-server.html>this site's web server</a>, or notcat does for notifications, which I describe below) or, someday, if there were a module that could be loaded into <i>es</i>.
+In theory a shell script could do it, if there were a helper program to translate between plain text and the Wayland protocol (like <code>ncat(1)</code> does for <a href=/es/web-server.html>this site&rsquo;s web server</a>, or notcat does for notifications, which I describe below) or, someday, if there were a module that could be loaded into <i>es</i>.
 
 <h2>waybar and notcat</h2>
 
@@ -140,7 +140,7 @@ Like a netcat, at its most simple, it prints received notifications to its stand
 Notcat also implements an extension to the normal D-Bus notification protocol so that external programs can invoke actions on notifications&mdash;that ability is used in this config in the <code>"on-click"</code> script.
 
 <p>
-<a href=/notcat#usage>The notcat page itself goes deeper in detail</a> on what this line in waybar's config does, and what the scripts it invokes contain.
+<a href=/notcat#usage>The notcat page itself goes deeper in detail</a> on what this line in waybar&rsquo;s config does, and what the scripts it invokes contain.
 However, other references to notcat are littered throughout my desktop config, because I use it for all sorts of information.
 Every time I change the volume or brightness, <code>notcat send</code> is used to send a notification about it.
 I also get notifications for online status on login; the <code>get-online</code> script in my river init file is a simple wrapper around <code>ping</code> in a loop, sending notifications if pings initially fail, and on the first time pings succeed after failing.
@@ -157,7 +157,7 @@ I use the default application launcher logic, both the simple <code>run</code> m
 
 <p>
 On top of <code>run</code> and <code>drun</code>, I also use rofi to get passwords from <a href="https://www.passwordstore.org/">the password manager <code>pass</code></a>, using the <code>rofi-pass.es</code> script that I wrote.
-I'll describe the setup, though it is a bit of a mess.
+I&rsquo;ll describe the setup, though it is a bit of a mess.
 
 <p>
 When rofi uses a script (see <code>rofi-script(5)</code>), it calls it twice.
@@ -232,8 +232,8 @@ This makes it so that, when invoked from rofi, gpg uses rofi to prompt the user 
 This is more convenient, in terms of keeping the user (me) from having to jump between windows unnecessarily.
 
 <p>
-Then there's the the <code>pinentry-rofi.es</code> script.
-This script is an extremely rough-and-ready implementation against <a href="https://www.gnupg.org/documentation/manuals/assuan/index.html">the Assuan protocol</a> that was in part (especially the <code>sed</code> invocation) ripped from somewhere I can't remember now (whoops!)
+Then there&rsquo;s the the <code>pinentry-rofi.es</code> script.
+This script is an extremely rough-and-ready implementation against <a href="https://www.gnupg.org/documentation/manuals/assuan/index.html">the Assuan protocol</a> that was in part (especially the <code>sed</code> invocation) ripped from somewhere I can&rsquo;t remember now (whoops!)
 
 <figure>
 <pre>

@@ -70,7 +70,7 @@ Laying it out in prose, the behavior here is
 	<ol>
 	<li>introduces a new block,
 	<li>declares a new <code>List&nbsp;*</code> called <code>lp</code>, which is assigned the value of <code>list</code>, and
-	<li>adds <code>lp</code> to the GC's root list, ensuring <code>lp</code> remains valid across collections.
+	<li>adds <code>lp</code> to the GC&rsquo;s root list, ensuring <code>lp</code> remains valid across collections.
 	</ol>
 <li><p><code>sethistory(getstr(lp-&gt;term))</code> converts the first term of <code>lp</code> to a string &mdash; an action which may trigger a garbage collection &mdash; and calls <code>sethistory</code> on that string.
 <li><p><code>RefReturn(lp)</code>:
@@ -87,13 +87,13 @@ This has the benefit of making it more difficult to accidentally leak GC roots.
 Unfortunately, the compiler errors produced due to missing <code>Ref</code>s or <code>RefEnd</code>s have very little to do with the semantics of the macros themselves, which can be confusing.
 
 <p>
-There are a couple challenges with working with GCed objects in <i>es</i>: not everything in <i>es</i> is garbage collected, and collections can't occur at just any moment.
+There are a couple challenges with working with GCed objects in <i>es</i>: not everything in <i>es</i> is garbage collected, and collections can&rsquo;t occur at just any moment.
 This can make it somewhat difficult to predict exactly when a <code>Ref</code> needs to be used.
 A good rule of thumb for collections is that they can occur any time the shell needs more memory, which can happen in one of two cases: allocations, and when the GC is enabled with a call to <code>gcenable()</code> after having previously been <code>gcdisable()</code>-ed.
 A GC in the latter case is typically rare, but if enough allocations happen while the GC is disabled then it is possible for the shell to need to perform a collection immediately.
 
 <p>
-Knowing exactly which objects are GCed and which aren't can be even trickier.
+Knowing exactly which objects are GCed and which aren&rsquo;t can be even trickier.
 Generally, <code>List&nbsp;*</code>s, <code>Term&nbsp;*</code>s, and <code>Tree&nbsp;*</code>s are nearly always in the GCed space in memory.
 <code>char&nbsp;*</code>s can go either way, and in some cases very similar functions can produce either a GC-space or standard malloc-space string.
 For example, the <code>str()</code> and <code>mprint()</code> functions both function similarly to <code>sprintf(3)</code>, and only differ from each other in that <code>str()</code> produces a garbage collected string, while <code>mprint()</code> produces a string that needs to be <code>free()</code>-ed.
@@ -150,17 +150,17 @@ throw(list);</code>
 
 <p>
 Under the hood, the <code>ExceptionHandler</code> macros manage a dynamic stack of <code>setjmp(3)</code> targets, and the <code>throw()</code> function pops the top target of the stack and performs a <code>longjmp(3)</code> to it; there is also some bookkeeping so that these exceptions &ldquo;just work&rdquo; in the face of GCed memory and dynamic variables.
-However, exiting an <code>ExceptionHandler</code> block early with a <code>return</code> or <code>goto</code> will probably cause problems in later code, as the necessary exception handler cleanup couldn't happen (note that exiting a handler early with a <code>throw()</code> should be fine, because the <code>throw()</code> function performs its own cleaning-up behavior).
+However, exiting an <code>ExceptionHandler</code> block early with a <code>return</code> or <code>goto</code> will probably cause problems in later code, as the necessary exception handler cleanup couldn&rsquo;t happen (note that exiting a handler early with a <code>throw()</code> should be fine, because the <code>throw()</code> function performs its own cleaning-up behavior).
 
 <p>
 This setup is an <i>es</i>-specific implementation of a reasonably well-established set of conventions to add exceptions to C code.
-<a href="https://www.cs.tufts.edu/~nr/cs257/archive/eric-roberts/exceptions.pdf">This paper by Eric S. Roberts</a> shows a version of this very similar to <i>es</i>', but <a href="https://archive.org/details/1985-proceedings-summer-portland/page/24/">early versions of exceptions in C</a> date back to as early as 1985.
+<a href="https://www.cs.tufts.edu/~nr/cs257/archive/eric-roberts/exceptions.pdf">This paper by Eric S. Roberts</a> shows a version of this very similar to <i>es</i>&rsquo;, but <a href="https://archive.org/details/1985-proceedings-summer-portland/page/24/">early versions of exceptions in C</a> date back to as early as 1985.
 
 <h2 id=signals>Signals</h2>
 
 <p>
-One of <i>es</i>' jobs as a shell is to handle a steady stream of signals coming from the terminal, child processes, users, and elsewhere.
-<i>Es</i> models signals in-language as exceptions, such that any signal that isn't ignored leads to a call to the <code>throw()</code> function discussed above, but this has to be done explicitly, so signal-specific breadcrumbs are present in the code base, primarily in the form of the <code>SIGCHK()</code> macro.
+One of <i>es</i>&rsquo; jobs as a shell is to handle a steady stream of signals coming from the terminal, child processes, users, and elsewhere.
+<i>Es</i> models signals in-language as exceptions, such that any signal that isn&rsquo;t ignored leads to a call to the <code>throw()</code> function discussed above, but this has to be done explicitly, so signal-specific breadcrumbs are present in the code base, primarily in the form of the <code>SIGCHK()</code> macro.
 
 <p>
 <code>SIGCHK()</code>, which simply wraps the <code>sigchk()</code> function, checks if any signals have been received by the shell and handles those signals however the user has configured it to&mdash;either ignoring it or converting it into a <code>signal</code> exception which it throws.
@@ -223,7 +223,7 @@ So, in order that signals can interrupt the prompt in <i>es</i>, we are forced t
 
 <p>
 Curiously, this use of <code>longjmp</code> from a signal handler is well-known and common, and also broadly considered unsafe.
-That's C for you.
+That&rsquo;s C for you.
 
 <h2 id=fds>File descriptors</h2>
 
@@ -240,6 +240,6 @@ To prevent this, <i>es</i> presents a set of file descriptors to the user that d
 <p>
 As a side benefit, this user-fd/runtime-fd split also enables running shell built-ins within redirections without requiring a fork.
 For example, the <code>$&amp;read</code> primitive starts with a call to <code>fdmap(0)</code>.
-This call allows the primitive to work on the real file descriptor which its standard input appears to be, whether or not it's really fd 0, or some other file which has been redirected.
+This call allows the primitive to work on the real file descriptor which its standard input appears to be, whether or not it&rsquo;s really fd 0, or some other file which has been redirected.
 
 </main>

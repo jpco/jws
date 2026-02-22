@@ -25,7 +25,7 @@ Unlike, say, <a href="https://fishshell.com">fish</a>, the default behavior when
 
 <p>
 However: <i>es</i> is meant to be <em>extensible</em>.
-Even if the default behavior is lean or simplistic, there is no particular virtue in making it impossible for a user to get a more advanced interactive setup akin to fish, if that's what they want.
+Even if the default behavior is lean or simplistic, there is no particular virtue in making it impossible for a user to get a more advanced interactive setup akin to fish, if that&rsquo;s what they want.
 The major reasons for the lack of extensiblity in <i>es</i> today are all accidents of implementation.
 
 <h2>How input works</h2>
@@ -58,7 +58,7 @@ When the shell is started (or a script is run with <code>.</code>) the shell cre
 This object is populated with the appropriate values, and function pointers, in order to read from the input string or file.
 
 <p>
-Then the shell dynamically binds the <code>%dispatch</code> function to a definition it selects based on the <code>Input</code>'s <code>runflags</code> field, which is itself based on the <code>-inxv</code> flags the user used for the shell or <code>.</code> call.
+Then the shell dynamically binds the <code>%dispatch</code> function to a definition it selects based on the <code>Input</code>&rsquo;s <code>runflags</code> field, which is itself based on the <code>-inxv</code> flags the user used for the shell or <code>.</code> call.
 Then, depending on if the interactive runflag is present or not, the shell calls either <code>%interactive-loop</code> or <code>%batch-loop</code>.
 Finally, at this point, users have some control over what happens.
 
@@ -81,9 +81,9 @@ Then, if <code>$cmd</code> is not empty, the <code>%dispatch</code> function is 
 
 <p>
 When looking at these functions, the <code>%parse</code> part is fairly inscrutable.
-The obvious question: Why in the world does a function called <code>%parse</code> take the shell's <code>$prompt</code> as arguments, when those have nothing really to do with parsing?
-Also, where is the code to actually read from the shell's input?
-Well, that's the problem:
+The obvious question: Why in the world does a function called <code>%parse</code> take the shell&rsquo;s <code>$prompt</code> as arguments, when those have nothing really to do with parsing?
+Also, where is the code to actually read from the shell&rsquo;s input?
+Well, that&rsquo;s the problem:
 
 <h2><code>%parse</code> does too much</h2>
 
@@ -95,17 +95,17 @@ On top of that, the way <i>es</i> been historically implemented, <em>no es scrip
 
 <p>
 The reason for this is memory management.
-<i>Es</i> needs to track every bit of shell state for the sake of its garbage collector, but while the yacc-generated parser is running, some bits of shell state held by the parser will be unknown to <i>es</i> until parsing is complete, meaning that the GC can't run during parsing, meaning that normal <i>es</i> code can't be run while the parser is going.
+<i>Es</i> needs to track every bit of shell state for the sake of its garbage collector, but while the yacc-generated parser is running, some bits of shell state held by the parser will be unknown to <i>es</i> until parsing is complete, meaning that the GC can&rsquo;t run during parsing, meaning that normal <i>es</i> code can&rsquo;t be run while the parser is going.
 
 <p>
 This stinks!
-So much happens inside of <code>$&amp;parse</code>, and so much of that is made up by mysterious internal mechanisms (the <code>Input</code>) which are barely in the user's control, that it is essentially only usable within the context of these REPL functions.
+So much happens inside of <code>$&amp;parse</code>, and so much of that is made up by mysterious internal mechanisms (the <code>Input</code>) which are barely in the user&rsquo;s control, that it is essentially only usable within the context of these REPL functions.
 (Exercise for the reader: figure out a way to wrap <code>%parse</code> such that it can be fed an arbitrary string.)
-Because it has readline wrapped up in it, there's no <code>$&amp;readline</code> primitive that users can call, either&mdash;and no way at all to use readline to get any input that won't then be passed into the parser.
+Because it has readline wrapped up in it, there&rsquo;s no <code>$&amp;readline</code> primitive that users can call, either&mdash;and no way at all to use readline to get any input that won&rsquo;t then be passed into the parser.
 In a shell which has been praised for its <a href="http://www.catb.org/~esr/writings/taoup/html/ch04s02.html#orthogonality">orthogonality</a>, this is a glaring deficiency.
 
 <p>
-Forgetting the existing implementation, let's look at what a hypothetical <code>$&amp;parse</code> should do.
+Forgetting the existing implementation, let&rsquo;s look at what a hypothetical <code>$&amp;parse</code> should do.
 At first blush, we want a <code>$&amp;parse</code> which
 
 <ol>
@@ -114,8 +114,8 @@ At first blush, we want a <code>$&amp;parse</code> which
 </ol>
 
 <p>
-For most languages, including <i>es</i>, it's actually impossible to know without parsing how much input the parser needs before it's done, because it depends directly on the syntactic structure of the input.
-Because of that problem, you can't just pretend a parser is a black box where you feed it a string and it spits out a tree; it needs some way to ask for more input.
+For most languages, including <i>es</i>, it&rsquo;s actually impossible to know without parsing how much input the parser needs before it&rsquo;s done, because it depends directly on the syntactic structure of the input.
+Because of that problem, you can&rsquo;t just pretend a parser is a black box where you feed it a string and it spits out a tree; it needs some way to ask for more input.
 
 <p>
 With that in mind, how would we change <code>$&amp;parse</code>?
@@ -138,8 +138,8 @@ In <i>es</i> the basic setup might look like:
 </figure>
 
 <p>
-This is more complicated-looking than the above, but there's also a serious catch: now you have to worry about the state of the parser between calls.
-Because each <code>%parse</code> call can leave the parser in a partially-done state, in order to have reliably correct behavior, you'd actually need to add some kind of <code>%parse-init</code> function.
+This is more complicated-looking than the above, but there&rsquo;s also a serious catch: now you have to worry about the state of the parser between calls.
+Because each <code>%parse</code> call can leave the parser in a partially-done state, in order to have reliably correct behavior, you&rsquo;d actually need to add some kind of <code>%parse-init</code> function.
 You may even want to have some kind of parser handle where the parser code can be encapsulated.
 
 <p>
@@ -159,7 +159,7 @@ In <i>es</i>, this might look like:
 </figure>
 
 <p>
-The change from the current state of the shell to this is very subtle&mdash;we've just gone from the original <code>%parse $prompt</code> to <code>%parse %read</code>.
+The change from the current state of the shell to this is very subtle&mdash;we&rsquo;ve just gone from the original <code>%parse $prompt</code> to <code>%parse %read</code>.
 In this case, <code>%read</code> is a command that we give to <code>%parse</code>, which it can call whenever it wants to read more shell input.
 This command will be called at least once, and might be called a hundred times, until the parser finishes.
 This setup fixes the problems with state that the push-style parser would have, as every call to <code>%parse</code> would run until the parser reached a complete state.

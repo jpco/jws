@@ -7,6 +7,8 @@ main {
 	margin-left: auto;
 	margin-right: auto;
 	padding: 10px;
+
+	font-variant-numeric: oldstyle-nums proportional-nums;
 	tab-size: 2;
 }
 nav {
@@ -27,9 +29,18 @@ nav a:visited {
 /* text rendering */
 p {
 	hyphens: auto;
+	text-align: justify;
+}
+code, samp, kbd {
+	hyphens: none;
+	font-variant-ligatures: none;
+	font-variant-numeric: normal lining-nums tabular-nums;
 }
 h1 {
 	text-align: center;
+}
+h2, h3, h4, h5, h6 {
+	font-variant-ligatures: common-ligatures discretionary-ligatures historical-ligatures;
 }
 div.time {
 	text-align: center;
@@ -39,6 +50,8 @@ blockquote {
 	padding-left: 1em;
 	border-left: 2px solid gray;
 	font-style: italic;
+	hyphens: auto;
+	text-align: justify;
 }
 blockquote em {
 	font-style: initial;
@@ -62,7 +75,8 @@ table {
 }
 figure {
 	padding: 0;
-	margin: 0;
+	margin-left: 0;
+	margin-right: 0;
 	border: 1px solid #eee;
 	border-radius: 2px;
 	background-color: #fbfbfb;

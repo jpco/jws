@@ -19,7 +19,7 @@ script {
 This page is for testing various aspects of the Web Notifications API.
 
 <p>
-First you'll have to give permission for notifications.
+First you&rsquo;ll have to give permission for notifications.
 
 <p>
 <button id=permission>Permission please!</button>

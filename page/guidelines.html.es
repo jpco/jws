@@ -13,43 +13,43 @@
 A website is a complicated thing.
 
 <p>
-If you don't have a clear idea of what you want to do, there are a lot of different ways to end up with something that, plainly, stinks.
+If you don&rsquo;t have a clear idea of what you want to do, there are a lot of different ways to end up with something that, plainly, stinks.
 
 <p>
-Impressively, it seems that some of the world's premiere institutions of the written word struggle with this just as soon as that word needs to be wrapped in an <code>&lt;html&gt;</code>.
-Have you ever clicked a link, hoping to read something insightful from a great writer, just to become locked in battle with the page it's on, which is desperately trying to get you to do anything except read what you came there for?
+Impressively, it seems that some of the world&rsquo;s premiere institutions of the written word struggle with this just as soon as that word needs to be wrapped in an <code>&lt;html&gt;</code>.
+Have you ever clicked a link, hoping to read something insightful from a great writer, just to become locked in battle with the page it&rsquo;s on, which is desperately trying to get you to do anything except read what you came there for?
 
 <p>
 Sure you have.
-That's like 40% of what the web is these days.
+That&rsquo;s like 40% of what the web is these days.
 
 <p>
-Now, admittedly, I can't exactly claim to be a great designer myself.
-I've got what you might call &ldquo;basic&rdquo; visual aesthetic tastes.
-I also don't spend a great deal of time working in the browser, so it's easy for me to forget about some of the various things I care about in a website.
+Now, admittedly, I can&rsquo;t exactly claim to be a great designer myself.
+I&rsquo;ve got what you might call &ldquo;basic&rdquo; visual aesthetic tastes.
+I also don&rsquo;t spend a great deal of time working in the browser, so it&rsquo;s easy for me to forget about some of the various things I care about in a website.
 
 <p>
 So, this page is primarily for myself, to remember my own design goals, inspirations, and practices.
-I'm putting it on this site so that it's definitely available when I want to use it, but maybe it'll be useful to somebody else, too.
+I&rsquo;m putting it on this site so that it&rsquo;s definitely available when I want to use it, but maybe it&rsquo;ll be useful to somebody else, too.
 
 <h2>Websites that work well</h2>
 
 <p>
 First, hello, future me and anyone else reading.
-Let's talk about what actually makes a website <em>good</em>.
+Let&rsquo;s talk about what actually makes a website <em>good</em>.
 This is useful not only because people have different opinions, but also because the web is versatile, and different uses of web technology imply different behaviors.
 
 <p>
-For example, web <em>art</em>, the kind that <a href="https://everest-pipkin.com">Everest Pipkin</a> makes, shouldn't be judged the same way as a blog post or a web app.
-Some of the stuff that Steven Wittens does on <a href="https://acko.net">his site acko.net</a> is similar; while his site is visually great and technically impressive, all the heavily animated whizzing-about going on on the site would be kind of miserable if it were happening on essentially any website that wasn't essentially a tech demo for 3D graphics in the browser.
+For example, web <em>art</em>, the kind that <a href="https://everest-pipkin.com">Everest Pipkin</a> makes, shouldn&rsquo;t be judged the same way as a blog post or a web app.
+Some of the stuff that Steven Wittens does on <a href="https://acko.net">his site acko.net</a> is similar; while his site is visually great and technically impressive, all the heavily animated whizzing-about going on on the site would be kind of miserable if it were happening on essentially any website that wasn&rsquo;t essentially a tech demo for 3D graphics in the browser.
 
 <p>
 Complex web apps are yet another thing altogether.
 I have very little to say about, say, Google Maps as a &ldquo;website&rdquo;, except that it seems good at being a big interactive map.
-As far as I'm concerned, websites like that are more or less magic.
+As far as I&rsquo;m concerned, websites like that are more or less magic.
 
 <p> That said, though, sophisticated web apps like that&mdash;web apps that really <em>need</em> that degree of sophistication&mdash;are pretty rare.
-There aren't that many websites where &ldquo;what if we used wasm?&rdquo; is a reasonable question.
+There aren&rsquo;t that many websites where &ldquo;what if we used wasm?&rdquo; is a reasonable question.
 
 <p>
 So, for everything else, all those sites that are essentially fancy text-and-image delivery systems, what makes a site good?
@@ -58,7 +58,7 @@ So, for everything else, all those sites that are essentially fancy text-and-ima
 Well, some universally good things are compactness and accessibility.
 
 <p>
-By compactness I mean the amount of data your browser downloads shouldn't be much bigger than it has to.
+By compactness I mean the amount of data your browser downloads shouldn&rsquo;t be much bigger than it has to.
 Plenty of people have written about this before; Maciej Cegłowski did <a href="https://idlewords.com/talks/website_obesity.htm">the canonical talk on the &ldquo;website obesity crisis&rdquo;</a>, which itself refers to half a dozen pages bemoaning, and at the same time exhibiting, page bloat.
 Dan Luu has done some great writing on this as well, focusing on the impacts of bloated sites on both <a href="http://danluu.com/web-bloat/">slow and intermittent internet</a> and <a href="http://danluu.com/slow-device/">slow devices</a>.
 Incidentally, <a href="http://danluu.com">danluu.com</a> itself is a very good, if extreme, example of a compact website.
@@ -71,18 +71,18 @@ I also mentioned accessibility.
 Accessibility is a very good thing if you want people to use your thing.
 
 <p>
-Accessibility includes the typical topics of screen-readers and semantic HTML, but it's broader than that.
+Accessibility includes the typical topics of screen-readers and semantic HTML, but it&rsquo;s broader than that.
 I would define accessibility on the web as something like &ldquo;usable, according to many different preferences and needs.&rdquo;
 Because there are many ways people use the web, and many levers of control available to a user.
 
 <p>
 An accessible site should use responsive design, so that people can read a site easily on whatever screen they want, and at whatever font size or zoom level they want.
-Dark mode is another ubiquitous user setting, which a lot of people get very bothered about if they can't manage, and respecting it in this site (as of this writing) costs just 229 bytes of CSS.  (Even Dan Luu's site respects dark mode!)
+Dark mode is another ubiquitous user setting, which a lot of people get very bothered about if they can&rsquo;t manage, and respecting it in this site (as of this writing) costs just 229 bytes of CSS.  (Even Dan Luu&rsquo;s site respects dark mode!)
 
 <p>
 Speaking of fonts: in my opinion, an accessible site should, preferably, allow users to control the font they use to read it.
-I'm not a typeface designer or a design firm, and my page isn't about type, so what business is it of mine what fonts are used by people reading my site?
-I'm going to deliver half a megabyte of font data just to make sure people <em>aren't</em> able to read text the way they want to?
+I&rsquo;m not a typeface designer or a design firm, and my page isn&rsquo;t about type, so what business is it of mine what fonts are used by people reading my site?
+I&rsquo;m going to deliver half a megabyte of font data just to make sure people <em>aren&rsquo;t</em> able to read text the way they want to?
 
 <p>
 Some folks want that nice dyslexia-friendly font with the fat bottom.
@@ -100,26 +100,26 @@ How did it go?
 I think sites do better at this these days than they used to, but it still feels like a treat these days to print out a web page and get something fully functional.
 Apparently, image layout is the hardest part.
 The <a href="https://hcn.org">High Country News</a> site, for example, does an okay job with print styling, but slices images in half across page breaks.
-<a href="https://solar.lowtechmagazine.com">Low-tech Magazine</a> deserves a special shout-out for formatting their newer articles in a nice looking multi-column format, and <em>especially</em> for taking into account the fact that you can't, you know, click on links on a piece of paper, but it still tends to leave huge ugly blank spaces around large images.
+<a href="https://solar.lowtechmagazine.com">Low-tech Magazine</a> deserves a special shout-out for formatting their newer articles in a nice looking multi-column format, and <em>especially</em> for taking into account the fact that you can&rsquo;t, you know, click on links on a piece of paper, but it still tends to leave huge ugly blank spaces around large images.
 
 <p>
 Okay, just a couple more kinds of usability to note.
 Not everybody who uses the web is good at English, and nor should they be.
-Doing some basic things to help machine translation work well is a Good Thing, and not particularly difficult (so long as you don't have to write the translation engine yourself!)
+Doing some basic things to help machine translation work well is a Good Thing, and not particularly difficult (so long as you don&rsquo;t have to write the translation engine yourself!)
 
 <p>
-Lastly, there's usability for people with slow and intermittent networking.
+Lastly, there&rsquo;s usability for people with slow and intermittent networking.
 
 <p>
-The first clear way to achieve this kind of accessibility is compactness, which I already described, but there's some more beyond that.
-There's raw speed, which can be achieved with nice things like minification and compression, though with a sufficiently compact site those don't actually save a whole ton of bits (you'll note this site doesn't use either).
+The first clear way to achieve this kind of accessibility is compactness, which I already described, but there&rsquo;s some more beyond that.
+There&rsquo;s raw speed, which can be achieved with nice things like minification and compression, though with a sufficiently compact site those don&rsquo;t actually save a whole ton of bits (you&rsquo;ll note this site doesn&rsquo;t use either).
 
 <p>
-On top of speed, though, there's also networking <em>predictability</em> and <em>control</em>.
+On top of speed, though, there&rsquo;s also networking <em>predictability</em> and <em>control</em>.
 When your access to the internet is more complicated than just &ldquo;yes&rdquo; or &ldquo;no&rdquo;, being able to predict and manage network access has real value.
 
 <p>
-Alexander Petros describes this well in <a href="https://unplannedobsolescence.com/blog/hard-page-load/">Who's Afraid of a Hard Page Load?</a>:
+Alexander Petros describes this well in <a href="https://unplannedobsolescence.com/blog/hard-page-load/">Who&rsquo;s Afraid of a Hard Page Load?</a>:
 
 <blockquote>
 <p>
@@ -131,9 +131,9 @@ So I avoid clicking links until I’m at a stop.
 </blockquote>
 
 <p>
-This might seem like something advanced, but it's really the most basic and predictable behavior of the web.
-If I'm looking at a page, I should be able to keep looking at it.
-If I click a link, it makes sense I wouldn't be able to load it if I don't have internet.
+This might seem like something advanced, but it&rsquo;s really the most basic and predictable behavior of the web.
+If I&rsquo;m looking at a page, I should be able to keep looking at it.
+If I click a link, it makes sense I wouldn&rsquo;t be able to load it if I don&rsquo;t have internet.
 Once that linked page loads, though, I should be able to keep looking at it.
 This is Just Works stuff that really sucks when it stops, and having it is worth a lot.
 
@@ -152,7 +152,7 @@ What sites are <em>cool</em>?
 <h2>Websites that are cool</h2>
 
 <p>
-Okay, first of all, let me admit what's already extremely predictable: I have a different idea of what's <em>cool</em> than most other people do.
+Okay, first of all, let me admit what&rsquo;s already extremely predictable: I have a different idea of what&rsquo;s <em>cool</em> than most other people do.
 
 <p>
 I like tools that are small and high-leverage, objects that expose their component parts, and systems that are complex and <a href="https://malleable.systems">malleable</a>.
@@ -161,7 +161,7 @@ I like tools that are small and high-leverage, objects that expose their compone
 I like sites that use or expose HTML in interesting ways. This self-described <a href="https://secretgeek.github.io/html_wysiwyg/html.html">HTML quine</a> is essentially as far as you can go in this direction, but other projects like <a href="https://thehtml.review">the html review</a> are also troves of creativity.
 
 <p>
-I'm also fond of sites that interact with the real world in ways that most sites usually don't &mdash; sites which respond to their own energy use and display their own server's physical reality.
+I&rsquo;m also fond of sites that interact with the real world in ways that most sites usually don&rsquo;t &mdash; sites which respond to their own energy use and display their own server&rsquo;s physical reality.
 
 <p>
 The <a href="https://solar.lowtechmagazine.com/about/the-solar-website">Low-tech Magazine</a> seems to be cited by most as the original on this, but the <a href="https://solarprotocol.net">Solar Protocol</a> project adds some cleverness to that, grouping several geographically-distributed solar servers together to direct traffic around the planet as solar availability changes.
@@ -173,13 +173,13 @@ Other such projects exist, too.  <a href="https://compost.party">compost.party</
 There are a lot of good ideas on the <a href="https://damaged.bleu255.com/">Damaged Earth Catalog</a>, and organizations like <a href="https://computingwithinlimits.org/">LIMITS</a>.
 
 <p>
-Lots of these pages don't do very much of what I describe as &ldquo;working well&rdquo;.
-Like I mentioned, many of them are effectively interactive art, and it doesn't make much more sense to print interactive art than it does to print a sculpture.
+Lots of these pages don&rsquo;t do very much of what I describe as &ldquo;working well&rdquo;.
+Like I mentioned, many of them are effectively interactive art, and it doesn&rsquo;t make much more sense to print interactive art than it does to print a sculpture.
 
 <p>
-Sadly, I also can't very easily follow the lead of a lot of these sites right now, since my own internet situation at home is difficult.
-I don't have a public IP address to speak of, and doing a small-site-hosted-on-the-farm doesn't seem particularly useful if you can't see it without going through some kind of Cloudflare tunnel to do so.
-So, there's some disconnect between the sites I think are good (work well) and those I think are good (are cool).
+Sadly, I also can&rsquo;t very easily follow the lead of a lot of these sites right now, since my own internet situation at home is difficult.
+I don&rsquo;t have a public IP address to speak of, and doing a small-site-hosted-on-the-farm doesn&rsquo;t seem particularly useful if you can&rsquo;t see it without going through some kind of Cloudflare tunnel to do so.
+So, there&rsquo;s some disconnect between the sites I think are good (work well) and those I think are good (are cool).
 When the opportunity comes, though, I plan on integrating the two ideals in this site.
 
 <p>
@@ -226,9 +226,9 @@ Print CSS (for which the <a href="https://developer.mozilla.org/en-US/docs/Web/C
 
 <p>
 Good translation support is mostly a matter of declaring what language content is in.
-That's done via the <code>lang</code> attribute on tags.
+That&rsquo;s done via the <code>lang</code> attribute on tags.
 Since this site is generally in English, <code>&lt;html lang=en-US&gt;</code> is set on every page.
-But, since this site has some content that <a href=/toki>isn't in English</a>, declaring the right languages for the right text is good.
+But, since this site has some content that <a href=/toki>isn&rsquo;t in English</a>, declaring the right languages for the right text is good.
 
 <p>
 Note this also improves text rendering: hyphenation is based on language, so declaring the language being used helps avoid weirdness.
@@ -239,13 +239,13 @@ UTF-8 is the only encoding to use on the web these days.
 
 <p>
 One last note about languages!
-We generally don't want code translated at all, even if we're translating text from English to something else.
+We generally don&rsquo;t want code translated at all, even if we&rsquo;re translating text from English to something else.
 
 <p>
-For general text, that can be hinted at with a <code>translate=no</code> attribute on an element, but for code, that isn't necessary, as long as everything is wrapped in one of the following elements: <code>kbd</code>, for input to a computer; <code>samp</code>, for output from a computer; or <code>code</code>, for other code.
-Note that <code>pre</code> doesn't prevent translation by itself.
+For general text, that can be hinted at with a <code>translate=no</code> attribute on an element, but for code, that isn&rsquo;t necessary, as long as everything is wrapped in one of the following elements: <code>kbd</code>, for input to a computer; <code>samp</code>, for output from a computer; or <code>code</code>, for other code.
+Note that <code>pre</code> doesn&rsquo;t prevent translation by itself.
 
 <p>
-Okay, that's all for now.
+Okay, that&rsquo;s all for now.
 This is a living page so expect it to change over time as I slowly get less wrong.
 </main>

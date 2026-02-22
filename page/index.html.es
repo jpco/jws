@@ -13,9 +13,9 @@ Welcome to the <a href="https://info.cern.ch/hypertext/WWW/TheProject.html">Worl
 What you are looking at now is what is known as a &ldquo;web site.&rdquo;
 
 <p>
-There are other things you may be familiar with which are somewhat similar to a web site, but many of them don't actually follow any reasonable <a href=/guidelines.html>guidelines</a> for how a website ought to be built.
+There are other things you may be familiar with which are somewhat similar to a web site, but many of them don&rsquo;t actually follow any reasonable <a href=/guidelines.html>guidelines</a> for how a website ought to be built.
 Even some that are made by big well-funded companies!
-Isn't that surprising?
+Isn&rsquo;t that surprising?
 
 <p>
 Much of my (non-work) focus on computers is dedicated to <a href=/es>the extensible shell <i>es</i></a>.

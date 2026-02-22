@@ -60,7 +60,7 @@ But despite its far-too-specific meaning, it is terribly useful for us online ne
 I think this is why <span lang=tok>linluwi</span> is a word people come back to, despite having such an objectively un-<span lang=tok>pona</span> definition.
 I think this is also why people have repeatedly tried redefining <span lang=tok>linluwi</span> in a way that makes it more <span lang=tok>pona</span>.
 <a href="https://www.reddit.com/r/tokipona/comments/kliq9c/lets_elaborate_on_repurposing_linluwi/">Several</a> <a href="https://www.reddit.com/r/tokipona/comments/kcq0ox/lets_repurpose_the_words_pu_kule_and_linluwi/">examples</a> <a href="https://www.reddit.com/r/tokipona/comments/q44882/on_linluwi/">exist</a> on reddit.
-This post integrates some of those ideas (especially <span lang=tok>jan Kali</span>'s).
+This post integrates some of those ideas (especially <span lang=tok>jan Kali</span>&rsquo;s).
 
 <p>
 Briefly, I want to talk about semantic spaces.
@@ -107,9 +107,9 @@ Tapestries?
 Beading?
 <span lang=tok>linluwi kiwen</span>.
 A spider is <span lang=tok>pipi linluwi</span>.
-If I'm hungry, maybe I will <span lang=tok>linluwi e kala</span> to cook it for dinner.
+If I&rsquo;m hungry, maybe I will <span lang=tok>linluwi e kala</span> to cook it for dinner.
 A pie with a lattice top could be called <span lang=tok>pan linluwi</span>.
-If your bread didn't rise, did you <span lang=tok>pali e linluwi ko</span> &mdash; build the gluten network?
+If your bread didn&rsquo;t rise, did you <span lang=tok>pali e linluwi ko</span> &mdash; build the gluten network?
 
 <p>
 Moreover: If I want to learn something, I can look it up on the <span lang=tok>linluwi ilo</span>.
@@ -124,7 +124,7 @@ A commune can be <span lang=tok>linluwi tomo</span>.
 <h2>Evaluating <span lang=tok>linluwi</span></h2>
 
 <p>
-Let's consult <a href="https://theepicosity.github.io/lipu-pi-ijo-pi-toki-pona/ante/smell.html"><span lang=tok>kule epiku Atawan</span>'s rules of thumb for good <span lang=tok>nimi sin</span></a>.
+Let&rsquo;s consult <a href="https://theepicosity.github.io/lipu-pi-ijo-pi-toki-pona/ante/smell.html"><span lang=tok>kule epiku Atawan</span>&rsquo;s rules of thumb for good <span lang=tok>nimi sin</span></a>.
 
 <ol>
 <li>
@@ -135,7 +135,7 @@ Be universal
 Explicitly, this rule says &ldquo;[a]ny random person on earth should be able to know what the word is referring to.&rdquo;
 I would actually say that for most toki pona words, any random person on earth <em>a thousand years ago</em> should know what the words are referring to.
 This is something that makes the typical &ldquo;internet&rdquo; definition of <span lang=tok>linluwi</span> immediately stick out like a sore thumb.
-It's just so newfangled!
+It&rsquo;s just so newfangled!
 
 <p>
 Unlike the internet, weaving is absolutely ancient; archaeological evidence confirms at least ten thousand years of history of weaving, and that is with the disadvantage that woven materials are typically very quick to break down.
@@ -148,7 +148,7 @@ Be physical
 
 <p>
 This is the whole motivation for the proposed definition here.
-The weaving-related definition is primarily physical while the &ldquo;internet&rdquo; or abstract &ldquo;network&rdquo; definition isn't very much so (you can hold a computer in your hand, but can you hold <em>the internet</em> in your hand?)
+The weaving-related definition is primarily physical while the &ldquo;internet&rdquo; or abstract &ldquo;network&rdquo; definition isn&rsquo;t very much so (you can hold a computer in your hand, but can you hold <em>the internet</em> in your hand?)
 
 <li>
 <p>
@@ -164,13 +164,13 @@ Be different
 
 <p>
 This deserves some discussion.
-It's time to address <em lang=tok>len</em>.
+It&rsquo;s time to address <em lang=tok>len</em>.
 </ol>
 
 <h2 id=len>Overlap with <span lang=tok>len</span></h2>
 
 <p>
-Let's talk about alternatives to <span lang=tok>linluwi</span>.
+Let&rsquo;s talk about alternatives to <span lang=tok>linluwi</span>.
 There are certainly phrases and descriptions which work for the concept to some degree.
 In some cases, <em lang=tok>kulupu linja</em> works well enough.
 But it takes a good amount of work to communicate the &ldquo;interconnectedness&rdquo; aspect when restricted to the term <span lang=tok>kulupu linja</span>.
@@ -183,7 +183,7 @@ Despite <span lang=tok>aka</span> seeming more &ldquo;elementary&rdquo; in that 
 One can also simply refer to aka as <span lang=tok>linluwi lili</span>.
 
 <p>
-Lastly let's talk about <span lang=tok>len</span>.
+Lastly let&rsquo;s talk about <span lang=tok>len</span>.
 len is a <span lang=tok>nimi pu</span> which refers, in general, to clothing.
 <span lang=tok>pu taso la, len</span> is the best single word to cover <span lang=tok>linluwi</span>.
 But I think understanding <span lang=tok>len</span> can be a bit of a struggle, because <span lang=tok>len</span> is forced to play &ldquo;double duty&rdquo;.
@@ -214,7 +214,7 @@ The first aspect, definition #1 for each part of speech above, is that <span lan
 This is the primary physical definition of <span lang=tok>len</span>, which is then extended to more metaphorical concepts (definitions #2) of covering, concealment, or hiding.
 In this metaphorical sense, if you hide behind a rock, that rock is <span lang=tok>len</span>.
 A secret code to communicate is <span lang=tok>toki len</span>.
-Anything can be <span lang=tok>len</span>, no matter what it's made of, if you use it to cover up.
+Anything can be <span lang=tok>len</span>, no matter what it&rsquo;s made of, if you use it to cover up.
 
 <p>
 The second aspect to talk about (definitions #3) is that which overlaps with <span lang=tok>linluwi</span>: cloth.
@@ -224,16 +224,16 @@ Following from this, then, if <span lang=tok>len</span> covers the physical sens
 <span lang=tok>len pi ilo sona</span> &mdash; the fabric of the knowledge tools &mdash; can be a perfectly cromulent way to refer to the internet.
 
 <p>
-But note that, of these four meanings of <span lang=tok>len</span> (physical-covering, metaphorical-covering, physical-fabric, and metaphorical-fabric), metaphorical-fabric isn't included in the definitions on wiktionary!
-I believe that this isn't a simple oversight, but rather a sign that <span lang=tok>len</span> is overstretched.
+But note that, of these four meanings of <span lang=tok>len</span> (physical-covering, metaphorical-covering, physical-fabric, and metaphorical-fabric), metaphorical-fabric isn&rsquo;t included in the definitions on wiktionary!
+I believe that this isn&rsquo;t a simple oversight, but rather a sign that <span lang=tok>len</span> is overstretched.
 It is difficult to parse four semi-coupled aspects of meaning from a single word, especially when the two metaphorical senses (covered/concealed/private/obscured, and connected/networked/enmeshed) are completely unrelated and to some degree even slightly opposed to each other.
 <span lang=tok>telo linluwi</span>, woven water, makes some sense.
 It could be a river delta, or watershed, or maybe the canals of Venice.
 But <span lang=tok>telo len</span> could be all of those things, or groundwater, or a covered reservoir, or some other generally hidden water.
-Context helps, of course, but perhaps this is a large enough tent of meaning that two tents wouldn't be inappropriate?
+Context helps, of course, but perhaps this is a large enough tent of meaning that two tents wouldn&rsquo;t be inappropriate?
 
 <p>
-So <span lang=tok>linluwi</span> does overlap with <span lang=tok>len</span>, but I claim it isn't really redundant with it.
+So <span lang=tok>linluwi</span> does overlap with <span lang=tok>len</span>, but I claim it isn&rsquo;t really redundant with it.
 <span lang=tok>linluwi</span> frees len up from its awkward double meaning, and allows us to start talking about metaphorical fabric and weaving and networks and webs freely, adding interesting and novel noun phrases to the language, and with far less ambiguity.
 
 <table class=meaning>

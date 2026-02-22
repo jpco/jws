@@ -86,7 +86,7 @@ Because it must satisfy both the interactive and programming aspects of command 
 <p>
 A shell is both a programming language and the core of an interactive environment.
 The ancestor of most current shells is the 7th Edition Bourne shell[<a class=local href=#ref2>2</a>], which is characterized by simple semantics, a minimal set of interactive features, and syntax that is all too reminiscent of Algol.
-One recent shell, <i>rc</i> [<a class=local href=#ref3>3</a>], substituted a cleaner syntax but kept most of the Bourne shell's attributes.
+One recent shell, <i>rc</i> [<a class=local href=#ref3>3</a>], substituted a cleaner syntax but kept most of the Bourne shell&rsquo;s attributes.
 However, most recent developments in shells (e.g., <i>csh</i>, <i>ksh</i>, <i>zsh</i>) have focused on improving the interactive environment without changing the structure of the underlying language &mdash; shells have proven to be resistant to innovation in programming languages.
 
 <p>
@@ -100,7 +100,7 @@ The ability to replace primitive functions in <i>es</i> is key to its extensibil
 <p>
 At a superficial level, <i>es</i> looks like most UNIX shells.
 The syntax for pipes, redirection, background jobs, etc., is unchanged from the Bourne shell.
-<i>Es</i>'s programming constructs are new, but reminiscent of <i>rc</i> and Tcl[<a class=local href=#ref6>6</a>].
+<i>Es</i>&rsquo;s programming constructs are new, but reminiscent of <i>rc</i> and Tcl[<a class=local href=#ref6>6</a>].
 
 <p>
 <i>Es</i> is freely redistributable, and is available by anonymous ftp from <code>ftp.white.toronto.edu</code>.
@@ -238,7 +238,7 @@ It takes the form
 </figure>
 
 <p>
-In effect, a lambda is a procedure "waiting to happen."
+In effect, a lambda is a procedure &ldquo;waiting to happen.&rdquo;
 For example, it is possible to type:
 
 <figure>
@@ -317,7 +317,7 @@ For example, in order to avoid interfering with a global instance of <code>i</co
 </figure>
 
 <p>
-Lexical binding is useful in shell functions, where it becomes important to have shell functions that do not clobber each others' variables.
+Lexical binding is useful in shell functions, where it becomes important to have shell functions that do not clobber each others&rsquo; variables.
 
 <p>
 <i>Es</i> code fragments, whether used as arguments to commands or stored in variables, capture the values of enclosing lexically scoped values.
@@ -397,7 +397,7 @@ The reader should note that
 </figure>
 
 <p>
-is <i>es</i>'s "not" command, which inverts the sense of the return value of <var>cmd</var>, and
+is <i>es</i>&rsquo;s &ldquo;not&rdquo; command, which inverts the sense of the return value of <var>cmd</var>, and
 
 <figure>
 <pre>
@@ -420,7 +420,7 @@ The shell syntax for this is typically:
 </figure>
 
 <p>
-That notation conflicts with <i>es</i>'s syntax for assignment (where zero or more words are assigned to a variable), so dynamic binding has the syntax:
+That notation conflicts with <i>es</i>&rsquo;s syntax for assignment (where zero or more words are assigned to a variable), so dynamic binding has the syntax:
 
 <figure>
 <pre>
@@ -493,7 +493,7 @@ new x = fubar</samp>
 
 <p>
 UNIX programs exit with a single number between 0 and 255 reported as their statuses.
-<i>Es</i> supplants the notion of an exit status with "rich" return values.
+<i>Es</i> supplants the notion of an exit status with &ldquo;rich&rdquo; return values.
 An <i>es</i> function can return not only a number, but any object: a string, a program fragment, a lambda, or a list which mixes such values.
 
 <p>
@@ -580,7 +580,7 @@ Exceptions are trapped with the built-in <code>catch</code>, which typically tak
 </figure>
 
 <p>
-<code>Catch</code> first executes <i>body</i>; if no exception is raised, <code>catch</code> simply returns, passing along <i>body</i>'s return value.
+<code>Catch</code> first executes <i>body</i>; if no exception is raised, <code>catch</code> simply returns, passing along <i>body</i>&rsquo;s return value.
 On the other hand, if anything invoked by <i>body</i> throws an exception, <i>handler</i> is run, with <code>e</code> bound to the exception that caused the problem.
 For example, the last two lines of <code>in</code> above can be replaced with:
 
@@ -613,7 +613,7 @@ No such file or directory</samp>
 <h2><a id=spoofing>Spoofing</a></h2>
 
 <p>
-<i>Es</i>'s versatile functions and variables are only half of the story; the other part is that <i>es</i>'s shell syntax is just a front for calls on built-in functions.
+<i>Es</i>&rsquo;s versatile functions and variables are only half of the story; the other part is that <i>es</i>&rsquo;s shell syntax is just a front for calls on built-in functions.
 For example:
 
 <figure>
@@ -645,7 +645,7 @@ That means that it is always possible to access the underlying shell service, ev
 
 <p>
 Keeping this in mind, here is a spoof of the redirection operator that we have been discussing.
-This spoof is simple: if the file to be created exists (determined by running <code>test -f</code>), then the command is not run, similar to the C-shell's "noclobber" option:
+This spoof is simple: if the file to be created exists (determined by running <code>test -f</code>), then the command is not run, similar to the C-shell&rsquo;s &ldquo;noclobber&rdquo; option:
 
 <figure>
 <pre>
@@ -726,7 +726,7 @@ Spoofing can also be used for tasks which other shells cannot do; one example is
 </figure>
 
 <p>
-Many shells provide some mechanism for caching the full pathnames of executables which are looked up in a user's <code>$PATH</code>.
+Many shells provide some mechanism for caching the full pathnames of executables which are looked up in a user&rsquo;s <code>$PATH</code>.
 <i>Es</i> does not provide this functionality in the shell, but it can easily be added by any user who wants it.
 The function <code>%pathsearch</code> (see Figure 2) is invoked to lookup non-absolute file names which are used as commands.
 
@@ -809,8 +809,8 @@ Hence <i>es</i> must maintain a copy of each variable, with a change in one refl
 <h2><a id=initialization>Initialization</a></h2>
 
 <p>
-Much of <i>es</i>'s initialization is actually done by an <i>es</i> script, called <code>initial.es</code>, which is converted by a shell script to a C character string at compile time and stored internally.
-The script illustrates how the default actions for <i>es</i>'s parser is set up, as well as features such as the <code>path</code>/<code>PATH</code> aliasing mentioned above. [<a class=local href=#erratum6 name=erratum6-use>Errata note 6</a>]
+Much of <i>es</i>&rsquo;s initialization is actually done by an <i>es</i> script, called <code>initial.es</code>, which is converted by a shell script to a C character string at compile time and stored internally.
+The script illustrates how the default actions for <i>es</i>&rsquo;s parser is set up, as well as features such as the <code>path</code>/<code>PATH</code> aliasing mentioned above. [<a class=local href=#erratum6 name=erratum6-use>Errata note 6</a>]
 
 <p>
 Much of the script consists of lines like:
@@ -838,7 +838,7 @@ fn-catch = $&amp;catch</code>
 </figure>
 
 <p>
-The difference with these is that they are given names invoked directly by the user; "<code>.</code>" is the Bourne-compatible command for "sourcing" a file.
+The difference with these is that they are given names invoked directly by the user; &ldquo;<code>.</code>&rdquo; is the Bourne-compatible command for &ldquo;sourcing&rdquo; a file.
 
 <p>
 Finally, some settor functions are defined to work around UNIX path searching (and other) conventions.
@@ -869,7 +869,7 @@ This avoids infinite recursion between the two settor functions.
 UNIX shells typically maintain a table of variable definitions which is passed on to child processes when they are created.
 This table is loosely referred to as the environment or the environment variables.
 Although traditionally the environment has been used to pass values of variables only, the duality of functions and variables in <i>es</i> has made it possible to pass down function definitions to subshells.
-(While <i>rc</i> also offered this functionality, it was more of a kludge arising from the restriction that there was not a separate space for "environment functions.")
+(While <i>rc</i> also offered this functionality, it was more of a kludge arising from the restriction that there was not a separate space for &ldquo;environment functions.&rdquo;)
 
 <p>
 Having functions in the environment brings them into the same conceptual framework as variables -- they follow identical rules for creation, deletion, presence in the environment, and so on.
@@ -878,7 +878,7 @@ Since nearly all shell state can now be encoded in the environment, it becomes s
 Hence shell startup becomes very quick.
 
 <p>
-As a consequence of this support for the environment, a fair amount of <i>es</i> must be devoted to "unparsing" function definitions so that they may be passed as environment strings.
+As a consequence of this support for the environment, a fair amount of <i>es</i> must be devoted to &ldquo;unparsing&rdquo; function definitions so that they may be passed as environment strings.
 This is complicated a bit more because the lexical environment of a function definition must be preserved at unparsing.
 This is best illustrated by an example:
 
@@ -901,7 +901,7 @@ It is encoded as:
 </figure>
 
 <p>
-(Note that for cultural compatibility with other shells, functions with no named parameters use "<code>*</code>" for binding arguments.)
+(Note that for cultural compatibility with other shells, functions with no named parameters use &ldquo;<code>*</code>&rdquo; for binding arguments.)
 
 <h2><a id=interactions-with-unix>Interactions With UNIX</a></h2>
 
@@ -937,7 +937,7 @@ While this feature can be useful for programmers, it has the unfortunate consequ
 Simple memory reclamation strategies such as arena style allocation <a class=local href="#ref8">[8]</a> or reference counting are unfortunately inadequate; a full garbage collection system is required to plug all memory leaks.
 
 <p>
-Based on our experience with <i>rc</i>'s memory use, we decided that a copying garbage collector would be appropriate for <i>es</i>.
+Based on our experience with <i>rc</i>&rsquo;s memory use, we decided that a copying garbage collector would be appropriate for <i>es</i>.
 The observations leading to this conclusion were: (1) between two separate commands little memory is preserved (it roughly corresponds to the storage for environment variables); (2) command execution can consume large amounts of memory for a short time, especially when loops are involved; and, (3) however much memory is used, the working set of the shell will typically be much smaller than the physical memory available.
 Thus, we picked a strategy where we traded relatively fast collection times for being somewhat wasteful in the amount of memory used in exchange.
 While a generational garbage collector might have made sense for the same reasons that we picked a copying collector, we decided to avoid the added complexity implied by switching to the generational model.
@@ -950,7 +950,7 @@ At this point, the memory request which triggered the collection should be able 
 If not, a larger block is allocated and the collection is redone.
 
 <p>
-During some parts of the shell's execution&mdash;notably while the <i>yacc</i> parser driver is running&mdash;it is not possible to identify all of the rootset, so garbage collection is disabled.
+During some parts of the shell&rsquo;s execution&mdash;notably while the <i>yacc</i> parser driver is running&mdash;it is not possible to identify all of the rootset, so garbage collection is disabled.
 If an allocation request is made during this time for which there is not enough memory available in the arena, a new chunk of memory is grabbed so that allocation can continue.
 
 <p>
@@ -994,10 +994,10 @@ Therefore, properly tail recursive functions, such as <code>echo-nl</code> above
 This is an implementation deficiency which we hope to remedy in the near future.
 
 <p>
-<i>Es</i>, in addition to being a good language for shell programming, is a good candidate for a use as an embeddable "scripting" language, along the lines of Tcl.
+<i>Es</i>, in addition to being a good language for shell programming, is a good candidate for a use as an embeddable &ldquo;scripting&rdquo; language, along the lines of Tcl.
 <i>Es</i>, in fact, borrows much from Tcl -- most notably the idea of passing around blocks of code as unparsed strings -- and, since the requirements on the two languages are similar, it is not surprising that the syntaxes are so similar.
 <i>Es</i> has two advantages over most embedded languages: (1) the same code can be used by the shell or other programs, and many functions could be identical; and (2) it supports a wide variety of programming constructs, such as closures and exceptions.
-We are currently working on a "library" version of <i>es</i> which could be used stand-alone as a shell or linked in other programs, with or without shell features such as wildcard expansion or pipes.
+We are currently working on a &ldquo;library&rdquo; version of <i>es</i> which could be used stand-alone as a shell or linked in other programs, with or without shell features such as wildcard expansion or pipes.
 
 <h2><a id=conclusions>Conclusions</a></h2>
 
@@ -1013,21 +1013,21 @@ In <i>es</i>, once a construct is surrounded by braces, it can be stored or pass
 
 <p>
 <i>Es</i> contains little that is completely new.
-It is a synthesis of the attributes we admire most from two shells -- the venerable Bourne shell and Tom Duff's <i>rc</i> -- and several programming languages, notably Scheme and Tcl.
-Where possible we tried to retain the simplicity of <i>es</i>'s predecessors, and in several cases, such as control flow constructs, we believe that we have simplified and generalized what was found in earlier shells.
+It is a synthesis of the attributes we admire most from two shells -- the venerable Bourne shell and Tom Duff&rsquo;s <i>rc</i> -- and several programming languages, notably Scheme and Tcl.
+Where possible we tried to retain the simplicity of <i>es</i>&rsquo;s predecessors, and in several cases, such as control flow constructs, we believe that we have simplified and generalized what was found in earlier shells.
 
 <p>
 We do not believe that <i>es</i> is the ultimate shell.
-It has a cumbersome and non-extensible syntax, the support for traditional shell notations forced some unfortunate design decisions, and some of <i>es</i>'s features, such as exceptions and rich return values, do not interact as well with UNIX as we would like them to.
+It has a cumbersome and non-extensible syntax, the support for traditional shell notations forced some unfortunate design decisions, and some of <i>es</i>&rsquo;s features, such as exceptions and rich return values, do not interact as well with UNIX as we would like them to.
 Nonetheless, we think that <i>es</i> is successful as both a shell and a programming language, and would miss its features and extensibility if we were forced to revert to other shells.
 
 <h2><a id=acknowledgements>Acknowledgements</a></h2>
 
 <p>
-We'd like to thank the many people who helped both with the development of <i>es</i> and the writing of this paper.
+We&rsquo;d like to thank the many people who helped both with the development of <i>es</i> and the writing of this paper.
 Dave Hitz supplied essential advice on where to focus our efforts.
 Chris Siebenmann maintained the <i>es</i> mailing list and ftp distribution of the source.
-Donn Cave, Peter Ho, Noel Hunt, John Mackin, Bruce Perens, Steven Rezsutek, Rich Salz, Scott Schwartz, Alan Watson, and all other contributors to the list provided many suggestions, which along with a ferocious willingness to experiment with a not-ready-for-prime-time shell, were vital to <i>es</i>'s development.
+Donn Cave, Peter Ho, Noel Hunt, John Mackin, Bruce Perens, Steven Rezsutek, Rich Salz, Scott Schwartz, Alan Watson, and all other contributors to the list provided many suggestions, which along with a ferocious willingness to experiment with a not-ready-for-prime-time shell, were vital to <i>es</i>&rsquo;s development.
 Finally, Susan Karp and Beth Mitcham read many drafts of this paper and put up with us while <i>es</i> was under development.
 
 <h2><a id=footnotes>Footnotes</a></h2>
@@ -1035,8 +1035,8 @@ Finally, Susan Karp and Beth Mitcham read many drafts of this paper and put up w
 <p>
 <a id=footnote1 class=local href=#footnote1-use>1.</a>
 
-In our examples, we use "<code>es&gt;</code>" as <i>es</i>'s prompt.
-The default prompt, which may be overridden, is "<code>; </code>" which is interpreted by <i>es</i> as a null command followed by a command separator.
+In our examples, we use &ldquo;<code>es&gt;</code>&rdquo; as <i>es</i>&rsquo;s prompt.
+The default prompt, which may be overridden, is &ldquo;<code>; </code>&rdquo; which is interpreted by <i>es</i> as a null command followed by a command separator.
 Thus, whole lines, including prompts, can be cut and pasted back to the shell for re-execution.
 In examples, an italic fixed width font indicates user input.
 
@@ -1061,7 +1061,7 @@ If you are aware of any undocumented differences, please contact the authors.
 <p>
 <a id=erratum1 class=local href=#erratum1-use>1.</a>
 
-Haahr's present affiliation is
+Haahr&rsquo;s present affiliation is
 <a href="http://www.google.com/">Jive Technology</a>,
 and he can be reached by email at
 <a href="mailto:haahr@jivetech.com">haahr@jivetech.com</a>.
@@ -1069,7 +1069,7 @@ and he can be reached by email at
 <p>
 <a id=erratum2 class=local href=#erratum2-use>2.</a>
 
-The <code>&lt;&gt;</code> operator for obtaining the return value of a command has been renamed <code>&lt;=</code> to avoid conflicting with the POSIX-compatible defintion of <code>&lt;&gt;</code> as "open for reading and writing."
+The <code>&lt;&gt;</code> operator for obtaining the return value of a command has been renamed <code>&lt;=</code> to avoid conflicting with the POSIX-compatible defintion of <code>&lt;&gt;</code> as &ldquo;open for reading and writing.&rdquo;
 
 <p>
 <a id=erratum3 class=local href=#erratum3-use>3.</a>
@@ -1128,12 +1128,12 @@ Environment</i>, Prentice-Hall, 1984.
 
 <p>
 <a id=ref2>2.</a>
-S. R. Bourne, "The UNIX Shell," <i>Bell Sys. Tech. J.</i>, vol. 57,
+S. R. Bourne, &ldquo;The UNIX Shell,&rdquo; <i>Bell Sys. Tech. J.</i>, vol. 57,
 no. 6, pp. 1971-1990, 1978.
 
 <p>
 <a id=ref3>3.</a>
-Tom Duff, "Rc -- A Shell for Plan 9 and UNIX Systems," in <i>UKUUG
+Tom Duff, &ldquo;Rc -- A Shell for Plan 9 and UNIX Systems,&rdquo; in <i>UKUUG
 Conference Proceedings</i>, pp. 21-33, Summer 1990.
 
 <p>
@@ -1148,7 +1148,7 @@ Standard ML</i>, MIT Press, 1990.
 
 <p>
 <a id=ref6>6.</a>
-John Ousterhout, "Tcl: An Embeddable Command Language," in <i>Usenix
+John Ousterhout, &ldquo;Tcl: An Embeddable Command Language,&rdquo; in <i>Usenix
 Conference Proceedings</i>, pp. 133-146, Winter 1990.
 
 <p>
@@ -1157,8 +1157,8 @@ Jon L. Bentley, <i>More Programming Pearls</i>, Addison-Welsey, 1988.
 
 <p>
 <a id=ref8>8.</a>
-David R. Hanson, "Fast allocation and deallocation of memory based on
-object lifetimes," <i>Software -- Practice and Experience</i>,
+David R. Hanson, &ldquo;Fast allocation and deallocation of memory based on
+object lifetimes,&rdquo; <i>Software -- Practice and Experience</i>,
 vol. 20, no.  1, pp. 5-12, January, 1990.
 
 <p>
@@ -1177,7 +1177,7 @@ He can be reached by electronic mail at <i>haahr@adobe.com</i> or by surface mai
 <p>
 Byron Rakitzis is a system programmer at Network Appliance Corporation, where he works on the design and implementation of their network file server.
 In his spare time he works on shells and window systems.
-His free-software contributions include a UNIX version of <i>rc</i>, the Plan 9 shell, and <i>pico</i>, a version of Gerard Holzmann's picture editor <i>popi</i> with code generators for SPARC and MIPS.
+His free-software contributions include a UNIX version of <i>rc</i>, the Plan 9 shell, and <i>pico</i>, a version of Gerard Holzmann&rsquo;s picture editor <i>popi</i> with code generators for SPARC and MIPS.
 He received an A.B. in Physics from Princeton University in 1990.
 He has two cats, Pooh-Bah and Goldilocks, who try to rule his home life.
 Byron can be reached at <a href="http://www.rakitzis.com/resume.html">byron@netapp.com</a> or at <a href="http://www.netapp.com/">Network Appliance Corporation</a>, 2901 Tasman Drive, Suite 208, Santa Clara, CA 95054.

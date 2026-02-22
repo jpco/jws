@@ -17,7 +17,7 @@ It is small, fast, low-dependency, and tries hard to do just one thing well.
 Notcat can do one of two things when it receives a notification.
 By default, it will print the notification to standard output.
 This can be controlled by a number of <em>format arguments</em>, which are filled with particular details of the notification.
-For example, when a notification is received, the following notcat invocation prints the notification's summary (<code>%s</code>), a space, and then the notification's body (<code>%B</code>):
+For example, when a notification is received, the following notcat invocation prints the notification&rsquo;s summary (<code>%s</code>), a space, and then the notification&rsquo;s body (<code>%B</code>):
 
 <figure>
 <pre>
@@ -37,7 +37,7 @@ Subcommands can be run when a notification is received, when a notification is c
 
 <p>
 Notcat is built on its own notification server library called notlib.
-Both are written in C99 and depend on GLib's D-Bus bindings.
+Both are written in C99 and depend on GLib&rsquo;s D-Bus bindings.
 The <a href="https://github.com/jpco/notcat">notcat repository</a> and <a href="https://github.com/jpco/notlib">notlib repository</a> are both hosted on GitHub and are licensed under the GPLv3 and LGPLv3, respectively.
 
 <h2>Format arguments</h2>
@@ -128,7 +128,7 @@ The default values for these are
 </figure>
 
 <p>
-A value of exactly <code>echo</code> refers to notcat's internal notification-printing logic.
+A value of exactly <code>echo</code> refers to notcat&rsquo;s internal notification-printing logic.
 Any other value is understood to be an external command, which is invoked using <code>posix_spawnp(3)</code> with the format arguments filled in and passed as arguments to the command.
 For example,
 
@@ -139,7 +139,7 @@ For example,
 </figure>
 
 <p>
-will search for <code>my-script.es</code> in <code>$PATH</code>, and run the resulting binary with a single argument set to the notification's summary.
+will search for <code>my-script.es</code> in <code>$PATH</code>, and run the resulting binary with a single argument set to the notification&rsquo;s summary.
 
 <p>
 If the <code>-s</code> argument is passed to notcat, then the command is invoked using <code>$SHELL -c</code>.
@@ -237,10 +237,10 @@ The waybar config which runs the notcat server is this:
 </figure>
 
 <p>
-Let's take this <code>"exec"</code> from right to left.
+Let&rsquo;s take this <code>"exec"</code> from right to left.
 
 <p>
-The <code>'%i' '%s%(?B: - %b)'</code> format arguments tell notcat that each notification should be formatted as two arguments.  The first argument is the notification's ID.  The second is the notification summary, followed&mdash;if the body is non-empty when &ldquo;cooked&rdquo;&mdash;with a hyphen and the raw text contents of the body.
+The <code>'%i' '%s%(?B: - %b)'</code> format arguments tell notcat that each notification should be formatted as two arguments.  The first argument is the notification&rsquo;s ID.  The second is the notification summary, followed&mdash;if the body is non-empty when &ldquo;cooked&rdquo;&mdash;with a hyphen and the raw text contents of the body.
 
 <p>
 These two arguments are passed to <code>tee-note.es</code> on notify and empty events.
@@ -264,7 +264,7 @@ This is why we use <code>%b</code> as the body format argument: so that notcat d
 Because the format arguments include the markup-aware <code>%B</code> in a conditional, notcat advertises the <code>body-markup</code> capability automatically.  Because waybar also correctly handles links marked up with <code>&lt;a href=""&gt;</code>, we use <code>--capabilities=body-hyperlinks</code> to manually advertise the <code>body-hyperlinks</code> capability, since notcat cannot automatically detect that support.
 
 <p>
-And that's all the configuration we give the notcat server.
+And that&rsquo;s all the configuration we give the notcat server.
 Moving on to the next line: what is the <code>"on-click": "act-note.es"</code>?
 
 <p>
@@ -283,18 +283,18 @@ if {!~ $id () &amp;&amp; !~ $id ''} {
 </figure>
 
 <p>
-reads the ID from <code>/tmp/notcat.id</code>, and, if it's non-empty, calls <code>notcat invoke $id</code> in order to invoke the default action for the notification.
+reads the ID from <code>/tmp/notcat.id</code>, and, if it&rsquo;s non-empty, calls <code>notcat invoke $id</code> in order to invoke the default action for the notification.
 
 <h2>Limitations and TODOs</h2>
 
 <p>
-While notcat doesn't want or need libnotify, many other applications do, so sometimes notcat seems to be broken just because libnotify isn't installed on the system and clients are confused.
+While notcat doesn&rsquo;t want or need libnotify, many other applications do, so sometimes notcat seems to be broken just because libnotify isn&rsquo;t installed on the system and clients are confused.
 (This has bitten me in particular with web notifications from Firefox.)
 
 <p>
-Because notcat isn't a graphical application, certain things like icons and images are unlikely to ever be supported in a real way.
+Because notcat isn&rsquo;t a graphical application, certain things like icons and images are unlikely to ever be supported in a real way.
 Sound is also unlikely.
-However, there are other things which notcat could support and doesn't now.
+However, there are other things which notcat could support and doesn&rsquo;t now.
 
 <ul>
 
