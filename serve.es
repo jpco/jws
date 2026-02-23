@@ -77,6 +77,8 @@ fn serve file flags {
 }
 
 # Build an html page.
+# If there's anywhere in this script to focus on for performance, it's here.
+# werc uses an awk script to translate from templated-html to rc?
 fn build-page args {
 	let (line = (); cmdbuf = ()) {
 		while {!~ <={line = <=%read} ()} {

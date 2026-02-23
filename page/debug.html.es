@@ -22,7 +22,7 @@
 <figure>
 <!-- FIXME: how to marry this with the serve.es logic? -->
 <pre>
-<; respond 200 text/plain >
+<; respond 200 text/html >
 </pre>
 </figure>
 
