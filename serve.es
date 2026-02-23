@@ -24,8 +24,7 @@ if {!~ $PORT ()} {
 	server-port = $PORT
 }
 
-if {~ $NCAT_SUBSHELL_MODE ()} {
-	local (NCAT_SUBSHELL_MODE = yes)
+if {!~ $NCAT_LOCAL_PORT ()} {
 	forever {ncat -k -l -p $server-port -e $0 || exit 3}
 }
 
