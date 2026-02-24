@@ -18,13 +18,11 @@ sudo docker run -it --rm -p 8181:8080 es-srv
 curl -i localhost:8181
 ```
 
-To deploy the dang thing (make sure to commit and push any changes first, as this builds from upstream master):
+To deploy the dang thing, just run
 ```
-# Cloud Build the new container version
-gcloud builds submit --tag gcr.io/jpco-cloud/web:0.70 .
-# Cloud Run the new container version
-gcloud run deploy --platform managed --image=gcr.io/jpco-cloud/web:0.70
+./deploy.es
 ```
+(make sure to push any changes first: the Dockerfile builds from HEAD, not the local directory!)
 
 ## TODO
 
