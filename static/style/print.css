@@ -11,6 +11,17 @@ figure {
 	border: none;
 	padding-top: 0;
 	padding-bottom: 0;
+	break-inside: avoid;
+}
+figure.bigfig {
+	border-top: 1px solid #bbb;
+	border-bottom: 1px solid #bbb;
+}
+
+/* vaguely try to wrangle page breaks */
+p {
+	orphans: 2;
+	widows: 3;
 }
 
 /* paper doesn't scroll */

@@ -36,15 +36,17 @@ code, samp, kbd {
 	font-variant-ligatures: none;
 	font-variant-numeric: normal;
 }
+kbd {
+	font-style: oblique;
+}
 ul li {
 	list-style-type: "—  ";
 }
 h1 {
 	text-align: center;
-	font-variant-ligatures: common-ligatures discretionary-ligatures historical-ligatures;
 }
-h2, h3, h4, h5, h6 {
-	font-variant-ligatures: common-ligatures discretionary-ligatures historical-ligatures;
+h1, h2, h3, h4, h5, h6 {
+	font-variant-ligatures: common-ligatures discretionary-ligatures historical-ligatures; /* teehee */
 }
 div.time {
 	text-align: center;
@@ -65,6 +67,9 @@ hr {
 	margin: 24px auto;
 	border-top: 1px solid #999;
 	border-bottom: none;
+}
+.uppernum {
+	font-variant-numeric: lining-nums;
 }
 
 /* figures and such */

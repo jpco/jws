@@ -22,7 +22,7 @@ For those not already familiar with it, the best introductions to <i>es</i> are 
 <p>
 The current version of <i>es</i> is hosted on <a href="https://github.com/wryun/es-shell">the GitHub repository</a>.
 It is written in ANSI C, though a <a href=/es/runtime-quirks.html>somewhat quirky form of C</a> due to some extensive preprocessor macro use to implement some of its features.
-It should successfully build with any ANSI C compiler and it should successfully run on any OS which implements a reasonable portion of the POSIX.1-2001 standard.
+It should successfully build with any ANSI C compiler and it should successfully run on any OS which implements a reasonable portion of the <span class=uppernum>POSIX.1-2001</span> standard.
 
 <h2>What is <i>es</i>?</h2>
 

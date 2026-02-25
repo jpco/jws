@@ -1,17 +1,5 @@
 <; cat tmpl/header.html >
 
-<style>
-@media print {
-	figure.bigfig {
-		border-top: 1px solid #bbb;
-		border-bottom: 1px solid #bbb;
-	}
-}
-kbd {
-	font-style: oblique;
-}
-</style>
-
 <title>jpco.io | Es: A shell with higher-order functions</title>
 <meta name=description content="Es: A shell with higher-order functions.  Written by Paul Haahr and Byron Rakitzis for Usenet 1993.">
 

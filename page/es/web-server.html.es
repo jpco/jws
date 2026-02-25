@@ -26,16 +26,15 @@ After a bit of messing about to get a <code>$server-port</code> depending on if 
 
 <figure>
 <pre>
-<code>if {~ $NCAT_SUBSHELL_MODE ()} {
-	local (NCAT_SUBSHELL_MODE = yes)
+<code>if {~ $NCAT_LOCAL_PORT ()} {
 	forever {ncat -k -l -p $server-port -e $0 || exit 3}
 }</code>
 </pre>
 </figure>
 
 <p>
-This bit of code is controlled by the <code>$NCAT_SUBSHELL_MODE</code> variable, which is unset when the script is originally invoked.
-When this is the case, then the script sets <code>$NCAT_SUBSHELL_MODE</code> to <code>yes</code> (really the value doesn&rsquo;t matter, since the shell only ever checks whether there is any value), and runs an infinite loop of <code>ncat</code> commands.
+This bit of code is controlled by the <code>$NCAT_LOCAL_PORT</code> variable, which is unset when the script is originally invoked, but set later by <code>ncat</code>.
+Because of this, the top-level script just runs an infinite loop of <code>ncat</code> calls.
 
 <p>
 This <code>ncat</code> is the part that handles the actual TCP networking.
@@ -43,7 +42,7 @@ Sorry if you thought the shell would natively handle that&mdash;<i>es</i> isn&rs
 In particular, this command is written for <a href=https://nmap.org/ncat>the <code>ncat</code> distributed as part of the nmap project</a>; certain other versions of netcat lack the <code>-e</code> argument this server depends on.
 
 <p>
-The exact <code>ncat</code> invocation looks like this.
+The exact invocation looks like this:
 
 <figure>
 <pre>
@@ -58,11 +57,11 @@ This is set to 8080 when running within Docker, since that&rsquo;s the standard,
 
 <p>
 The last flag, <code>-e</code>, configures <code>ncat</code> to execute a command when a request is received.  The command can read its standard input to look at the request, and can write to standard output to specify the response.
-<code>ncat</code> is actually pretty clever about this&mdash;it configures everything ahead of time so that instead of needing to buffer the response in memory, it sends it as the child process writes to stdout.
+<code>ncat</code> is actually pretty clever about this&mdash;instead of buffering the response in memory, it sends it as the child process writes to stdout; this helps pages start rendering in browsers even if the server gets hung up while producing them.
 
 <p>
 The argument we give to <code>-e</code> is the script itself, stored in <code>$0</code>.
-When we invoke the subcommand, because we&rsquo;ve set <code>$NCAT_SUBSHELL_MODE</code>, we skip running the server loop and instead move on to the rest of the script which handles the individual requests.
+When we invoke the subcommand, because <code>ncat</code> has set <code>$NCAT_LOCAL_PORT</code>, we skip running the server loop and instead move on to the rest of the script which handles the individual requests.
 
 <h3>Request handling</h3>
 
@@ -226,16 +225,17 @@ The server is also always served live thanks to <code>ncat -e $0</code>, so unle
 <p>
 In &ldquo;prod&rdquo;, I package up the contents of the repo from HEAD as well as a fresh <i>es</i> built from HEAD and the couple of binary dependencies (<code>ncat</code>, <code>man</code>, <code>file</code>) into a Docker container and serve it from Google Cloud Run.
 Cloud Run takes care of details around HTTPS for me, which is nice.
-Building and deploying a new version is done with a command like the following:
+Building and deploying a new version is done with the <code>deploy.es</code> script, which runs something like:
 
 <figure>
 <pre>
-<code>@ image {gcloud builds submit --tag $image . &amp;&amp; gcloud run deploy --platform managed --image=$image} gcr.io/jpco-cloud/web:0.76</code>
+<code>gcloud builds submit --tag gcr.io/jpco-cloud/web:0.76 .
+gcloud run deploy --platform managed --image=gcr.io/jpco-cloud/web:0.76</code>
 </pre>
 </figure>
 
 <p>
-I won&rsquo;t go into the Dockerfile here since it&rsquo;s pretty extremely basic, but <a href="https://github.com/jpco/jws/blob/master/Dockerfile">it&rsquo;s in the repository for this site</a> if anybody really wants to take a look.
+I won&rsquo;t go into the Dockerfile these commands use since it&rsquo;s pretty extremely basic, but <a href="https://github.com/jpco/jws/blob/master/Dockerfile">it&rsquo;s in the repository for this site</a> if anybody really wants to take a look.
 
 <h2>Okay&hellip; but why?</h2>
 

@@ -9,7 +9,7 @@
 
 #
 # The server loop.  Tells ncat to run this script again when a request is
-# received, but when that happens, $NCAT_SUBSHELL_MODE is set, so we know we
+# received, but when that happens, $NCAT_LOCAL_PORT is set, so we know we
 # don't need to run another server.
 #
 
