@@ -12,7 +12,7 @@ script {
 }
 </style>
 
-<; build-nav /notcat/web-test.html >
+<; build-nav >
 
 <main>
 <p>

@@ -3,7 +3,7 @@
 <title>jpco.io | Exceptions in the extensible shell</title>
 <meta name=description content="This page explores the use of the exception mechanism in the extensible shell es">
 
-<; build-nav /es/exceptions.html >
+<; build-nav >
 
 <main>
 <h1>The <del>Extensible</del><ins>Exceptional</ins> Shell</h1>

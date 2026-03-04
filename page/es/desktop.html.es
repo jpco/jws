@@ -3,7 +3,7 @@
 <title>jpco.io | A shell-forward desktop</title>
 <meta name=description content="Description of my desktop setup, through the lens of how it emphasizes the role of the extensible shell, es.">
 
-<; build-nav /es/desktop.html >
+<; build-nav >
 
 <main>
 <h1>A shell-forward desktop</h1>

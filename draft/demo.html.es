@@ -3,7 +3,7 @@
 <title>jpco.io | DEMO PAGE FOR COPYING</title>
 <meta name=description content="REPLACE ME">
 
-<; build-nav PATH >
+<; build-nav >
 
 <main>
 <h1>DEMO DEMO REPLACE ME DEMO DEMO</h1>

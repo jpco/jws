@@ -3,7 +3,7 @@
 <title>jpco.io | A (re-)introduction to the extensible shell</title>
 <meta name=description content="Es is the extensible shell.">
 
-<; build-nav /es >
+<; build-nav >
 
 <main>
 <h1>A (re-)introduction to the extensible shell</h1>

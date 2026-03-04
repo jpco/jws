@@ -3,7 +3,7 @@
 <title>jpco.io | The notcat notification server</title>
 <meta name=description content="notcat is a D-Bus notification server which prints or executes subcommands when a notification is received.">
 
-<; build-nav /notcat >
+<; build-nav >
 
 <main>
 <h1>The <code>notcat</code> notification server</h1>

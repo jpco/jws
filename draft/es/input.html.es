@@ -3,7 +3,7 @@
 <title>jpco.io | Input to es is not what it could be</title>
 <meta name=description content="This page discusses how input works in the extensible shell es, and how it is being improved.">
 
-<; build-nav /es/input.html >
+<; build-nav >
 
 <main>
 <h1>Input to <i>es</i> is not what it could be</h1>

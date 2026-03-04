@@ -3,7 +3,7 @@
 <title>jpco.io | Serving a web site from a shell script is fun and easy</title>
 <meta name=description content="This page describes how the web server behind jpco.io works.  It is a shell script written in the extensible shell es.">
 
-<; build-nav /es/web-server.html >
+<; build-nav >
 
 <main>
 

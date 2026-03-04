@@ -3,7 +3,7 @@
 <title>jpco.io | Es: A shell with higher-order functions</title>
 <meta name=description content="Es: A shell with higher-order functions.  Written by Paul Haahr and Byron Rakitzis for Usenet 1993.">
 
-<; build-nav /es/paper.html >
+<; build-nav >
 
 <main>
 <h1><i>Es</i>: A shell with higher-order functions</h1>

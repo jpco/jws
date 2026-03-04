@@ -3,7 +3,7 @@
 <title>jpco.io | Effective es</title>
 <meta name=description content="Recommendations for well-functioning, good-looking scripts written in the extensible shell.">
 
-<; build-nav /es/effective.html >
+<; build-nav >
 
 <main>
 <h1>Effective <i>es</i></h1>

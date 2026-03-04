@@ -3,7 +3,7 @@
 <title>jpco.io | Guidelines for a website</title>
 <meta name=description content="Fallible thoughts on making a good website from somebody who really doesn't know how to make a good website.">
 
-<; build-nav /guidelines.html >
+<; build-nav >
 
 <main>
 <h1>Guidelines for a website</h1>

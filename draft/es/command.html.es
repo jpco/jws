@@ -3,7 +3,7 @@
 <title>jpco.io | The life of an es command</title>
 <meta name=description content="This page documents how a command in the extensible shell es goes from parsing to execution.">
 
-<; build-nav /es/command.html >
+<; build-nav >
 
 <main>
 <h1>The life of an <i>es</i> command</h1>
@@ -27,11 +27,13 @@ First, some pre-requisite knowledge: Most behaviors in <i>es</i> are various wra
 <p>
 There are some exceptions, such as <code>let</code>, <code>~</code> (the matching construct), or assignments, but for the most part everything wraps a simple command which takes arguments, even things that look more complicated, such as pipes or redirections.
 
-<p>
-The basic steps are something like this:
+<h2 id=life>The life of a command</h2>
 
 <p>
-First, a command is read from somewhere, and the parsed version of the command is produced by the <code>%parse</code> function.
+The basic steps to evaluate a single command something like this.
+
+<p>
+First, the command is read from somewhere, and the parsed version of the command is produced by the <code>%parse</code> function.
 This parsed command is represented internally as a <code>Tree</code>, a binary abstract syntax tree, which can represent any command.
 So, for a command like
 
@@ -60,29 +62,38 @@ the tree produced is:
 </figure>
 
 <p>
-Different types of tree node can contain different types and numbers of children: An <code>nWord</code> contains just a single string child, which is the word itself.
-An <code>nVar</code>, <code>nThunk</code>, or <code>nCall</code> contains a single <code>Tree</code> child, as each of those constructs can contain further recursively-nested constructs within them.
+Types of tree node are identified by a symbol such as <code>nList</code>.  Different node types can contain different types and numbers of children: An <code>nWord</code> contains just a single string child, which is the word itself.
+An <code>nVar</code>, <code>nThunk</code> (the internal term for code fragment), or <code>nCall</code> contains a single <code>Tree</code> child, as each of those constructs can contain further recursively-nested constructs within them.
 An <code>nList</code> or <code>nAssign</code> always has two <code>Tree</code> children, one of them potentially being <code>NULL</code>, which represent different things: <code>nList</code>s are laid out like <code>cons</code> cells, where the second child of an <code>nList</code> is always either another <code>nList</code> containing the remaining items in the list, or <code>NULL</code>; <code>nAssign</code>s, as expected, contain their variable name(s) in their first child and value(s) in their second.
 
 <p>
 Something important to note, demonstrated by this <code>Tree</code> in particular, is that it has not yet done anything to look up the value of <code>$path</code> or perform the assignment.
-In general, at this stage, the command hasn&rsquo;t been &ldquo;touched&rdquo; at all yet.
-Globbing has not been performed, variables remain un-resolved, and no code fragments or lambdas have been made into closures.
+In general, the <code>Tree</code> form of a command hasn&rsquo;t been changed at all from how it was typed: Globbing has not been performed, variables remain un-looked-up, <code>&lt;={}</code> calls have not been made, and no code fragments or lambdas have been made into closures.
 All of these behaviors are part of the next phase, known as <em>glomming</em>.
 
 <p>
-The glomming step, at its most basic, converts a <code>Tree</code> command into a <code>List</code>, since <code>List</code>s are what the shell can actually evaluate.
-To do so, the shell often needs to recursively process its arguments.
+The core job of the glomming step is to convert a <code>Tree</code> command into a <code>List</code>, since <code>List</code>s are what the shell can actually evaluate.
+To do this translation requires evaluating some of the nested structures into outputs that can be evaluated.
+Types of processing performed include:
+
+<ul>
+<li>Flattening lists
+<li>Concatenating
+<li>Resolving variables
+<li>Getting the return values of commands via <code>&lt;=</code>
+<li>File globbing
+<li>Closing over code fragments and lambdas (more on this later)
+</ul>
 
 <p>
-In our example, the <code>echo</code> term is easy, since it&rsquo;s just an <code>nWord</code>; the first <code>Term</code> of the resulting <code>List</code> must, of course, just be <code>echo</code>.
-The second word is quite a bit more complicated, because we don&rsquo;t want to put the <code>nCall</code> into our list to evaluate, but instead to make the call and put its <em>result</em> into the list.
-To achieve this, we have to evaluate the thunk, which just means evaluating the assignment, and to do that, we need to glom the terms of both sides of the assignment; glomming the variable name <code>a</code> just produces itself, but glomming the value <code>$path</code> requires actually looking up the value of the variable in the current context.
-Let&rsquo;s suppose that the current path is <code>/bin /usr/bin</code>.
+Our command is fairly short and simple: we have one plain word, <code>echo</code>, and one <code>&lt;=</code> call.
+The word <code>echo</code> is just turned directly into a <code>Term</code> in the <code>List</code>.
+The <code>&lt;=</code> is more involved, but not terribly hard to explain; the shell simply recursively evalutes the command <code>{a = $path}</code> and splats the result of that command into our <code>List</code>.
+For the purposes of this explanation, let&rsquo;s suppose that the current path is <code>/bin /usr/bin</code>.
 
 <p>
-So, the assignment is performed; <code>$a</code> is now <code>/bin /usr/bin</code>, and the return value of the assignment is that same value.
-That return value makes it to the outermost glom, which adds it to its output list, and since there&rsquo;s no more <code>Tree</code> to glom, it&rsquo;s done, with a final <code>List</code> of:
+So, the assignment is performed; <code>$a</code> now contains <code>/bin /usr/bin</code>, and the result of the assignment is that same value that has been assigned.
+That result is received by our glom logic, which adds it to its output list after the <code>echo</code>, resulting in a <code>List</code> that is simply:
 
 <figure class="bigfig centered">
 <pre>
@@ -98,18 +109,19 @@ Evaluating a command can end up recursing back into tree-walking and glomming, p
 <p>
 How a command is evaluated is based directly on its first term.
 
-<ol>
+<ul>
+
 <li>Some commands, the special syntactic forms like <code>let</code>, <code>~</code>, or assignments, are handled via special functions.
 
 <li>Primitives have their corresponding functions looked up in the primitive table based on their name, and those functions are called with the rest of the command as arguments.
 
-<li>Anything else is looked up as a function; if a function definition is found, then that definition replaces the function name, and evaluation is retried with the new list.
+<li>Anything else is looked up as a function; if a function definition is found, then that definition replaces the function name in the command, and evaluation is retried.
 
-<li>Anything not found as a function is presumed to be an external command.
+<li>Anything not found by function lookup is presumed to be an external command.
 If the command looks like an absolute path, then the shell will just try to run it.
 If it doesn&rsquo;t, then the shell will call the <code>%pathsearch</code> hook to find the location of the command; assuming a result is produced, then it will be prepended on the command as a presumed path.
 
-</ol>
+</ul>
 
 <p>
 Our <code>echo</code> case is pretty simple.
@@ -133,5 +145,53 @@ to
 
 <p>
 On its second iteration, <code>eval()</code> finds the primitive, and <code>prim_echo()</code> is called with <code>/bin /usr/bin</code> as its argument list.
+
+<p>
+So, that is the basic lifetime of a command:
+
+<ol>
+<li>It is parsed and a <code>Tree</code> representation is produced
+<li>Glomming converts that <code>Tree</code> to a <code>List</code>, resolving variables and other things along the way&mdash;potentially requiring other commands to be parsed, glommed, and evaluated while doing so
+<li>If the resulting <code>List</code> is a special form, that is evaluated specially
+<li>Otherwise, the first term of the <code>List</code> is looked up as a function until it resolves to a special form, primitive, or external binary, and that is run.
+</ol>
+
+<p>
+This description gives enough context to discuss some of the finer points of evaluation which are important to know.
+
+<h2 id=closures>Glomming, code fragments, and closures</h2>
+
+<p>
+Consider a snippet of code like
+
+<figure>
+<pre>
+<code>let (v = some list) {
+	clo = {echo $v}
+	str = '{echo $v}'
+}
+$clo
+$str</code>
+</pre>
+</figure>
+
+<p>
+The <code>$clo</code> invocation prints <code>some list</code>, but the <code>$str</code> invocation just prints an empty line.
+Why is that?
+
+<p>
+The short, obvious answer is because one is in quotes while the other isn&rsquo;t.
+But that&rsquo;s not an explanation by itself, since in many ways, a quoted code fragment behaves identically to an unquoted one, so what <em>actually</em> differs between these two cases here?
+The answer is in how the two are glommed.
+
+<p>
+When the <code>clo</code> and <code>str</code> assignments are performed, the left and right sides of both assignments are glommed before the assignment is performed.
+In the <code>str</code> case, the quoted word is simply glommed as a quoted word.
+Later&mdash;outside of the <code>let</code>&mdash;when <code>$str</code> is invoked, <code>'{echo $v}'</code> is parsed into <code>{echo $v}</code>, which is glommed and evaluated with no value of <code>$v</code> in sight, so an empty line is produced.
+On the other hand, when the <code>clo</code> assignment is glommed, the <code>nThunk</code> of <code>{echo $v}</code> is turned into a <em>closure</em>, capturing the lexical binding of <code>$v</code> for when it is later used.
+
+<p>
+This behavior is an unfortunately tricky case that arises from <i>es</i>&rsquo; free conversion between strings and code combined with its handling of lexical binding.
+However, it can sometimes also be exploited by a user who wants to avoid capturing lexical scope in a spot.
 
 </main>

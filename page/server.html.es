@@ -3,7 +3,7 @@
 <title>jpco.io | The script that served this title</title>
 <meta name=description content="The script that served this description">
 
-<; build-nav /server.html >
+<; build-nav >
 
 <main>
 <p>

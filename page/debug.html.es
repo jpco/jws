@@ -3,7 +3,7 @@
 <title>jpco.io | debug</title>
 <meta name=description content="server debug page">
 
-<; build-nav /debug.html >
+<; build-nav >
 
 <main>
 

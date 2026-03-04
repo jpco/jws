@@ -3,7 +3,7 @@
 <title>jpco.io | es(1)</title>
 <meta name=description content="The man page for es, the extensible shell.">
 
-<; build-nav /es/man.html >
+<; build-nav >
 
 <main>
 <p class=noprint>

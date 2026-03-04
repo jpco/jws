@@ -1,17 +1,45 @@
 <; cat tmpl/header.html >
 
-<title>jpco.io | Thoughts for pluggable es primitives</title>
+<title>jpco.io | Thoughts for extensible es primitives</title>
 <meta name=description content="A sort-of-design-doc for dynamically loadable primitives in the extensible shell es" />
 
-<; build-nav /es/primitives.html >
+<; build-nav >
 
 <main>
-<h1>Thoughts for pluggable <i>es</i> primitives</h1>
+<h1>Thoughts for extensible <i>es</i> primitives</h1>
 <div class=time><time datetime="2025-09-18">2025-09-18</time></div>
 
 <p>
-I'm interested in adding &ldquo;pluggable&rdquo; primitives to <i>es</i>.
-The actual hard part of dynamically adding code to a running binary is implemented in the POSIX.1-2001-specified functions <code>dlopen</code> and <code>dlsym</code>. Given that, the question becomes: how do we design the use of those things to actually create a &ldquo;pluggable primitives&rdquo; system in <i>es</i>?
+The extensible shell <i>es</i> can be thought of has having three layers, each with different degrees of malleability.
+
+<p>
+The top layer contains everything defined in the shell: variables, functions, and so on.
+Due to the nice qualities of <i>es</i>, this layer includes things like the definition of the interactive and non-interactive REPLs, control flow constructs like <code>while</code>, path-searching behavior, the <code>cd</code> builtin, and so on.
+This is the &ldquo;extensible&rdquo; part of the extensible shell.
+
+<p>
+The bottom layer is the core shell runtime implementing things like the GC, data structures, variables, closures, glomming, and so on.
+In general, nothing in this layer is modifiable without hacking on the runtime, since this is the foundation of the shell and needs to be kept coherent to support everything else.
+This layer also tends to work outside of the abstractions available to the shell&rsquo;s language, making it infeasible to express desired behaviors using the shell language at all.
+Much of what happens at this layer is invisible to the user, even, though certain isolated behaviors can be customized with hook functions, as with the <code>%home</code> hook.
+
+<p>
+The middle layer is the one of interest for this page: it is the <em>primitives</em> layer.
+Primitives are the callable objects in <i>es</i> script which are implemented using C, and which, in some sense, make up the &ldquo;standard library&rdquo; of the shell.
+A large proportion of the shell&rsquo;s behaviors, especially those that are relevant to its nature as a <em>shell</em>, are implemented via primitives such as <code>$&amp;pipe</code>, <code>$&amp;fork</code>, <code>$&amp;read</code>, and so on.
+While the internals of a primitive are abstract, a well-designed and well-documented primitive has behavior that is understandable, predictable, and well-isolated from any other primitive.
+
+<p>
+Improving the extensibility of <i>es</i> is, generally, a process of moving behaviors from lower layers to higher ones: removing primitives in favor of functions in pure <i>es</i> script, or making implicit parts of the core runtime into explicit combinations of primitives and functions&mdash;hopefully, reusing as many pre-existing functions as possible.
+
+<p>
+An example of this process is the set of changes I am pursuing for shell input.
+Historically, the entire process of reading input into <i>es</i> has happened as part of the <code>$&amp;parse</code> primitive.
+This primitive performs parsing, but it also does everything that happens during parsing as well: reading shell input, invoking <code>readline</code> if relevant, writing to history, and so on.
+This is due to a technical limitation of memory management during parsing which is nearly fixed.
+Once it is,
+
+<hr>
 
 <p>
 What I am picturing looks something like this.
@@ -117,3 +145,11 @@ A specific case would be the recent rewrite of <code>$&amp;time</code> that was 
 <h2>Changes to core <i>es</i></h2>
 
 <h2>Prior art</h2>
+
+<h3>zsh</h3>
+
+<h3>Inferno sh</h3>
+
+<h3>mveety&rsquo;s <i>es</i></h3>
+
+<h3>Scheme</h3>

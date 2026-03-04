@@ -16,7 +16,7 @@
 }
 </style>
 
-<; build-nav /es/runtime-quirks.html >
+<; build-nav >
 
 <main>
 <h1>Quirks of the <i>es</i> interpreter</h1>

@@ -105,10 +105,10 @@ fn serve-page file flags {
 }
 
 # Print the top nav bar on a page based on the path passed to it.
-fn build-nav path {
+fn build-nav {
 	echo -n '<nav><pre><code>http://<a href=/>jpco.io</a>'
 	let (accum = '')
-	for (f = <={%split / $path}) {
+	for (f = <={%split / $reqpath}) {
 		accum = $accum^/^$^f
 		echo -n '/<a href="'^$accum^'">'^$^f^'</a>'
 	}
@@ -195,7 +195,7 @@ catch @ exception {
 		# 404
 		{
 			respond 404 text/html
-			build-page < page/404.html.es $reqpath
+			build-page < page/404.html.es
 		}
 	)
 }
