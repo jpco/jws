@@ -104,9 +104,26 @@ fn serve-page file flags {
 	build-page < $file
 }
 
-# Print the top nav bar on a page based on the path passed to it.
+# Print the top nav bar on a page based on headers and the request path.
 fn build-nav {
-	echo -n '<nav><pre><code>http://<a href=/>jpco.io</a>'
+	let (
+		proto = <={
+			if {!~ $#head-x-forwarded-proto 0} {
+				result $head-x-forwarded-proto
+			} {
+				result http
+			}
+		}
+		host = <={
+			if {!~ $#head-host 0} {
+				result $head-host
+			} {
+				result jpco.io
+			}
+		}
+	)
+	echo -n '<nav><pre><code>'^$proto^'://<a href=/>'^$^host^'</a>'
+
 	let (accum = '')
 	for (f = <={%split / $reqpath}) {
 		accum = $accum^/^$^f
@@ -124,6 +141,7 @@ fn build-nav {
 #
 
 (method reqpath version) = <={%split ' ' <={~~ <=%read *\r}}
+
 let (q = <={~~ $reqpath *'?'*})
 if {!~ $q ()} {
 	(reqpath query) = $q
