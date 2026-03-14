@@ -25,7 +25,7 @@ if {!~ $PORT ()} {
 }
 
 if {~ $NCAT_LOCAL_PORT ()} {
-	forever {ncat -k -l -p $server-port -e $0 || exit 3}
+	forever {ncat -klp $server-port -e $0 || exit 3}
 }
 
 

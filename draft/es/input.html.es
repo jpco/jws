@@ -10,11 +10,11 @@
 <div class=time><time datetime=REPLACEME>REPLACEME</time></div>
 
 <p>
-One area of <i>es</i> which is extremely lacking compared to other shell is how it reads input.
-Whereas interactive features tend to be the major attractive feature of most shells (those shells often being limited to POSIX-compatibility in the language itself), in <i>es</i> the support for interactivity is meager.
+One area of <i>es</i> which is extremely lacking compared to other shells is how it reads input.
+Whereas interactive features tend to be the major attractive feature of many shells (those shells often being limited to POSIX-compatibility in the language itself), in <i>es</i> the support for interactivity is meager.
 
 <p>
-This is in part due to history and intention; <i>es</i>, coming from <i>rc</i>, tries to be relatively minimal in its behaviors by default.
+This is in part intentional; <i>es</i>, coming from <i>rc</i>, tries to be relatively minimal in its behaviors by default.
 Unlike, say, <a href="https://fishshell.com">fish</a>, the default behavior when dropping into <i>es</i> for the first time is always probably going to be a simple prompt.
 
 <figure>
@@ -24,7 +24,7 @@ Unlike, say, <a href="https://fishshell.com">fish</a>, the default behavior when
 </figure>
 
 <p>
-However: <i>es</i> is meant to be <em>extensible</em>.
+However, defaults aside, <i>es</i> is meant to be <em>extensible</em>.
 Even if the default behavior is lean or simplistic, there is no particular virtue in making it impossible for a user to get a more advanced interactive setup akin to fish, if that&rsquo;s what they want.
 The major reasons for the lack of extensiblity in <i>es</i> today are all accidents of implementation.
 
@@ -32,64 +32,44 @@ The major reasons for the lack of extensiblity in <i>es</i> today are all accide
 
 <p>
 Like other shells, <i>es</i> can be given shell input in a few forms: a raw string (<code>es -c</code>); a named file (<code>es script.es</code>, or <code>. script.es</code>); or standard input, either non-interactively (<code>curl | es</code>) or interactively at a terminal.
-When the shell is started (or a script is run with <code>.</code>) the shell creates a new <code>Input</code> object:
-
-<figure>
-<pre>
-<code>struct Input {
-	int (*get)(Input *self);        /* fetch a character from the input buffer */
-	int (*fill)(Input *self);       /* fill the input buffer from a source */
-	int (*rfill)(Input *self);      /* temporary pointer for `fill` during pushback */
-	void (*cleanup)(Input *self);   /* clean up after the input is exhausted */
-	Input *prev;
-	const char *name;               /* input name -- e.g., filename */
-	unsigned char *buf, *bufend, *bufbegin, *rbuf;  /* buffer pointers */
-	size_t buflen;                  /* buffer size */
-	int unget[MAXUNGET];            /* pushback buffer */
-	int ungot;                      /* pushback counter */
-	int lineno;                     /* line number */
-	int fd;                         /* file descriptor (if relevant) */
-	int runflags;                   /* bitmap indicating es flags -inxv */
-};</code>
-</pre>
-</figure>
+When started (or a script is run with <code>.</code>), the shell creates a new <code>Input</code> object corresponding with the file or string the shell is meant to read and evaluate.
 
 <p>
-This object is populated with the appropriate values, and function pointers, in order to read from the input string or file.
+It binds the <code>%dispatch</code> function to a definition based on the <code>-enx</code> flags the user gave when starting the shell or calling the <code>.</code> function.
+This function takes a command and typically just runs it, but occasionally does other things, such as printing the command when <code>-x</code> is given.
 
 <p>
-Then the shell dynamically binds the <code>%dispatch</code> function to a definition it selects based on the <code>Input</code>&rsquo;s <code>runflags</code> field, which is itself based on the <code>-inxv</code> flags the user used for the shell or <code>.</code> call.
-Then, depending on if the interactive runflag is present or not, the shell calls either <code>%interactive-loop</code> or <code>%batch-loop</code>.
+Then, depending on if the input is meant to be read interactively or not, the shell calls either <code>%interactive-loop</code> or <code>%batch-loop</code>.
 Finally, at this point, users have some control over what happens.
 
 <p>
-The REPL functions are important (and complicated) enough that they deserve their own entire page, but at their heart is a bit of code that looks like this.
+The REPL functions are important (and complicated) enough that they deserve their own page documenting them, but at their heart is a loop containing a bit of code that looks something like this:
 
 <figure>
 <pre>
 <code>let (cmd = &lt;={%parse $prompt}) {
 	if {!~ $#cmd 0} {
-		result = &lt;={$fn-%dispatch $cmd}
+		$fn-%dispatch $cmd
 	}
 }</code>
 </pre>
 </figure>
 
 <p>
-First, the <code>%parse</code> function is called and its result bound to the variable <code>cmd</code>.
-Then, if <code>$cmd</code> is not empty, the <code>%dispatch</code> function is called with it as an argument, and the result of that call is saved.
+In this block, the <code>%parse</code> function is called and its result&mdash;a command which has just been read from the shell&rsquo;s <code>Input</code> and is intended to be run&mdash;is bound to the variable <code>cmd</code>.
+If <code>$cmd</code> is not empty, the <code>%dispatch</code> function is called in order to evaluate it appropriately.
 
 <p>
 When looking at these functions, the <code>%parse</code> part is fairly inscrutable.
-The obvious question: Why in the world does a function called <code>%parse</code> take the shell&rsquo;s <code>$prompt</code> as arguments, when those have nothing really to do with parsing?
+An obvious question is: Why does a function called <code>%parse</code> take the shell&rsquo;s <code>$prompt</code> as arguments, when the prompt has nothing really to do with parsing?
 Also, where is the code to actually read from the shell&rsquo;s input?
 Well, that&rsquo;s the problem:
 
 <h2><code>%parse</code> does too much</h2>
 
 <p>
-Given what the <code>$&amp;parse</code> primitive does, it would more accurately be called <code>$&amp;readfromshellinputandparse</code>.
-<code>$&amp;parse</code> does do what it ought to&mdash;namely, <em>parse</em> unstructured input to produce a shell syntax tree&mdash;but to actually get at that input, it reads from the special shell <code>Input</code> using either special buffered read logic (available nowhere else in the shell) or <code>readline(3)</code> (available nowhere else in the shell).
+Given what the <code>$&amp;parse</code> primitive actually does, it would more accurately be called <code>$&amp;readfromshellinputandparse</code>.
+<code>$&amp;parse</code> does do what it claims to, <em>parse</em> unstructured input to produce a shell syntax tree, but to actually get at that input, it reads from the special shell <code>Input</code> using either special buffered read logic (which can&rsquo;t be used anywhere else) or <code>readline(3)</code> (which also can&rsquo;t be called any other way).
 And, of course, anybody who has worked with readline knows that it is a distinctly verbose pleasure to do so.
 On top of that, the way <i>es</i> been historically implemented, <em>no es script can be invoked</em> while <code>$&amp;parse</code> is running, which includes when the shell is reading its input.
 

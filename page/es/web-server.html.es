@@ -22,12 +22,12 @@ We&rsquo;ll also go over some of the details of the script itself, at least in t
 <p>
 Right at the beginning of the server is the most important part.
 It&rsquo;s what makes the whole thing go.
-After a bit of messing about to get a <code>$server-port</code> depending on if the shell was started in a Docker container, we have:
+After a bit of messing about to decide on a <code>$server-port</code> based on the environment, we have:
 
 <figure>
 <pre>
 <code>if {~ $NCAT_LOCAL_PORT ()} {
-	forever {ncat -k -l -p $server-port -e $0 || exit 3}
+	forever {ncat -klp $server-port -e $0 || exit 3}
 }</code>
 </pre>
 </figure>
@@ -37,36 +37,33 @@ This bit of code is controlled by the <code>$NCAT_LOCAL_PORT</code> variable, wh
 Because of this, the top-level script just runs an infinite loop of <code>ncat</code> calls.
 
 <p>
-This <code>ncat</code> is the part that handles the actual TCP networking.
+The <code>ncat</code> binary is the part that handles the actual TCP networking.
 Sorry if you thought the shell would natively handle that&mdash;<i>es</i> isn&rsquo;t quite capable of something like that yet.
-In particular, this command is written for <a href=https://nmap.org/ncat>the <code>ncat</code> distributed as part of the nmap project</a>; certain other versions of netcat lack the <code>-e</code> argument this server depends on.
+In particular, this command is written expecting <a href=https://nmap.org/ncat>the <code>ncat</code> distributed as part of the nmap project</a>; certain other versions of netcat lack the <code>-e</code> argument this server needs.
 
 <p>
 The exact invocation looks like this:
 
 <figure>
 <pre>
-<code>ncat -k -l -p $server-port -e $0</code>
+<code>ncat -klp $server-port -e $0</code>
 </pre>
 </figure>
 
 <p>
-The <code>-k</code> and <code>-l</code> flags are what make <code>ncat</code> run as a TCP server.
-The <code>-p $server-port</code> configures the port on which to listen.
-This is set to 8080 when running within Docker, since that&rsquo;s the standard, and 8181 when running outside a Docker container, since that&rsquo;s more likely to be free on an arbitrary host.
+The <code>-k</code> and <code>-l</code> flags are what make <code>ncat</code> run as a TCP server, and <code>-p $server-port</code> sets the port on which to listen.
+This is set to 8080 when running within a container, since that&rsquo;s the standard, and 8181 when running standalone, since that&rsquo;s more likely to be free on an arbitrary host.
 
 <p>
-The last flag, <code>-e</code>, configures <code>ncat</code> to execute a command when a request is received.  The command can read its standard input to look at the request, and can write to standard output to specify the response.
-<code>ncat</code> is actually pretty clever about this&mdash;instead of buffering the response in memory, it sends it as the child process writes to stdout; this helps pages start rendering in browsers even if the server gets hung up while producing them.
-
-<p>
-The argument we give to <code>-e</code> is the script itself, stored in <code>$0</code>.
-When we invoke the subcommand, because <code>ncat</code> has set <code>$NCAT_LOCAL_PORT</code>, we skip running the server loop and instead move on to the rest of the script which handles the individual requests.
+The last flag, <code>-e</code>, configures <code>ncat</code> to execute a command when a request is received.
+The command can read its standard input to look at the request, and can write to standard output to specify the response.
+In this case, the argument we give to <code>-e</code> is the path to the script itself, stored in the <code>$0</code> variable.
+When we invoke the subcommand, because <code>ncat</code> has set <code>$NCAT_LOCAL_PORT</code>, we skip running the server loop and instead move on to the remainder of the script, which handles each individual request.
 
 <h3>Request handling</h3>
 
 <p>
-While <code>ncat</code> does all the hard work of handling TCP networking, it doesn&rsquo;t actually do anything about HTTP, so that has to be implemented in the script.
+While <code>ncat</code> does all the hard work of handling TCP networking, it doesn&rsquo;t actually do anything about HTTP, so we get to implement that within the script.
 So the first thing we do is define a <code>respond</code> function which takes a <a href="https://en.wikipedia.org/wiki/List_of_HTTP_status_codes">numeric status code</a> <code>code</code>, a <a href="https://en.wikipedia.org/wiki/Media_type">MIME type</a> <code>type</code>, and optional <code>flags</code> to control things like caching or compression, and uses those arguments to print the headers of the reply.
 
 <p>
@@ -139,13 +136,12 @@ let (header-names = (); header-values = ()) {
 	# set the header variables
 	for (n = $header-names; v = $header-values)
 		head-$n = $v
-}
-</code>
+}</code>
 </pre>
 </figure>
 
 <p>
-Here we read in headers and save the header values within variables of the form <code>head-$name</code>, so that <code>$head-host</code> contains something like <code>jpco.io</code>.
+Here we read in headers and save the header values within variables of the form <code>head-$name</code>, so that, for example, <code>$head-host</code> contains <code>jpco.io</code>.
 There is some extra handling to enforce that case-insensitive headers (<code>host</code>, <code>Host</code>, <code>hOsT</code>) are all made into lower-case variables (<code>$head-host</code>); this uses <code>awk</code>, which incurs some overhead due to the extra fork/execs, but is structured to limit the number of necessary calls to either zero or one.
 
 <h3>Routing</h3>
@@ -200,7 +196,7 @@ Here&rsquo;s where it all comes together.
 
 <ul>
 <li>If the request is coming to <code>www.jpco.io</code>, redirect it to <code>jpco.io</code>.
-<li>If we&rsquo;re in &ldquo;dev mode&rdquo; and not in a Docker container, serve the request as a page if it matches a file in the draft directory.
+<li>If we&rsquo;re in &ldquo;dev mode&rdquo; and not inside a container, serve the request as a dynamically-built page if it matches a file in the <code>draft/</code> directory.
 <li>If the request matches a file in the <code>page/</code> directory, serve it as a dynamically-built page.
 <li>If the request matches a static resource, serve it verbatim.
 <li>Otherwise, serve the 404 page with a 404 code, since we didn&rsquo;t find anything.
@@ -241,16 +237,16 @@ I won&rsquo;t go into the Dockerfile these commands use since it&rsquo;s pretty 
 
 <p>
 This is obviously not a very good general web server.
-It&rsquo;s relatively slow in the first place compared to something in a so-called blazingly-fast language, and I imagine it scales pretty poorly.
+The templating system is weak, it&rsquo;s relatively slow compared to something in a so-called blazingly-fast language, and I imagine it scales pretty poorly with the rate of queries.
 
 <p>
 But none of that actually matters.
-I didn&rsquo;t write this server to serve <em>any</em> web site, I wrote it to serve <em>this</em> web site, and this web site is really pretty dead simple, and it doesn&rsquo;t get very much traffic at all, so I don&rsquo;t care about complicated server-side logic, templating, or the degree to which the fast is blazing.
+I didn&rsquo;t write this server to serve <em>any</em> web site, I wrote it to serve <em>this</em> web site, and this web site is really pretty dead simple, and it doesn&rsquo;t get very much traffic at all, so I don&rsquo;t care about complicated server-side logic, templating, or the degree to which the language it&rsquo;s implemented in blazes.
 
 <p>
 What I really want is exactly what this server gives me.
-I want a really convenient environment to write new pages in without bothering with any sort of recompilation flow.
-I want a router that is extremely simple but more flexible than a pure directory structure-based setup.
+I want a really convenient environment in which I can write web pages without bothering with any sort of recompilation flow.
+I want a router that&rsquo;s simple, but more flexible than a pure directory structure-based setup.
 And I want all of it without some kind of goofy toolchain, framework, or runtime dependencies that do more to get in my way than help me serve this extremely simple site.
 I&rsquo;m not a web developer so whenever I&rsquo;m not actively working on this site, I&rsquo;m not really thinking about any web technologies, so using fancy special-purpose tools is a net increase to my cognitive load, not the other way around.
 
@@ -318,12 +314,12 @@ Notably, <a href="https://sourceforge.net/p/zsh/code/ci/master/tree/Src/Modules/
 <h3>werc and rc-httpd</h3>
 
 <p>
-The last, and most relevant, work in this space is <a href="http://werc.cat-v.org/">the werc web &ldquo;anti-framework&rdquo;</a> used heavily in the Plan 9 space these days.
+The last, and most relevant, work in this space is <a href="http://werc.cat-v.org/">the werc web &ldquo;anti-framework&rdquo;</a> used heavily among the Plan 9-interested community these days.
 Werc is not itself a web server, but it does come packaged with the rc-httpd server, which is very similar to the one used for this site.
 
 <p>
-A particular distinction of rc-httpd is that it does not do (or control) the networking or main loop at all, but instead simply expects to be called with files already managed for each request; typically, presumably, because this would be done with one of the <a href="https://man.aiju.de/8/listen"><code>listen(8)</code></a> utilities in Plan 9.
-Like a lot of the design choices made in Plan 9, the outcome seems to be a net simplification of each program.
+A particular distinction of rc-httpd is that it does not do (or control) the networking or main loop at all, but instead simply expects to be called with TCP already managed for each request; typically, presumably, because this would be done with one of the <a href="https://man.aiju.de/8/listen"><code>listen(8)</code></a> utilities in Plan 9.
+Like a lot of the design choices made in Plan 9, the outcome seems to be a net simplification of each program which we don&rsquo;t get to enjoy with Unix.
 
 <p>
 If there were a &ldquo;web framework&rdquo; written for <i>es</i>, then werc would be the obvious model to follow first.
