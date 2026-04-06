@@ -14,15 +14,15 @@ I am excited to announce that version 0.10.0 of <i>es</i>, the extensible shell,
 
 <p>
 This is the first release of <i>es</i> in almost four years, and the first time the release hasn&rsquo;t started with 0.9 in over three <em>decades</em>.
-So, while this release doesn&rsquo;t contain any profound changes to the language or interpreter, it should be taken as a signal that something has changed in <i>es</i>, and that right now is a great time to try picking it up.
+So, while this release doesn&rsquo;t contain any profound changes to the language or interpreter, it should be taken as a signal that activity in <i>es</i> has picked up once again.
 
 <p>
 For those not already familiar with it, the best introductions to <i>es</i> are <a href=/es/paper.html>the original paper</a> presented at Usenix 1993 or the <a href=/es/man.html>man page</a>, but I&rsquo;ll provide a shorter, incomplete introduction to the shell here, the state of the shell after its over three decades of existence, and some ideas on what interesting work there still is to be done.
 
 <p>
 The current version of <i>es</i> is hosted on <a href="https://github.com/wryun/es-shell">the GitHub repository</a>.
-It is written in ANSI C, though a <a href=/es/runtime-quirks.html>somewhat quirky form of C</a> due to some extensive preprocessor macro use to implement some of its features.
-It should successfully build with any ANSI C compiler and it should successfully run on any OS which implements a reasonable portion of the <span class=uppernum>POSIX.1-2001</span> standard.
+It is written in a <a href=/es/runtime-quirks.html>somewhat quirky form of ANSI C</a>, making somewhat heavy use of a preprocessor macros to implement a few core behaviors.
+It should successfully build using any ANSI C compiler and it should successfully run on any OS which implements a reasonable portion of the <span class=uppernum>POSIX.1-2001</span> standard.
 
 <h2>What is <i>es</i>?</h2>
 
@@ -72,15 +72,18 @@ map @ i {cd $i; rm -f *} /tmp /var/tmp</code>
 
 <p>
 In this example, <code>@ i {cd $i; rm -f *}</code> is a <em>lambda expression</em>&mdash;an anonymous, inline function&mdash;which takes an argument <code>i</code>, <code>cd</code>s to the directory named in <code>$i</code>, and then <code>rm -f</code>s everything in the directory.
-Blocks of code (&ldquo;code fragments&rdquo; in <i>es</i>-speak), represented as <code>{commands in curly braces}</code>, can also be passed around in variables or passed as arguments to functions.
+In this example, it is being used as the first argument (everything between the <code>@</code> and closing <code>}</code> is parsed as a single term) passed to the <code>map</code> function.
+
+<p>
+Blocks of code (&ldquo;code fragments&rdquo; in <i>es</i>-speak), represented as <code>{commands in curly braces}</code>, can also be stored as terms within variables, or passed as arguments to functions.
 These blocks of code function like lambda expressions, except that they bind no arguments.
 
 <figure>
 <pre>
 <samp>; </samp><kbd>var = {echo first} {echo second}</kbd>
-<samp>; </samp><kbd>$var(1)  # invoke the first element of $var</kbd>
+<samp>; </samp><kbd>$var(1)  # take the first term of $var and run it</kbd>
 <samp>first
-; </samp><kbd>$var(2)  # invoke the second element of $var</kbd>
+; </samp><kbd>$var(2)  # take the second term of $var and run it</kbd>
 <samp>second</samp>
 </pre>
 </figure>
@@ -102,7 +105,7 @@ For example, the builtin command <code>catch</code>, which is core to <a href=/e
 </figure>
 
 <p>
-Because so many behaviors in <i>es</i> are modeled internally as function calls, the internals of the shell are easily visible and changeable.
+Because so many behaviors in <i>es</i> are modeled internally as function calls, and function definitions are visible to users and changeable at will, the internals of the shell are highly malleable.
 The following shows how pipes are implemented: when parsed, the <code>|</code> syntax is desugared into a call to the <code>%pipe</code> function, and the <code>%pipe</code> function is itself just a call to the <code>$&amp;pipe</code> <em>primitive</em>, the built-in function which performs the behavior.
 
 <figure>
@@ -119,7 +122,7 @@ With this knowledge, the definition of <code>%pipe</code> can be changed to add 
 
 <figure>
 <pre>
-<samp>; </samp><kbd>cat pipehook.es</kbd>
+<samp>; </samp><kbd>cat pipe-spoof.es</kbd>
 <samp>fn %pipe {
 	let (args = ()) {
 		for ((c i o) = $*)
@@ -127,8 +130,8 @@ With this knowledge, the definition of <code>%pipe</code> can be changed to add 
 		$&amp;pipe $args
 	}
 }
-$*
-; </samp><kbd>es pipehook.es {cat page/es/paper.html.es | tr -cs a-zA-Z0-9 '\012' | sort | uniq -c | sort -nr | sed 6q}</kbd>
+; </samp><kbd>. pipe-spoof.es  # "load" the spoof into the current shell process</kbd>
+<samp>; </samp><kbd>cat page/es/paper.html.es | tr -cs a-zA-Z0-9 '\012' | sort | uniq -c | sort -nr | sed 6q</kbd>
 <samp> 0.001r   0.000u   0.000s	{cat page/es/paper.html.es}
  0.001r   0.000u   0.000s	{tr -cs a-zA-Z0-9 '\012'}
  0.005r   0.004u   0.001s	{sort}
@@ -145,7 +148,7 @@ $*
 </figure>
 
 <p>
-Spoofing lets users redefine large swaths of the shell&rsquo;s internal behavior.
+Spoofing is the major mechanism by which users can redefine large swaths of the shell&rsquo;s internal behavior.
 For example, the <code>%write-history</code> function is called by the shell to write a command to the shell history after reading it.
 To make the shell avoid writing duplicate commands to history, one can simply redefine the function as follows:
 
@@ -230,7 +233,7 @@ When Paul and Byron exposed the shell&rsquo;s interactive REPL as the function <
 Doing so, however, made it possible to write an alternate version of <code>%batch-loop</code> that parses an entire script before running any of its commands, which is a convenient way to &ldquo;sanity-check&rdquo; code and avoid running half of a buggy script.
 
 <p>
-This degree of flexibility is remarkable: this kind of pre-parsing was never implemented or even considered by the authors of <i>es</i>, but it&rsquo;s just as possible as it is under other shells which <a href="https://elv.sh/ref/language.html#code-chunk">officially advertise the behavior</a>.
+This degree of flexibility is remarkable.  The kind of pre-parsing performed here was never implemented or even considered by the authors of <i>es</i>, but it&rsquo;s just as possible as it is under other shells which <a href="https://elv.sh/ref/language.html#code-chunk">officially advertise the behavior</a>.
 
 <h2>What&rsquo;s been happening with <i>es</i>?</h2>
 
@@ -248,17 +251,17 @@ This left <i>es</i> as an incomplete experiment: Paul and Byron didn&rsquo;t hav
 Recently, however, there has been more activity, which has just been bundled up in version 0.10.0.
 This new version of <i>es</i> is not significantly different as a language from prior versions, but it contains a good number of bug fixes.
 Something like 20 PRs have been merged to fix different ways to crash the shell, and each way now has automated regression testing run on every new PR written.
-Portability has also been significantly improved, as obsolete portability-oriented code has been removed and the <i>es</i> runtime has been moved onto the very widely-supported functions in the POSIX.1-2001 standard.
+Portability has also been significantly improved, as obsolete portability-oriented code has been removed and the <i>es</i> runtime has been moved onto the very widely-supported functions in the <span class=uppernum>POSIX.1-2001</span> standard.
 
 <p>
 There has also been a large collection of small improvements: <a href="https://tiswww.case.edu/php/chet/readline/rltop.html">readline</a> integration is better, supporting variables and primitives, and writing to history has been tweaked.
-Most left-over implications of assignments returning the assigned value have been tidied up.
+Most of the left-over implications of assignments returning the assigned value have been tidied up.
 Waiting, process group handling, and terminal assignment have all been fixed up to be made more predictable, as has signal handling.
 
 <p>
 One other change is the addition of &ldquo;canonical extension&rdquo; scripts.
 These are scripts distributed (and installed) with <i>es</i>, not built into the shell itself, but available as officially supported implementations of certain spoofs.
-The initial canonical extensions are
+The initial canonical extensions distributed with the shell are
 
 <ul>
 <li><code>autoload.es</code>, which adds a function-autoloading mechanism.
@@ -279,28 +282,30 @@ Well, there are a couple of near-term goals I would like to achieve.
 
 <p>
 I would like to improve how shell input is read and parsed.
-<i>Es</i> has long had support for readline, but that support is limited, because while the parser is running, the shell can&rsquo;t run commands written in <i>es</i> script&mdash;only hardcoded behavior.
-Some work that has been recently done with how parser memory is managed changes this, and will enable things like programmable tab completion, or even swapping out readline for other libraries entirely.
-Given that there are multiple <i>es</i> forks featuring custom, hand-rolled line editing libraries, making this easier to swap out seems like meeting an active desire of users.
+Historically, memory management related to the parser has meant that <i>es</i> functions can&rsquo;t run while the parser is active&mdash;which, while input is being read, is always the case.
+Because of this, extensibility in shell input has always been limited; even the readline integration can only perform pre-implemented, hard-coded behaviors, which means that basic things like tab-completion on the first word of a command can&rsquo;t be done, since the <code>%pathsearch</code> hook function makes it impossible to predict in the binary what commands and functions are actually available.
+This lack of extensibility while reading input is a glaring deficiency, given so many shells are oriented around interactive features.
+There are also multiple <i>es</i> forks oriented around integrating fancier line-editing libraries, demonstrating active demand among <i>es</i> users for better options here.
 
 <p>
 I would also like to add some form of support for job control to the shell.
 There is a long history of religious arguments about job control in both <i>es</i> and <i>rc</i>, and I admit that I find many shells&rsquo; abstraction of a &ldquo;job&rdquo; to be more obnoxious than useful.
-However, managing process groups, which is the core of job control, is something that should be possible for any competent Unix shell, and I believe that it can be possible for <i>es</i> with small extensions to existing shell mechanisms; particularly, the <code>$&amp;newpgrp</code> and <code>$&amp;wait</code> primitives.
+Despite that, the ability to manage process groups&mdash;which is the real, core functionality of job control&mdash;is something that should be possible for any competent Unix shell, and I believe that it can be possible for <i>es</i> with only small extensions to existing shell mechanisms.
 Once that support is added, then a simple <code>job-control.es</code> script can be easily added as a canonical extension.
 
 <p>
-Both of these ideas, programmable input and job control, are in large part in service of a larger goal, which is to grow the <i>es</i> community.
-<i>Es</i>, I think, has real design strengths which have appealed to people like myself even despite other limitations of the shell, and during periods when development was stalled.
-Removing those limitations and allowing people to interact with their shell in ways that are familiar to them (that is, job control and fancy programmable input), and managing to do so in ways that are consistent with the shell&rsquo;s existing design, serves to both make the shell more practically useful and demonstrate that its design works.
+Both of these ideas are in service of a larger goal, which is to grow the <i>es</i> community.
+<i>Es</i>, I think, has real design strengths which have appealed to people such as myself despite the shell&rsquo;s current limitations.
+Removing those limitations and allowing people to interact with their shell in ways that are familiar to them (that is, using job control and fancy programmable input), and managing to do so in ways that are consistent with the shell&rsquo;s design objectives, serves to both make the shell more practically useful and demonstrate that the design works.
 
 <p>
 Ideally though, I don&rsquo;t want to add too much to what&rsquo;s built into the upstream <i>es</i>.
-The current feature set is pretty good, and I think it&rsquo;s right to have a shell that starts small and lets users build on that, rather than the other way around.
-Whatever is added to the core, upstream shell should function as a sort of meta feature, enabling not just this or that particular use but a whole kind of extensibility or programmability.
+The current feature set is pretty good, and I think it&rsquo;s right to have a shell that starts small and lets users build on that.
+Whatever is added to the <i>es</i> that everybody uses should exist to enable people to add the features they need.
 
 <p>
-Outside of actual development work, I intend to write more posts to document aspects of <i>es</i>, making it easier to get a strong grasp of the shell without having to dive into the codebase or trawl the old mailing list just to have an idea of how certain things work or why they&rsquo;re implemented the way they are.
+Outside of actual development work, I intend to write more posts to document various aspects of <i>es</i>, making it easier to get a strong grasp of the shell without having to dive into the codebase or trawl the old mailing list just to have an idea of how certain things work or why they&rsquo;re implemented the way they are.
+(It is an opinion of mine that somebody shouldn&rsquo;t have to learn C just to learn <i>es</i>.)
 
 <p>
 Some pages I ought to get around to writing include:
@@ -313,13 +318,13 @@ Some pages I ought to get around to writing include:
 </ul>
 
 <p>
-All in all, I&rsquo;d like to help build a solid enough foundation for <i>es</i>, along with documentation and tooling support, that it lowers the barrier to entry for hacking on the shell significantly.
-Over the years, while the upstream shell has been quiet, multiple individual forks have spun up, proving that motivation to do things with <i>es</i> has never really gone away, even if it has been disorganized.
-If upstream <i>es</i> can better avoid all that effort hitting dead-ends in defunct personal forks, that would be fantastic for the shell and its community.
+All in all, I&rsquo;d like to help build a solid enough foundation for <i>es</i>, along with documentation and tooling support, that it significantly lowers the barrier to entry for hacking on the shell.
+Over the years, while the upstream shell has been quiet, multiple individual forks have spun up, proving that motivation to do things with <i>es</i> has never really gone away, even if it has been scattershot.
+If upstream <i>es</i> can better organize these contributions to enable people to more effectively build on each others&rsquo; work, I believe it would be a huge benefit to the momentum of the shell and its community.
 
 <p>
 I believe that the continuing endurance of <i>es</i> is directly due to the fact that, even as an old and incomplete experiment, it is still a shining example of software design.
 It is simple, powerful, and predictable; it can be used to <a href=/es/web-server.html>host a web site</a> or <a href=/es/desktop.html>function at the core of a desktop</a>.
-<i>Es</i> is an elegant piece of software that I&rsquo;m happy to use every day.
+All I want to do is continue to develop upon its strengths, and enable others to do so as well.
 
 </main>
