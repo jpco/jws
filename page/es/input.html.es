@@ -1,21 +1,21 @@
 <; cat tmpl/header.html >
 
-<title>jpco.io | Making input to es what it could be</title>
+<title>jpco.io | Making es input how it should be</title>
 <meta name=description content="This page discusses how input works in the extensible shell es, and how it is being improved.">
 
 <; build-nav >
 
 <main>
-<h1>Making input to <i>es</i> what it could be</h1>
-<div class=time><time datetime=REPLACEME>REPLACEME</time></div>
+<h1>Making <i>es</i> input how it should be</h1>
+<div class=time><time datetime=2026-04-08>2026-04-08</time></div>
 
 <p>
-The way that <i>es</i> reads input from scripts or from an interactive terminal session is badly lacking, compared to other shells.
-Whereas interactive features tend to be the major attractive feature of many shells (those shells often being limited to POSIX-compatibility in the language itself), in <i>es</i> the support for interactivity is meager.
+The way that <i>es</i> reads input from scripts or from an interactive terminal session has historically been badly lacking, compared to other shells.
+Whereas interactive features tend to be a major, or the <em>only</em>, major attractive feature of many shells (those shells often being limited to POSIX-compatibility in the language itself), in <i>es</i> the support for interactivity is meager.
 
 <p>
-To some degree, this is intentional; <i>es</i>, coming from <i>rc</i>, tries to be relatively minimal in its behaviors by default.
-Unlike, say, <a href="https://fishshell.com">fish</a>, the default behavior when dropping into <i>es</i> for the first time is always probably going to be a simple prompt.
+To some degree, this is intentional; <i>es</i>, coming from <i>rc</i>, tries to be relatively minimalist by default.
+Unlike, say, <a href="https://fishshell.com">fish</a>, the default behavior when dropping into <i>es</i> for the first time is always probably going to be a simple prompt:
 
 <figure>
 <pre>
@@ -25,22 +25,21 @@ Unlike, say, <a href="https://fishshell.com">fish</a>, the default behavior when
 
 <p>
 Defaults aside, though, <i>es</i> is intended to be <em>extensible</em>.
-Even when the default behavior is lean or simplistic, there is no particular virtue in making it impossible for a user to get a more advanced interactive setup akin to fish, if that&rsquo;s what they want.
-The major reasons for the lack of extensiblity in <i>es</i> today are all accidents of implementation.
+Even when the default behavior is lean or even simplistic, the shell ought to make it possible for a user to get a more advanced interactive setup akin to fish if that&rsquo;s what they want.
+The major reasons for the lack of extensiblity in <i>es</i> today are all due to accidents of implementation.
 
 <h2>How input works</h2>
 
 <p>
-Like other shells, <i>es</i> can be given shell input in a few forms: a raw string (<code>es -c</code>); a named file (<code>es script.es</code>, or <code>. script.es</code>); or standard input, either non-interactively (<code>curl | es</code>) or interactively at a terminal.
+Like other shells, <i>es</i> can be given shell input in a few forms: a raw string (<code>es -c</code>); a named file (<code>es script.es</code>, or <code>. script.es</code>); or via the shell&rsquo;s standard input, either non-interactively (<code>curl | es</code>) or interactively at a terminal.
 
 <p>
 When started, the shell creates a new <code>Input</code> object corresponding with the file or string the shell is meant to read and evaluate.
-It decides whether the shell is &ldquo;interactive&rdquo;, either because the <code>-i</code> flag was given, or because the input is stdin and stdin is a TTY.
+It decides whether the shell should be &ldquo;interactive&rdquo;, either because the <code>-i</code> flag was given or because the input is standard input and standard input is a TTY.
 Based on this, the shell calls either <code>%interactive-loop</code> or <code>%batch-loop</code>.
-Finally, at this point, users have some control over what happens.
 
 <p>
-These two loop functions are important (and complicated) enough that they deserve their own page documenting them, but each of them are, at their core, a loop containing a bit of code that looks something like this:
+These two loop functions are important (and complicated) enough that they deserve their own page of documentation, but at their core each of them are a loop containing a bit of code that looks something like this:
 
 <figure>
 <pre>
@@ -63,7 +62,9 @@ This is a loop of essentially two steps:
 <p>
 It makes plenty of sense that <code>%parse</code> parses its input, of course.
 But why is <code>%parse</code> also responsible for <em>reading</em> shell input?
-This is the exact stuff that we would want to get at, if we want to make <i>es</i> capable of fancy interactivity à la fish or zsh.
+Why does it take <code>$prompt</code> as arguments?
+Can that reading behavior be changed at all?
+It&rsquo;s that exact behavior that we would want to get at, if we want to make <i>es</i> capable of fancy interactivity à la fish or zsh.
 But if we look at the definition of <code>%parse</code>, we get:
 
 <figure>
@@ -81,18 +82,18 @@ It&rsquo;s all locked away within the <code>$&amp;parse</code> primitive.
 
 <p>
 Given what the <code>$&amp;parse</code> primitive actually does, it would more accurately be called <code>$&amp;readfromshellinputandparse</code>.
-<code>$&amp;parse</code> does do what it claims to, <em>parse</em> unstructured input to produce a shell syntax tree, but to actually get at that input, it reads from the special shell <code>Input</code> using either special buffered read logic (which can&rsquo;t be used anywhere else) or <code>readline(3)</code> (which also can&rsquo;t be called any other way in <i>es</i>).
+<code>$&amp;parse</code> does do what it claims to, <em>parse</em> unstructured input to produce a shell syntax tree, but to actually get at that input, it reads from the shell&rsquo;s <code>Input</code> using either special buffered read logic (which can&rsquo;t be used anywhere else) or <code>readline(3)</code> (which also can&rsquo;t be called any other way in <i>es</i>).
 On top of that, the way <i>es</i> been historically implemented, <em>no es script can be invoked</em> while <code>$&amp;parse</code> is running.
 
 <p>
-The reason for this last bit is memory management.
-<i>Es</i> needs to track every bit of shell state for the sake of its garbage collector, but while the yacc-generated parser is running, some bits of shell state held by the parser will be unknown to <i>es</i> until parsing is complete, meaning that the GC must be disabled during parsing, meaning that normal <i>es</i> code (which requires the GC) can&rsquo;t be run while the parser is going.
+This last bit, which is the biggest problem of all, comes down to issues with memory management.
+<i>Es</i> needs to track every bit of shell state for the sake of its garbage collector, but while the yacc-generated parser is running, some references to the shell&rsquo;s data held by the parser will be unknown to <i>es</i> until parsing is complete, meaning that the GC can&rsquo;t run correctly during parsing, meaning that normal <i>es</i> code (which requires the GC) can&rsquo;t run during parsing.
 
 <p>
 This stinks!
-So much happens inside of <code>$&amp;parse</code>, and so much of that is made up by mysterious internal mechanisms (the <code>Input</code>) which are barely in the user&rsquo;s control, that it is essentially only usable within the context of these REPL functions.
+So much happens inside of <code>$&amp;parse</code>, and so much of that is made up of mysterious internal mechanisms (the <code>Input</code>) which are barely even visible to a user, that it is essentially only usable within the context of these REPL functions.
 (Exercise for the reader: figure out a way to wrap <code>%parse</code> such that it can be fed an arbitrary string.)
-Because it has readline wrapped up in it, there&rsquo;s no <code>$&amp;readline</code> primitive that users can call, either&mdash;and no way at all to use readline to get any input that won&rsquo;t then be passed into the parser.
+And, because it has all of readline buried inside of it, there&rsquo;s nothing like a <code>$&amp;readline</code> primitive that users can call, either&mdash;and no way at all to use readline to get any input that won&rsquo;t then be modified by the parser.
 In a shell which has been praised for its <a href="http://www.catb.org/~esr/writings/taoup/html/ch04s02.html#orthogonality">orthogonality</a>, this is a glaring deficiency.
 
 <p>
@@ -105,8 +106,7 @@ At first blush, we want a <code>$&amp;parse</code> which
 </ol>
 
 <p>
-However, there is a difficulty with this: for most languages, including <i>es</i>, it&rsquo;s actually impossible to know without parsing how much input the parser needs before it&rsquo;s done, because it depends directly on the syntactic structure of the input.
-
+However, this runs into a problem: for most languages, including <i>es</i>, it&rsquo;s actually impossible to know beforehand how much input the parser will need before it&rsquo;s done, because it depends directly on the syntactic structure of the input.
 Consider the following contrived <i>es</i> snippet as an example:
 
 <figure>
@@ -126,15 +126,15 @@ echo goodbye world</code>
 
 <p>
 The first seven lines must be parsed together, but the remaining three must be parsed separately.
-But without actually parsing, it&rsquo;s hard to know this; you have to track the <code>{</code> and <code>}</code>, and you have to know when the heredoc starts and ends.
-You could, maybe, do a sort of pre-parsing pass to figure out how to delimit commands, but it isn&rsquo;t worth it.
-The way to handle this is to simply feed lines to <code>$&amp;parse</code> and allow it to gauge when it needs more input or not.
-With that in mind, how would we change <code>$&amp;parse</code>?
-There are two tactics that parsers use for this.
+But other than by actually parsing, it&rsquo;s hard to know this; you have to track the <code>{</code>s and <code>}</code>s, and, worse, you have to know when the heredoc starts and ends.
+You could, potentially, do a sort of pre-parsing pass to figure out how to delimit commands, but it isn&rsquo;t worth it.
+The best way to handle this is to simply feed input to <code>$&amp;parse</code> line-by-line and allow it to tell you when it needs more input and when it&rsquo;s done.
 
 <p>
-A <em>push-style</em> parser is one where you get some input, push it into the parser, and check if that was enough input to get something out.
-In <i>es</i> the basic setup might look like:
+With that in mind, how would we change our imagined design for <code>$&amp;parse</code>?
+There are two tactics that parsers use for this.
+A <em>push-style</em> parser is one where you get some input, call the parser with that one line of input, and check based on the parser&rsquo;s return value if that was enough input to produce something, or if it wants more.
+In <i>es</i> this kind of setup might look like:
 
 <figure>
 <pre>
@@ -149,16 +149,17 @@ In <i>es</i> the basic setup might look like:
 </figure>
 
 <p>
-This is more complicated-looking than the current loop function structure, but there&rsquo;s also a serious catch: now you have to worry about the state of the parser between calls.
-Because each <code>%parse</code> call can potentially leave the parser in a partially-done state, in order to have reliably correct behavior, you need some way to say either &ldquo;keep parsing what you&rsquo;ve got, parser&rdquo; or &ldquo;I&rsquo;m calling a fresh parser, throw out anything you have!&rsquo;
+Unfortunately, with this design, there&rsquo;s a serious catch: now you have to worry about the state of the parser between calls to <code>$&amp;parse</code>.
+Because each <code>%parse</code> call can potentially leave the parser in a partially-done state, in order to have reliably correct behavior, you need some way to say either &ldquo;keep working on what you&rsquo;ve already got, parser&rdquo; or &ldquo;I&rsquo;m starting fresh! Throw out all your state!&rdquo;
 This could be some kind of <code>%parse-reset</code> function, or it could be some kind of &ldquo;parser handle&rdquo;, where the shell tracks multiple parsers&rsquo; state with some ID, and the user can supply that ID to indicate which parse run they want to use.
 
 <p>
 This starts to get legitimately complicated, and it can all be avoided by using the other style of parser: <em>pull-style</em>.
 This is how the internal yacc-generated parser in <i>es</i> works.
-As a user, you just call the parser, and you supply it some way to read as much input as it wants all by itself.
-In yacc, this is a function named <code>yylex</code>.
-In <i>es</i>, since we have nice things like first-class functions, this might look like:
+As a user, you just call the parser once, and when you do, you supply it some mechanism to request more input whenever it needs to.
+In yacc, this mechanism is a function named <code>yylex()</code>.
+In <i>es</i>, since we have fancy things like lambda expressions, we can give <code>%parse</code> its <em>reader command</em> directly as an argument.
+This might look like:
 
 <figure>
 <pre>
@@ -171,33 +172,36 @@ In <i>es</i>, since we have nice things like first-class functions, this might l
 </figure>
 
 <p>
-The change between the original loop and what we have here is very small&mdash;we&rsquo;ve just gone from the original <code>%parse $prompt</code> to <code>%parse %read</code>.
-In this case, <code>%read</code> is a command that we give to <code>%parse</code>, which it can call whenever it wants to read more shell input.
-<code>$&amp;parse</code> still manages the <code>Input</code>, and redirects the stdin of <code>%read</code> to the shell input.
-This command will be called at least once like this, and maybe many more times, until the parser gets a completely-parsed command (or an error).
+The change between the original loop and what we have here is very small&mdash;we&rsquo;ve just gone from the original <code>{%parse $prompt}</code> to <code>{%parse %read}</code>.
+(We&rsquo;ve lost <code>$prompt</code> in this change, but that will be addressed in a second.)
+In this case, <code>%read</code> is that reader command that we give to <code>%parse</code> to call whenever it wants to read more shell input.
+<code>$&amp;parse</code> manages the <code>Input</code>, and redirects the standard input of <code>%read</code> to the shell input when calling it.
+This reader command will be called at least once, and potentially many more times, until the parser receives enough input to produce a completely-parsed command.
 
 <p>
-This setup fixes the problems with state that the push-style parser would have, as there would be no more incomplete-parser state to track: every call to <code>%parse</code> would run until the parser is done.
+This setup fixes the problems with state that the push-style parser would have, as there would be no more incomplete-parser state to track: every call to <code>%parse</code> would start with a fresh parser, and would run until the parser is done.
 
 <h2>Rebuilding around this new <code>$&amp;parse</code></h2>
 
 <p>
-So, going with a pull-style <code>$&amp;parse</code> which takes a command that it uses to read shell input seems like the way to go.
-But the above example, <code>%parse %read</code>, is pretty insufficient for interactive shell use, as it lacks readline, history, prompting, and so on.
-So let&rsquo;s add that stuff back in.
+So, going with a pull-style <code>$&amp;parse</code> and giving it a reader command that it uses to read from the shell&rsquo;s <code>Input</code> seems like the way to go, in terms of simplifying <code>$&amp;parse</code>.
 
 <p>
-Let&rsquo;s orient this around producing a <code>%parse</code> function which works the same as before, on top of this new, smaller-scoped, <code>$&amp;parse</code> primitive, so that users&rsquo; loop functions don&rsquo;t need to change at all.
+But pulling out all the built-in reading logic that <code>$&amp;parse</code> had  and replacing it with <code>%read</code> loses all the interactive features we had come to expect, like readline, history, prompting, and all that.
+So, let&rsquo;s add that stuff back in.
 
 <p>
-We have no way to call readline in the shell now, so we will have to add one: call it <code>$&amp;readline</code>.
-We&rsquo;ll talk about this new primitive in more detail later, but for now it suffices to say that <code>$&amp;readline</code> should take one optional argument, its prompt, and return either a line of input or the empty list, with the same semantics as <code>$&amp;read</code>.
-(This is also essentially the exact calling semantics of the <code>readline(3)</code> function, which is all very tidy.)
-To make things consistent for folks who do and do not include readline in their <i>es</i>, we define a <code>%read-line</code> function which either wraps <code>$&amp;readline</code> if present and is otherwise <code>@ prompt {echo -n $prompt; %read}</code>.
+Let&rsquo;s reorient the design here so that instead of changing our loop functions, we&rsquo;re instead producing a <code>%parse</code> function which works the same as before on top of our new, smaller-scoped <code>$&amp;parse</code> primitive.
 
 <p>
-We already have a hook function for writing to history, <code>%write-history</code>, so we also need to call that.
-Putting these things together, with the appropriate scaffolding, looks like:
+We have no way to call readline, so we will have to add one: call it <code>$&amp;readline</code>.
+We&rsquo;ll talk about this new primitive in more detail later, but for now it suffices to say that <code>$&amp;readline</code> should take one optional argument, a prompt, and return either a line of input or the empty list, with the same semantics as <code>$&amp;read</code>.
+(Conveniently, these are also essentially the exact calling semantics of the <code>readline(3)</code> function.)
+To make things consistent for folks who do and do not include readline in their <i>es</i>, we define a <code>%read-line</code> function which wraps <code>$&amp;readline</code> if present and otherwise is <code>@ prompt {echo -n $prompt; %read}</code>.
+
+<p>
+We already have a hook function for writing to history, <code>%write-history</code>, so we also need to add a call to that.
+Putting these things together, with the appropriate scaffolding, creates a <code>%parse</code> which looks like:
 
 <figure class="centered bigfig">
 <pre>
@@ -227,65 +231,68 @@ Putting these things together, with the appropriate scaffolding, looks like:
 
 <p>
 The interactive logic is wrapped in an <code>%is-interactive</code> check, for obvious reasons.
-We also save the input that gets read and write it to shell history, and we do a little prompt-tracking.
-Note that a couple specific behaviors become visible here, now that they&rsquo;re in script, <em>and</em> they can be changed:
+We also buffer the input that gets read and write it to shell history, and there is also a little logic for picking the right prompt at the right time.
+Note that a couple specific behaviors become visible here, now that they&rsquo;re in <i>es</i> script, <em>and</em> they can be changed:
 
 <ul>
 <li>we use the first prompt before the first line, and the second prompt before each subsequent line
-<li>we buffer a whole command before writing it to history, rather than writing to history with each line
-<li>we write inputs to history even when they cause <code>$&amp;parse</code> to throw an exception, as with syntax errors
+<li>we buffer a whole command before writing it to history, rather than each line to history individually
+<li>we write inputs to history even when they cause <code>$&amp;parse</code> to throw an exception, such as with syntax errors
 </ul>
 
 <p>
 So now we have a new <code>$&amp;parse</code> that has less built-in behavior, and a new <code>%parse</code> which wraps it to maintain the same behavior that it had before.
-And, in fact, this is what I have written.
-As of very recently, <i>es</i> has a <code>%parse</code> function which looks just like this.
 
 
 <h2>Reimplementing <code>$&amp;parse</code></h2>
 
 <p>
-At the beginning of this post, I wrote that <i>es</i> was bound by its own implementation to have a <code>$&amp;parse</code> that could not run <i>es</i> script, so what changed?
+This is the part of the page where I reveal that this change has already been made to <i>es</i>; as of quite recently, <code>$&amp;parse</code> has been reimplemented to take a reader command, and <code>%parse</code> has been rewritten to wrap this new <code>$&amp;parse</code>.
 
 <p>
-I&rsquo;ll go over the problem in more detail before talking about the solution.
+But, at the beginning here, I wrote that <i>es</i> was bound by its implementation to have a <code>$&amp;parse</code> that could not invoke any <i>es</i> script, so what changed?
 
 <p>
-Historically, heap-allocated memory in <i>es</i> would be in one of two sets: it would either be in &ldquo;ealloc space&rdquo;, describing the set of references which are allocated by <code>malloc</code> or <code>realloc</code> and which need to be manually <code>free</code>d; or they would be in &ldquo;GC space&rdquo;, the particular set of references tracked by the garbage collector and automatically freed when appropriate.
-Just about anything actually visible to an <i>es</i> user would be in GC space, including the code returned by <code>$&amp;parse</code>.
-Because of this, the most obvious behavior was for the parser to construct the parse tree in-place, within GC space.
+I&rsquo;ll describe the problem in more detail before talking going over the solution.
 
 <p>
-But the parser code, produced by some yacc, didn&rsquo;t have any idea about the root list for <i>es</i>&rsquo; GC, of course.
-So while parsing was ongoing, there was a good chance that some of this parse-tree detritus was live, unmarked, in GC space, and any collection that ran would blow it away just before it needed to be used.
+Historically, heap-allocated memory in <i>es</i> was divided into two spaces: it would either be in &ldquo;ealloc space&rdquo;, describing the set of references which are allocated by <code>malloc()</code> or <code>realloc()</code> and which need to be manually <code>free()</code>d; or they would be in &ldquo;GC space&rdquo;, the particular set of references tracked by the garbage collector and automatically freed when appropriate.
+Just about anything actually visible to an <i>es</i> user would be in GC space, including the parse tree constructed and eventually returned by <code>$&amp;parse</code>.
 
 <p>
-Fixing this took a couple attempts.
-My first angle was to fix the parser so that any live references it was holding would be in the root list.
-I tried this with a hand-written parser with <a href=/es/runtime-quirks.html#gc>the appropriate <code>Ref()</code> macro calls</a> scattered throughout the parser code.
-I abandoned this when it was turning out to be very slow, probably because of all the new root-tracking code in the parser.
+But the parser code, being produced by a POSIX yacc, didn&rsquo;t have any idea about the root list for <i>es</i>&rsquo; GC.
+So while the parser was running and constructing the parse tree, there was a good chance that parse tree was live, but untracked, in GC space.
+This meant that if a GC run ever occurred, those live references were at risk of being invalidated.
 
 <p>
-My next attempt was to use <a href="https://sqlite.org/src/doc/trunk/doc/lemon.html">the lemon parser generator</a> from the SQLite project.
-Lemon is a really great parser generator, and it had two features in particular that I was interested in: it allowed a lot of control over how the parser code would be generated, and it was a push-style parser.
-Together, these meant that while the shell was reading input, all the state halfway through a parse could be encapsulated in a single <code>Parser</code> object, and I could generate code to make that <code>Parser</code> GC-able.
-This felt like a great way to go, but ran into some of the same problems as the first attmept.
+Fixing this took a couple different attempts.
+My first angle was to fix the parser so that any live references it was holding would be in the GC&rsquo;s root list.
+I tried implementing this with a hand-written parser with <a href=/es/runtime-quirks.html#gc>the appropriate <code>Ref()</code> macro calls</a> scattered throughout the parser code, but I abandoned this when it was turning out to be very slow, probably because of all the new root-tracking code in the parser.
 
 <p>
-In general, it was turning out that swapping out the entire <i>es</i> parser was a major change, and had the potential to introduce a lot of bugs, both in terms of memory management and in terms of the parsing itself.
-It was starting to feel absurd to do all this when I wasn&rsquo;t <em>actually</em> trying to change how parsing works in the shell.
+My next attempt was to rewrite the parser using <a href="https://sqlite.org/src/doc/trunk/doc/lemon.html">the lemon parser generator</a> from the SQLite project.
+Lemon is a pretty great parser generator which has two features in particular that I was interested in: it allows a lot of control over how the parser code is generated, and it generates a push-style parser.
+Together, these meant that while the shell was reading input, all the state held by the parser could be encapsulated in a single <code>Parser</code> object which could be wired up so the entire parser could be GC&rsquo;d.
+This ended up running into some of the same problems as the first attempt.
+
+<p>
+In general, I was finding that swapping out the entire <i>es</i> parser was a major change, and had the potential to introduce a lot of bugs, both in terms of memory management and in terms of the parsing itself.
+It was starting to feel absurd to do all this when I wasn&rsquo;t actually trying to change the parser at all.
 So I shelved the idea for a while.
 
 <p>
 What brought me back to the project was the realization that I didn&rsquo;t have to change the parser in order to change how it performs memory management; I could change the memory management system instead.
-So I added a third kind of memory, which I called <em>pspace</em>, for &ldquo;parser space&rdquo;.
+So, to keep the parser&rsquo;s untracked memory references safe during parsing, I moved them &ldquo;out of the way&rdquo;.
+
+<p>
+I added a third kind of memory, which I called <em>pspace</em>, for &ldquo;parser space&rdquo;.
 Pspace is a variation on GC space, with one critical difference: it is only ever collected once, where exactly one pointer and its referents are copied out to some other space (typically GC space), at which point the pspace is destroyed.
-The point of this is that while the shell can&rsquo;t know which references are live during parsing, it certainly knows which are live after parsing&mdash;the parse tree.
+The point of this is that while the shell can&rsquo;t know which references are live during parsing, it certainly knows what&rsquo;s live once parsing has finished&mdash;the parse tree.
 
 <p>
 This allowed me to get a proof-of-concept going of this new <code>$&amp;parse</code>, at which point I immediately ran into a new problem.
 I had forgotten that, because code coming from places like the environment is stored in string form, merely running <i>es</i> script often (and at unpredictable times) requires parsing it.
-Being able to have multiple parsers running concurrently, therefore, is necessary.
+Being able to run the parser in the middle of another parse run, therefore, is necessary.
 
 <p>
 This was yet another hurdle for the shell&rsquo;s yacc-generated parser, and this time, unfortunately, there was no clear workaround: a portable (POSIX) yacc-based compiler simply must rely on static (global) variables, which means that having two running concurrently in a single thread is not going to work.
@@ -293,7 +300,7 @@ However, while digging around, I found that yacc parser generators these days se
 Unlike with C compilers, I couldn&rsquo;t find any alternatives to try out <em>at all</em>.
 
 <p>
-So, I cheesed it&mdash;<i>es</i> can now be built with either bison or byacc, but it requires at least one non-portable extension.
+So, I cheesed it&mdash;<i>es</i> can still be built with either bison or byacc, but it requires at least one non-portable extension which both of them support.
 To make up for this, I decided to also put the generated parser into the repo, so that anybody just building the shell won&rsquo;t need a yacc at all.
 
 <p>
@@ -306,7 +313,7 @@ The extension in question is the line
 </figure>
 
 <p>
-which <a href="https://www.gnu.org/software/bison/manual/html_node/Pure-Decl.html">moves the statically-allocated variables involved in parsing</a>&mdash;particularly <code>yylval</code>&mdash;into the parameter lists of the functions.
+which <a href="https://www.gnu.org/software/bison/manual/html_node/Pure-Decl.html">moves the statically-allocated variables involved in parsing</a>&mdash;particularly <code>yylval</code>&mdash;into the parameter lists of the parser functions.
 
 <p>
 After this, the rest of the concurrent parsing work was a matter of moving other static variables into the stack.
@@ -457,14 +464,6 @@ This deserves its own page, but the idea would be a mechanism to specify a C fil
 This could reduce the stakes of contributing to upstream <i>es</i> by allowing people to offer code that is only included if opted-into at build time.
 
 <p>
-From this, further sophistication could be developed, such as dynamic runtime primitives using <code>dlopen(3)</code>, namespacing of primitives to better express things like &ldquo;which version of <code>$&amp;parse</code> are you using?&rdquo;
-
-
-<h2>TODOs for this page</h2>
-
-<ul>
-<li>make sure the term &ldquo;reader command&rdquo; is introduced at the right time
-<li>is everything linkified that could be?
-</ul>
+From this, further sophistication could be developed, such as dynamic runtime primitives using <code>dlopen(3)</code> and namespacing of primitives to better express notions such as &ldquo;which version of <code>$&amp;parse</code> are you using?&rdquo;
 
 </main>

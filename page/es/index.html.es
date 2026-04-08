@@ -281,11 +281,9 @@ So, what&rsquo;s next for <i>es</i>?
 Well, there are a couple of near-term goals I would like to achieve.
 
 <p>
-I would like to improve how shell input is read and parsed.
-Historically, memory management related to the parser has meant that <i>es</i> functions can&rsquo;t run while the parser is active&mdash;which, while input is being read, is always the case.
-Because of this, extensibility in shell input has always been limited; even the readline integration can only perform pre-implemented, hard-coded behaviors, which means that basic things like tab-completion on the first word of a command can&rsquo;t be done, since the <code>%pathsearch</code> hook function makes it impossible to predict in the binary what commands and functions are actually available.
-This lack of extensibility while reading input is a glaring deficiency, given so many shells are oriented around interactive features.
-There are also multiple <i>es</i> forks oriented around integrating fancier line-editing libraries, demonstrating active demand among <i>es</i> users for better options here.
+<a href=/es/input.html>Shell input has recently been refactored</a> so that it can be meaningfully extended like other parts of the shell, but this hasn&rsquo;t yet been exploited.
+For example, there&rsquo;s no mechanism for programmable tab completion, and there&rsquo;s no alternative to readline integration, such as editline, <a href="https://github.com/antirez/linenoise">linenoise</a>, <a href="https://github.com/AmokHuginnsson/replxx">replxx</a>, <a href="https://github.com/injinj/linecook">linecook</a>, or even something like an <i>es</i> version of <a href="https://github.com/akinomyoga/ble.sh">ble.sh</a>.
+Essentially, it is finally <em>possible</em> to make <i>es</i> input extensible, but I want to actually follow through.
 
 <p>
 I would also like to add some form of support for job control to the shell.
@@ -314,7 +312,6 @@ Some pages I ought to get around to writing include:
 <li>Effective <i>es</i> scripting
 <li>The life of an <i>es</i> command
 <li>The <i>es</i> runtime
-<li>Extensible shell input
 </ul>
 
 <p>
