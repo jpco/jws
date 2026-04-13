@@ -1,16 +1,16 @@
 <; cat tmpl/header.html >
 
-<title>jpco.io | Making es input how it should be</title>
+<title>jpco.io | Giving the extensible shell extensible input</title>
 <meta name=description content="This page discusses how input works in the extensible shell es, and how it is being improved.">
 
 <; build-nav >
 
 <main>
-<h1>Making <i>es</i> input how it should be</h1>
+<h1>Giving the extensible shell extensible input</h1>
 <div class=time><time datetime=2026-04-08>2026-04-08</time></div>
 
 <p>
-The way that <i>es</i> reads input from scripts or from an interactive terminal session has historically been badly lacking, compared to other shells.
+The way that <a href=/es><i>es</i></a> reads input from scripts or from an interactive terminal session has historically been badly lacking, compared to other shells.
 Whereas interactive features tend to be a major, or the <em>only</em>, major attractive feature of many shells (those shells often being limited to POSIX-compatibility in the language itself), in <i>es</i> the support for interactivity is meager.
 
 <p>
@@ -422,8 +422,9 @@ However, most of it isn&rsquo;t inherent to the change here, but is instead fixa
 Some of the changes are internal.  For example, a number of buffers and other bits of state that were previously retained across parser calls are now allocated and freed each time, so with certain workloads, allocations have increased quite a bit.
 
 <p>
-Some of the changes are external: previously the shell would read scripts and other non-interactive input in multiple-kilobyte chunks, but now lines are read line-by-line, which means that in order to read a script, calls to <code>read(3)</code> and <code>lseek(3)</code> are an order of magnitude more numerous.
+Some of the changes are external: previously the shell would read scripts and other non-interactive input in multiple-kilobyte chunks, but now files are read line-by-line, which means that in order to read a script, calls to <code>read(3)</code> and <code>lseek(3)</code> are an order of magnitude more numerous.
 Fixing this would require creating a read-in-chunks mechanism in <i>es</i>.
+Some experimentation thus far suggests that this is the major factor, and that adding this read-in-chunks mechanism would make most of the performance impact disappear.
 
 
 <h2>Implications and further work</h2>
@@ -446,7 +447,7 @@ In particular, we still can&rsquo;t just use <code>$&amp;parse</code> as a norma
 <p>
 Exposing these built-in behaviors and making shell input less magic would be a good path forward.
 An improvement on the current state of the art would be some mechanism for file descriptors (or, more generally, &ldquo;handles&rdquo;) to have lexical scope.
-This would provide a more robust way to isolate state between parts of the shell runtime, which would be fairly ideal.
+This would provide a more robust way to isolate state between parts of the shell runtime, which would be ideal.
 
 <p>
 I have been playing around with the idea of &ldquo;variable-bound file handles&rdquo;, a mechanism for opening an internal file descriptor which is bound directly to a variable, not exposing a user-visible file descriptor.
@@ -465,5 +466,12 @@ This could reduce the stakes of contributing to upstream <i>es</i> by allowing p
 
 <p>
 From this, further sophistication could be developed, such as dynamic runtime primitives using <code>dlopen(3)</code> and namespacing of primitives to better express notions such as &ldquo;which version of <code>$&amp;parse</code> are you using?&rdquo;
+
+<p>
+And then, of course, there are extensibility improvements that have become possible for <code>$&amp;readline</code> itself.
+Now that it is possible to run <i>es</i> script while parsing, we can add custom key bindings and a completion hook (or multiple completion hooks, depending on the design).
+Programmable completion logic would be useful in its own right, but custom key bindings should also allow for integration with things like <a href="https://github.com/atuinsh/atuin">the funny shell history server atuin</a>, so that iterating through or searching shell history would consult the remote server.
+These extensions to <code>$&amp;readline</code> represent the most immediate and significant usability improvement for users of the shell who aren&rsquo;t deep into implementation.
+
 
 </main>

@@ -27,17 +27,19 @@ Much of what happens at this layer is invisible to the user, even, though certai
 The middle layer is the one of interest for this page: it is the <em>primitives</em> layer.
 Primitives are the callable objects in <i>es</i> script which are implemented using C, and which, in some sense, make up the &ldquo;standard library&rdquo; of the shell.
 A large proportion of the shell&rsquo;s behaviors, especially those that are relevant to its nature as a <em>shell</em>, are implemented via primitives such as <code>$&amp;pipe</code>, <code>$&amp;fork</code>, <code>$&amp;read</code>, and so on.
-While the internals of a primitive are abstract, a well-designed and well-documented primitive has behavior that is understandable, predictable, and well-isolated from any other primitive.
+While the internals of a primitive are opaque, a well-designed and well-documented primitive has behavior that is understandable, predictable, and orthogonal to other primitives.
 
 <p>
-Improving the extensibility of <i>es</i> is, generally, a process of moving behaviors from lower layers to higher ones: removing primitives in favor of functions in pure <i>es</i> script, or making implicit parts of the core runtime into explicit combinations of primitives and functions&mdash;hopefully, reusing as many pre-existing functions as possible.
+As a broad rule, improving the extensibility of <i>es</i> is a process of moving behaviors from lower layers to higher ones: exposing built-in behaviors of the shell as primitives which are connected via functions, reducing those primitives to do the minimal work possible, or even replacing them entirely with pure-<i>es</i> functions.
 
 <p>
-An example of this process is the set of changes I am pursuing for shell input.
-Historically, the entire process of reading input into <i>es</i> has happened as part of the <code>$&amp;parse</code> primitive.
-This primitive performs parsing, but it also does everything that happens during parsing as well: reading shell input, invoking <code>readline</code> if relevant, writing to history, and so on.
-This is due to a technical limitation of memory management during parsing which is nearly fixed.
-Once it is,
+An example of this process is <a href=/es/input.html>the set of changes I have been pursuing for shell input</a>.
+Historically, the entire process of reading input into <i>es</i> has happened internally as part of the <code>$&amp;parse</code> primitive.
+This primitive performs parsing, but it also does everything else that happens during parsing: reading shell input, invoking <code>readline</code> if called for, writing to history, and so on.
+Making input more flexible has involved shrinking <code>$&amp;parse</code> so that it only performs lexical analysis and parsing, exposing behaviors like <code>$&amp;readline</code> in new primitives, and connecting these primitives using <i>es</i> script in the <code>%parse</code> function.
+
+<p>
+
 
 <hr>
 
@@ -101,6 +103,11 @@ This is, generally, the category that zsh (see <code>zshmodules(1)</code>) has f
 <p>
 Some of these items, especially the larger ones, require changes in the core shell runtime to be possible or useful.
 Changes to the core shell will be discussed later.
+
+<h3>Build-time functionality</h3>
+
+<p>
+prim-dump.c!
 
 <h3>OS specialization</h3>
 
