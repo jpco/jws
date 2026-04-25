@@ -30,7 +30,7 @@ A large proportion of the shell&rsquo;s behaviors, especially those that are rel
 While the internals of a primitive are opaque, a well-designed and well-documented primitive has behavior that is understandable, predictable, and orthogonal to other primitives.
 
 <p>
-As a broad rule, improving the extensibility of <i>es</i> is a process of moving behaviors from lower layers to higher ones: exposing built-in behaviors of the shell as primitives which are connected via functions, reducing those primitives to do the minimal work possible, or even replacing them entirely with pure-<i>es</i> functions.
+As a broad rule, improving the extensibility of <i>es</i> is a process of &ldquo;<em>raising</em>&rdquo; pieces of the shell from lower layers to higher ones: exposing built-in behaviors of the shell as primitives which are connected via functions, reducing those primitives to do the minimal work possible, or even replacing them entirely with pure-<i>es</i> functions.
 
 <p>
 An example of this process is <a href=/es/input.html>the set of changes I have been pursuing for shell input</a>.
@@ -38,47 +38,11 @@ Historically, the entire process of reading input into <i>es</i> has happened in
 This primitive performs parsing, but it also does everything else that happens during parsing: reading shell input, invoking <code>readline</code> if called for, writing to history, and so on.
 Making input more flexible has involved shrinking <code>$&amp;parse</code> so that it only performs lexical analysis and parsing, exposing behaviors like <code>$&amp;readline</code> in new primitives, and connecting these primitives using <i>es</i> script in the <code>%parse</code> function.
 
-<p>
-
-
-<hr>
-
-<p>
-What I am picturing looks something like this.
-
-<p>
-We'd have some kind of <code>$&amp;loadlib</code> primitive which does the actual primitive-loading.
-That would be wrapped in a function like
-
-<figure>
-<pre>
-<code>fn use dir {
-	if {!~ $dir $primdirs} {
-		$&amp;loadlib $dir/lib.so
-		. $dir/script.es
-		primdirs = $primdirs $dir
-	}
-}</code>
-</pre>
-</figure>
-
-<p>
-Which would allow us to do <em>something</em> like
-
-<figure>
-<pre>
-<code>use /usr/local/lib/es/linux-extensions</code>
-</pre>
-</figure>
-
-<p>
-But this is getting a little ahead of ourselves.
-<em>Why</em> would we want this in the first place?
-
 <h2>Motivation</h2>
 
 <p>
-My imagined use cases for pluggable primitives fall into one of the three following categories.
+What follows are a few general categories of potential use cases for extensible primitives.
+These might inform an eventual extensible-primitive design.
 
 <h3>Extended behaviors</h3>
 
@@ -92,53 +56,48 @@ I think pluggable primitives could be the right way to bridge that divide.
 Some functions and behaviors that could be added as extensions to <i>es</i>:
 
 <ul>
-<li>Small behaviors, like miscellaneous calls like <code>getcwd(3)</code> or <code>getpid(3)</code>, regexes, or arithmetic (though, in my opinion, arithmetic works best as a glomming-time construct, not a primitive)
+<li>Small features, such as <code>getcwd(3)</code> or <code>getpid(3)</code>, regexes, or arithmetic (though, in my opinion, arithmetic works best in the parser and during glomming, not as a primitive)
 <li>Larger additions, like job control or alternative input libraries
 <li>Abilities outside what a shell can typically do, such as networking facilities
 </ul>
 
 <p>
-This is, generally, the category that zsh (see <code>zshmodules(1)</code>) has fairly well covered.
+This is generally the category well-supported by zsh (see <code>zshmodules(1)</code>).
+Even though this is the least ambitious category, certain use cases would still require changes to the core runtime to support them.
 
-<p>
-Some of these items, especially the larger ones, require changes in the core shell runtime to be possible or useful.
-Changes to the core shell will be discussed later.
-
-<h3>Build-time functionality</h3>
-
-<p>
-prim-dump.c!
 
 <h3>OS specialization</h3>
 
 <p>
 <i>Es</i> is highly portable, and that's a very good thing.
-
-<p>
-That said, like the previous bullet point, erring towards portability in all things is often functionally equivalent to erring towards the lowest common denominator, as the shell is bound to use the feature set of the POSIX.1-2001 specification.
+However, erring towards portability in all things is often functionally equivalent to implementing the lowest common denominator, as the shell is bound to use the feature set of the <span class=uppernum>POSIX.1-2001</span> specification.
 
 <p>
 With pluggable primitives, <i>es</i> could be kept portable in its core, while in plugged-in primitives make use of non-standard and OS-specific APIs.
 
 <p>
-For example: With the right OS support, such as <a href="https://docs.freebsd.org/en/books/handbook/jails/">jails</a> or <a href="https://wiki.freebsd.org/Capsicum">capsicum</a> or <a href="https://man7.org/linux/man-pages/man2/seccomp.2.html">seccomp</a>, could the idea of a restricted shell be made actually meaningful?
+For example: With the right OS support, such as <a href="https://docs.freebsd.org/en/books/handbook/jails/">jails</a> or <a href="https://wiki.freebsd.org/Capsicum">capsicum</a> or <a href="https://man7.org/linux/man-pages/man2/seccomp.2.html">seccomp</a>, could a new sort of restricted shell be implemented that provides actual meaningful security?
 
 <p>
 What kind of <a href="https://www.haiku-os.org/blog/humdinger/2017-11-05_scripting_the_gui_with_hey/">Haiku GUI scripting</a> could be made possible, or at least more ergonomic, with built-in shell support?
 
 <p>
+Could one of Linux&rsquo;s many fancy process-handling mechanisms (<code>clone()</code> with all its many flags, pidfds, etc.) be exploited to good advantage?
+
+<p>
 These cases overlap with the previous point, but it bears emphasizing that pluggable primitives in <i>es</i> could support specialization to these kinds of per-OS behaviors, without making the core shell a rat's nest of <code>#ifdef</code>s.
+
 
 <h3>Versioned primitives</h3>
 
 <p>
-This is the most radical use case, but in addition to the above, I also believe that a well-designed system for pluggable primitives could be used to support active and backwards-incompatible updates to the shell without actually breaking backwards compatibility.
+In addition to the above, I also believe that a well-designed system for pluggable primitives could be used to support active and backwards-incompatible updates to the shell without actually breaking backwards compatibility.
 
 <p>
 This would require, as its major step, migrating existing shell primitives and related functionality out of the &ldquo;core&rdquo; shell and into a set of pluggable primitives.
 
 <p>
-It would also require some form of primitive versioning and namespacing, and some way to say &ldquo;when I specify <code>$&amp;time</code> I mean precisely <em>this</em> <code>$&amp;time</code>&rdquo;.
+It would also require some form of primitive versioning/namespacing, and some way to say &ldquo;when I call <code>$&amp;time</code> I mean <em>this version of</em> <code>$&amp;time</code>&rdquo;.
 
 <p>
 I am picturing this would enable a way to, essentially, opt-in to &ldquo;the future&rdquo;, with the potential breakage that might entail.
@@ -146,10 +105,45 @@ Scripts (and users) which have no need of &ldquo;the future&rdquo; can continue 
 
 <p>
 A specific case would be the recent rewrite of <code>$&amp;time</code> that was recently done.
+While the new version seems like a strict improvement on the previous one (being capable of everything the old primitive could do and more), it is a backwards-incompatible change, because it changes how the <code>$&amp;time</code> primitive is called.
+This could be side-stepped with a mechanism that lets users select the newer time specifically.
 
-<h2>Namespacing and versioning</h2>
 
-<h2>Changes to core <i>es</i></h2>
+<h3>Build-time functionality and alternative shell binaries</h3>
+
+<p>
+More flexibility in primitives could also be used to generalize <i>es</i>&rsquo; current build process into an <i>es</i>-binary-generating mechanism.
+
+<p>
+The current build process of <i>es</i> involves:
+
+<ol>
+<li>building the <code>esdump</code> binary with <code>dump.c</code>
+<li>running it so that it reads <code>initial.es</code> from stdin and then dumps the shell&rsquo;s memory state to <code>initial.c</code> in its stdout
+<li>building the real <code>es</code> binary with <code>initial.c</code>
+</ol>
+
+<p>
+This is all specialized, hard-coded behavior, and still requires <code>esdump</code> to have access to the same set of primitives as the built <code>es</code>.
+As a first step, build-time primitives could be loaded only during <code>initial.es</code> evaluation for bootstrapping purposes: for example, a built-in <code>$&amp;batchloop</code> currently needs to exist to evaluate <code>initial.es</code>, but <code>initial.es</code> can define an <i>es</i>-written <code>%batch-loop</code> function at which point <code>$&amp;batchloop</code> can be excised.
+
+<p>
+However, it could be possible to go even further and build <code>esdump</code> as an <i>es</i> binary which loads a particular set of bootstrapping-oriented primitives, such that it calls <code>$&amp;dumpinitial</code> to generate an <code>initial.c</code>, and then have the final <code>es</code> binary load that state using a <code>$&amp;loadinitial</code> primitive defined in <code>initial.c</code>.
+
+<p>
+This would be most useful combined with a set of changes like what I propose in <a href="https://github.com/wryun/es-shell/pull/79">my <code>es-main</code> branch</a>, so that the only thing the core runtime does at startup is call the <code>%main</code> hook function with its argument list, leaving everything else up to the es-dumping script and primitives or the &ldquo;real&rdquo; shell setup defined in <code>initial.es</code> and the shell-related primitives.
+
+<p>
+Hypothetically, this would actually be a general mechanism which could build a specialized <i>es</i> binary, potentially <em>without</em> a REPL, parser, or other general shell-like mechanisms, with its starting point at the <code>%main</code> function.
+This points toward the long-standing goal of a Tcl-like &ldquo;librarified <i>es</i>&rdquo;.
+However, this likely requires more control over currently core-shell things such as how the shell interacts with the environment (also potentially practically useful for people who want to make <i>es</i> act more like a POSIX shell), or how binaries are invoked (see <a href="https://github.com/wryun/es-shell/pull/241">my <code>%whatis</code>- and <code>%run</code>-changing PR</a>, also useful for my job control design).
+
+<p>
+A consideration that this use case raises is the problem of what would be done with the <code>$&amp;loadinitial</code> primitive after shell startup.
+The primitive only really makes sense to call at shell startup, but after a certain point it becomes nothing but a problem.
+A similar problem is present in the <code>es-main</code> branch with the <code>$&amp;importenvfuncs</code> primitive.
+The ability to remove a primitive from the primitive table could be practically useful.
+This overlaps with possible ideas around restricted shells, secure shells, or otherwise controlling the extensibility of the shell.
 
 <h2>Prior art</h2>
 
@@ -160,3 +154,8 @@ A specific case would be the recent rewrite of <code>$&amp;time</code> that was 
 <h3>mveety&rsquo;s <i>es</i></h3>
 
 <h3>Scheme</h3>
+
+<h3>Python</h3>
+
+<p>
+https://docs.python.org/3/extending/extending.html
