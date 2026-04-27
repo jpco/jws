@@ -3,19 +3,6 @@
 <title>jpco.io | Quirks of the es interpreter</title>
 <meta name=description content="Documentation of some of the quirks of the es interpreter codebase.  These quirks are a result of the age of the codebase as well as its behavior.">
 
-<style>
-.code-highlight {
-	background-color: #eaeaea;
-	font-weight: bold;
-	border-radius: 2px;
-}
-@media (prefers-color-scheme: dark) {
-	.code-highlight {
-		background-color: #2e2d2d;
-	}
-}
-</style>
-
 <; build-nav >
 
 <main>
@@ -36,30 +23,29 @@ Understanding some of these aspects of <i>es</i> can take some time without any 
 
 <p>
 <i>Es</i> uses a bespoke <a href=/es/paper.html#garbage-collection>copying garbage collector</a>, and precisely and explicitly tracks variable references in order that the GC knows what can and cannot be collected at any time.
-This reference tracking is one of the most conspicuous oddities visible throughout <i>es</i> code:
+This reference tracking is one of the most conspicuous oddities visible throughout <i>es</i> code.
 
 <figure>
 <pre>
-<code>if (list == NULL) {
-	sethistory(NULL);
-	return NULL;
-}
-<div class=code-highlight>Ref(List *, lp, list);</div>sethistory(getstr(lp-&gt;term));
-<div class=code-highlight>RefReturn(lp);</div></code></pre>
+<code>Ref(List *, lp, list);
+sethistory(getstr(lp-&gt;term));
+RefReturn(lp);</code>
+</pre>
 </figure>
 
 <p>
-In this example, these macros, <code>Ref</code> and <code>RefReturn</code>, define blocks of code where the variable <code>lp</code> is known by the garbage collector and kept up-to-date across collections.
-The macros are expanded so that the critical block resembles the following.
+In the above example, these <code>Ref</code> and <code>RefReturn</code> macros define blocks of code where the variable <code>lp</code> is known by the garbage collector and kept up-to-date across collections.
+The macros are expanded to rewrite the above block into the something like the following.
 
 <figure>
 <pre>
-<code><div class=code-highlight>{
+<code>{
 	List *lp = list;
-	add_root(lp);</div>	sethistory(getstr(lp-&gt;term));
-<div class=code-highlight>	remove_root(lp);
+	add_root(lp);
+	sethistory(getstr(lp-&gt;term));
+	remove_root(lp);
 	return lp;
-}</div></code></pre>
+}</code></pre>
 </figure>
 
 <p>
@@ -89,18 +75,41 @@ Unfortunately, the compiler errors produced due to missing <code>Ref</code>s or 
 <p>
 There are a couple challenges with working with GCed objects in <i>es</i>: not everything in <i>es</i> is garbage collected, and collections can&rsquo;t occur at just any moment.
 This can make it somewhat difficult to predict exactly when a <code>Ref</code> needs to be used.
-A good rule of thumb for collections is that they can occur any time the shell needs more memory, which can happen in one of two cases: allocations, and when the GC is enabled with a call to <code>gcenable()</code> after having previously been <code>gcdisable()</code>-ed.
+A good rule of thumb for collections is that they can occur any time the shell needs more memory, which can happen in one of two cases: allocations, and when the GC is enabled with a call to <code>gcenable()</code>.
 A GC in the latter case is typically rare, but if enough allocations happen while the GC is disabled then it is possible for the shell to need to perform a collection immediately.
 
 <p>
-Knowing exactly which objects are GCed and which aren&rsquo;t can be even trickier.
+The trickiest case of this is when a collection may happen &ldquo;in the middle&rdquo; of a statement.
+A simple, real example (fixed in <a href="https://github.com/wryun/es-shell/pull/52">one of my first contributions to the shell</a>) is the following, where <code>lr</code> is a <code>Ref</code>&rsquo;d pointer:
+
+<figure>
+<pre>
+<code>lr-&gt;term = mkstr(str);</code>
+</pre>
+</figure>
+
+<p>
+The bug here is fairly subtle, and requires some understanding of C semantics as well as <i>es</i> memory management to explain.
+The problem is that <code>lr-&gt;term</code> may evaluate to a particular memory location <em>before</em> <code>mkstr(str)</code> is called, and <code>mkstr()</code> may trigger a GC, which moves <code>lr</code> and <code>lr-&gt;term</code>.
+If these both happen, then the result of the <code>mkstr()</code> will be stored in the pre-GC, now invalid, memory location.
+Fixing cases like this requires splitting the statement up:
+
+<figure>
+<pre>
+<code>Term *tmp = mkstr(str);
+lr-&gt;term = tmp;</code>
+</pre>
+</figure>
+
+<p>
+Knowing exactly which objects are GCed and which aren&rsquo;t can sometimes be even harder to do than tracking when collections can happen, because it may be impossible to determine by the local code.
 Generally, <code>List&nbsp;*</code>s, <code>Term&nbsp;*</code>s, and <code>Tree&nbsp;*</code>s are nearly always in the GCed space in memory.
 <code>char&nbsp;*</code>s can go either way, and in some cases very similar functions can produce either a GC-space or standard malloc-space string.
 For example, the <code>str()</code> and <code>mprint()</code> functions both function similarly to <code>sprintf(3)</code>, and only differ from each other in that <code>str()</code> produces a garbage collected string, while <code>mprint()</code> produces a string that needs to be <code>free()</code>-ed.
 
 <p>
 The most foolproof way to build confidence in GC behavior is to build with <code>GCDEBUG</code> enabled, as in the following test invocation.
-The <code>GCDEBUG</code> define enables both <code>GCALWAYS</code>, which forces a GC pass to happen any time it is possible, and <code>GCPROTECT</code>, which disables collected areas of memory using <code>mprotect(3)</code>, causing references to stale pointers trigger immediate crashes.
+The <code>GCDEBUG</code> define enables both <code>GCALWAYS</code>, which forces a GC pass to happen any time it is possible, and <code>GCPROTECT</code>, which disables collected areas of memory using <code>mprotect(3)</code>, causing references to stale pointers to trigger immediate crashes.
 With both of these enabled, it is reasonably easy to know if a necessary <code>Ref</code> has been missed.
 
 <figure class=centered>
@@ -110,6 +119,7 @@ With both of these enabled, it is reasonably easy to know if a necessary <code>R
 <figcaption>Triggering segfaults the easy way.</figcaption>
 </figure>
 
+
 <h2 id=exceptions>The exception mechanism</h2>
 
 <p>
@@ -118,10 +128,13 @@ These macros look like this, from the <code>runesrc()</code> function used to ru
 
 <figure>
 <pre>
-<code>char *esrc = str("%L/.esrc", varlookup("home", NULL), "\001");
-int fd = eopen(esrc, oOpen);
-<div class=code-highlight>ExceptionHandler</div>	runfd(fd, esrc, 0);
-<div class=code-highlight>CatchException (e)</div>	if (termeq(e-&gt;term, "exit"))
+<code>ExceptionHandler
+
+	runfd(fd, esrc, 0);
+
+CatchException (e)
+
+	if (termeq(e-&gt;term, "exit"))
 		exit(exitstatus(e-&gt;next));
 	else if (termeq(e-&gt;term, "error")) {
 		eprint("%L\n",
@@ -132,11 +145,13 @@ int fd = eopen(esrc, oOpen);
 	if (!issilentsignal(e))
 		eprint("uncaught exception: %L\n", e, " ");
 	return;
-<div class=code-highlight>EndExceptionHandler</div></code></pre>
+
+EndExceptionHandler</code>
+</pre>
 </figure>
 
 <p>
-The exceptions that the <code>CatchException</code>s handle are <code>List&nbsp;*</code>s.
+The exceptions that the <code>CatchException</code> macro handles are <code>List&nbsp;*</code>s.
 These are produced by calls to <code>throw()</code>, which is often itself called by the <code>fail()</code> function typically used to generate <code>error</code> exceptions.
 The definition of the <code>$&amp;throw</code> primitive makes use of both of these exception-generating functions:
 
@@ -160,16 +175,16 @@ This setup is an <i>es</i>-specific implementation of a reasonably well-establis
 
 <p>
 One of <i>es</i>&rsquo; jobs as a shell is to handle a steady stream of signals coming from the terminal, child processes, users, and elsewhere.
-<i>Es</i> models signals in-language as exceptions, such that any signal that isn&rsquo;t ignored leads to a call to the <code>throw()</code> function discussed above, but this has to be done explicitly, so signal-specific breadcrumbs are present in the code base, primarily in the form of the <code>SIGCHK()</code> macro.
+<i>Es</i> models signals in-language as exceptions, such that any signal that isn&rsquo;t ignored leads to a call to the <code>throw()</code> function discussed above.
+This exception-generation behavior has to be done explicitly, so signal-specific breadcrumbs are present in the code base, primarily in the form of the <code>SIGCHK()</code> macro.
 
 <p>
 <code>SIGCHK()</code>, which simply wraps the <code>sigchk()</code> function, checks if any signals have been received by the shell and handles those signals however the user has configured it to&mdash;either ignoring it or converting it into a <code>signal</code> exception which it throws.
 
 <p>
 This follows the best practices of signal handling in C, where the signal handler itself does essentially nothing except increment a counter, which later code must check and handle more thoroughly.
-
-<p>
 The obvious follow-up question is, when should <code>SIGCHK()</code> be invoked?
+That is a good question, and I don&rsquo;t have an answer to it.
 
 <p>
 The signal handler in <i>es</i> does one more thing, in addition to setting things up for <code>SIGCHK()</code>.

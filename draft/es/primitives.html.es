@@ -1,7 +1,7 @@
 <; cat tmpl/header.html >
 
 <title>jpco.io | Thoughts for extensible es primitives</title>
-<meta name=description content="A sort-of-design-doc for dynamically loadable primitives in the extensible shell es" />
+<meta name=description content="Considerations for dynamically loadable primitives in the extensible shell and how they might be used" />
 
 <; build-nav >
 
@@ -149,13 +149,56 @@ This overlaps with possible ideas around restricted shells, secure shells, or ot
 
 <h3>zsh</h3>
 
-<h3>Inferno sh</h3>
+<p>
+Zsh is probably the shell most famous for its linkable modules, which give it even more features on top of its already prodigious feature set.
+These, of course, fall into the &ldquo;extended behaviors&rdquo; bucket.
 
-<h3>mveety&rsquo;s <i>es</i></h3>
+<p>
+<i>Es</i> and zsh are not very similar in their design goals, but zsh&rsquo;s success means that it is worth looking at what extended behavior might be useful to have, if not exactly how to get there.
+
+<p>
+Modules documented in <code>zshmodules(1)</code> include:
+
+<ul>
+<li><code>zsh/attr</code>
+<li><code>zsh/cap</code>
+<li><code>zsh/compctl</code>, <code>zsh/complete</code>, <code>zsh/complist</code>, <code>zsh/computil</code>
+<li><code>zsh/curses</code>
+<li><code>zsh/datetime</code>
+<li><code>zsh/pcre</code>, <code>zsh/regex</code>
+<li><code>zsh/net/socket</code>, <code>zsh/net/tcp</code>
+<li><code>zsh/zle</code>
+<li><code>zsh/zpty</code>
+</ul>
+
+<p>
+It also looks like zsh also has a setup for namespacing modules, at which we might take a gander.
+It seems quite sensible to model module namespacing after path names; perhaps primitives could look like <code>$&amp;es/parse</code>.
+
+
+<h3>Inferno <i>sh</i></h3>
+
+<p>
+The shell from <a href="http://inferno-os.org/">the Inferno OS</a>, simply <a href="https://inferno-os.org/inferno/papers/sh.pdf">called <i>sh</i></a>, has a concept of modules much more deeply integrated than zsh&rsquo;s.
+This shell, which incidentally is directly inspired by <i>es</i>, moves most of the typical behaviors of a shell out of its core runtime, leaving (as documented in its paper) only <code>builtin</code>, <code>exit</code>, <code>load</code>, <code>loaded</code>, <code>run</code>, <code>unload</code>, <code>whatis</code>, and a couple quoting utilities.
+
+<p>
+This is just enough capability to manage to load other modules, particularly the <code>std</code> module which contains most of the functionality that people expect in a shell, like <code>fn</code>, <code>!</code>, <code>and</code>, <code>or</code>, <code>if</code>, and <code>whatis</code>.
+Where the zsh module system seems to be designed around adding extra behaviors to a shell, this design corresponds with the other use-cases.
+
+<p>
+Unfortunately, this <i>sh</i> and the OS on which it is built has become museum-piece software over the years, so the design hasn&rsquo;t been exercised especially intensely.
+However, it might be a productive exercise to try to pull out as many of <i>es</i>&rsquo; primitives into some kind of <code>es</code> module and see what the minimal set of bootstrapping behaviors actually are.
+
 
 <h3>Scheme</h3>
+
+<p>
+Scheme is a major influence on <i>es</i>, and R<sup>6</sup>RS developed a 
+
 
 <h3>Python</h3>
 
 <p>
-https://docs.python.org/3/extending/extending.html
+You know Python.
+People have the ability to extend the Python interpreter with modules, so <a href="https://docs.python.org/3/extending/">let&rsquo;s look at that</a>.
