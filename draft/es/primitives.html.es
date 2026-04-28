@@ -47,7 +47,7 @@ These might inform an eventual extensible-primitive design.
 <h3>Extended behaviors</h3>
 
 <p>
-There are a number of behaviors which <i>es</i> could have and doesn't, out of a desire to keep <i>es</i> minimal.
+There are a number of behaviors which <i>es</i> could have and doesn&rsquo;t, out of a desire to keep <i>es</i> minimal.
 I am amenable to that.
 However, different people have different behaviors they consider useful to have in a shell, and <i>es</i> currently aims for what is essentially a lowest-common-denominator set of features.
 
@@ -69,7 +69,7 @@ Even though this is the least ambitious category, certain use cases would still 
 <h3>OS specialization</h3>
 
 <p>
-<i>Es</i> is highly portable, and that's a very good thing.
+<i>Es</i> is highly portable, and that&rsquo;s a very good thing.
 However, erring towards portability in all things is often functionally equivalent to implementing the lowest common denominator, as the shell is bound to use the feature set of the <span class=uppernum>POSIX.1-2001</span> specification.
 
 <p>
@@ -85,7 +85,7 @@ What kind of <a href="https://www.haiku-os.org/blog/humdinger/2017-11-05_scripti
 Could one of Linux&rsquo;s many fancy process-handling mechanisms (<code>clone()</code> with all its many flags, pidfds, etc.) be exploited to good advantage?
 
 <p>
-These cases overlap with the previous point, but it bears emphasizing that pluggable primitives in <i>es</i> could support specialization to these kinds of per-OS behaviors, without making the core shell a rat's nest of <code>#ifdef</code>s.
+These cases overlap with the previous point, but it bears emphasizing that pluggable primitives in <i>es</i> could support specialization to these kinds of per-OS behaviors, without making the core shell a rat&rsquo;s nest of <code>#ifdef</code>s.
 
 
 <h3>Versioned primitives</h3>
@@ -136,7 +136,6 @@ This would be most useful combined with a set of changes like what I propose in 
 <p>
 Hypothetically, this would actually be a general mechanism which could build a specialized <i>es</i> binary, potentially <em>without</em> a REPL, parser, or other general shell-like mechanisms, with its starting point at the <code>%main</code> function.
 This points toward the long-standing goal of a Tcl-like &ldquo;librarified <i>es</i>&rdquo;.
-However, this likely requires more control over currently core-shell things such as how the shell interacts with the environment (also potentially practically useful for people who want to make <i>es</i> act more like a POSIX shell), or how binaries are invoked (see <a href="https://github.com/wryun/es-shell/pull/241">my <code>%whatis</code>- and <code>%run</code>-changing PR</a>, also useful for my job control design).
 
 <p>
 A consideration that this use case raises is the problem of what would be done with the <code>$&amp;loadinitial</code> primitive after shell startup.
@@ -202,3 +201,43 @@ Scheme is a major influence on <i>es</i>, and R<sup>6</sup>RS developed a
 <p>
 You know Python.
 People have the ability to extend the Python interpreter with modules, so <a href="https://docs.python.org/3/extending/">let&rsquo;s look at that</a>.
+
+<h2>Limitations</h2>
+
+<p>
+For this kind of primitive extensibility to be as effective as possible&mdash;particularly with longer-term goals such as alternative (non-shell) <i>es</i> binaries, a number of behaviors would need to be &ldquo;lifted&rdquo; out of the core shell runtime and into primitives and scripted functions.
+
+<p>
+Running external binaries, and how that would be done, is one such case.
+See <a href="https://github.com/wryun/es-shell/pull/241">my <code>%whatis</code>- and <code>%run</code>-changing PR</a>, also useful for my job control design.
+This change is sufficient to remove the special ability to run external binaries from the core shell runtime, instead making it a possible shell-related extension.
+
+<p>
+Interaction with the environment is a big one.
+This would look like some way to explicitly go about importing variables from the environment on the one hand (with some degree of control over <em>which</em> things are imported, for the sake of the <code>-p</code> flag), and a way to explicitly manage the exporting of variables to the environment.
+The <code>noexport</code> variable already exists, but is almost certainly insufficient for the job; as a starting point for this extensibility, it should be possible for people to forsake the <i>rc</i>-inspired method of interacting with the environment in favor of a more bash- and other POSIX-shell-based method.
+I could see this being covered by:
+
+<ul>
+<li>An <code>$&amp;environment</code> primitive containing a list of names of variables present in the environment (this could also be a variable <code>$environment</code>, though the semantics around what should happen to <code>$environment</code> when <code>$&amp;setenv</code> adds or removes a variable in the environment).
+
+<li>A <code>$&amp;getenv</code> primitive which takes an environment variable name and returns its value.
+
+<li>A <code>$&amp;setenv</code> primitive which takes a variable name and value and sets the name to the value in the environment (or at least pretends to do so in such a way that a user can&rsquo;t reasonably tell the difference&mdash;shells often like to play these games around the environment).
+
+<li>A single, general <code>%set</code> hook which would call settor functions as well as export values subject to <code>$noexport</code>.
+<code>%set</code> would potentially be useful for other purposes as well, such as making certain variables read-only for a sort of restricted shell environment.
+</ul>
+
+<p>
+Parsing is another big one&mdash;plenty of people might not want a non-shell command language with redirection or pipes or I/O substitution.
+Extensibility in the parser was a goal of the original authors, but didn&rsquo;t go anywhere.
+This could still potentially be done, but a simpler story would be to use extensible primitives to &ldquo;swap out&rdquo; which parser is used in different settings.
+It is already the case that environment-parsing is almost entirely performed on desugared <i>es</i> commands, so a parser that only understands the desugared language should be highly effective in that case.
+Automatic conversion from strings more frequently needs to parse &ldquo;sugary&rdquo; syntax, but a hook could be exposed to allow the right parser to be selected.
+All of this would be improved by a more-orthogonal parser which does not perform any implicit redirection (see <a href=/es/input.html>my discussion of recent input changes</a> for details).
+
+<p>
+Globbing is yet another case: outside of a shell, a command like <code>echo *</code> may not be most useful as a way to list files in the current working directory, but instead any other set of currently-relevant objects (an example given long ago was program symbols in an <i>es</i>-powered debugger.)
+Unfortunately, despite the fact that exposing the shell in a meaningful way has been a desire for almost as long as the shell has existed, there has hardly even been a design proposed to actually do so.
+In large part, this is because it&rsquo;s difficult to expose to users the difference between <code>*</code> and <code>'*'</code>: glomming, and the subset that is globbing, directly works with data structures that are hard to work with in <i>es</i> script.
