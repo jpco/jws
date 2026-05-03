@@ -292,14 +292,25 @@ Despite that, the ability to manage process groups&mdash;which is the real, core
 Once that support is added, then a simple <code>job-control.es</code> script can be easily added as a canonical extension.
 
 <p>
-Both of these ideas are in service of a larger goal, which is to grow the <i>es</i> community.
-<i>Es</i>, I think, has real design strengths which have appealed to people such as myself despite the shell&rsquo;s current limitations.
-Removing those limitations and allowing people to interact with their shell in ways that are familiar to them (that is, using job control and fancy programmable input), and managing to do so in ways that are consistent with the shell&rsquo;s design objectives, serves to both make the shell more practically useful and demonstrate that the design works.
+Both of these are intended to improve <i>es</i>&rsquo; usability as a shell; these usability gaps create a real drag on how useful <i>es</i> is for people who have come to expect and depend on these features.
+It should be possible to make these behaviors possible for those who want them, with little cost to those who don&rsquo;t, using the same techniques already ubiquitous in <i>es</i>.
 
 <p>
-Ideally though, I don&rsquo;t want to add too much to what&rsquo;s built into the upstream <i>es</i>.
+Ideally though, I don&rsquo;t want to add too much to what&rsquo;s built into the upstream shell.
 The current feature set is pretty good, and I think it&rsquo;s right to have a shell that starts small and lets users build on that.
-Whatever is added to the <i>es</i> that everybody uses should exist to enable people to add the features they need.
+Whatever is added to upstream should be primarily focused on extensibility, programmability, and generality.
+
+<p>
+I have a few longer-term ideas around those goals in particular.
+One major theme is to improve the flexibility of <a href=/es/primitives.html><i>es</i>&rsquo; &ldquo;library&rdquo; of primitives</a>.
+An initial version of this would enable additional behaviors to be added into the shell in a more regularized fashion, enabling easy integration of things like alternative input mechanisms other than readline.
+Further development could enable a better story around specializing the shell&rsquo;s internal behaviors on specific OSes, and could create a more graceful process for backwards-incompatible changes.
+In the even longer term, this would connect directly to the development of a &ldquo;librarified <i>es</i>&rdquo;, a long-desired end point for the shell making it a generalized command language in the same vein as Tcl.
+
+<p>
+Another larger, longer-term goal is to improve the ergonomics of <i>es</i> as a programming language.
+<i>Es</i> already draws quite a bit from Scheme, but further development of concepts like first-class environments, tail call optimization, and potentially even continuations, would make the shell more powerful and ergonomic to use.
+Other improvements include a general facility for resource handles upon which the shell&rsquo;s file descriptor facilities could be rebased.
 
 <p>
 Outside of actual development work, I intend to write more posts to document various aspects of <i>es</i>, making it easier to get a strong grasp of the shell without having to dive into the codebase or trawl the old mailing list just to have an idea of how certain things work or why they&rsquo;re implemented the way they are.
@@ -312,6 +323,7 @@ Some pages I ought to get around to writing include:
 <li>Effective <i>es</i> scripting
 <li>The life of an <i>es</i> command
 <li>The <i>es</i> runtime
+<li><i>Es</i> and the environment
 </ul>
 
 <p>

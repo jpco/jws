@@ -529,7 +529,7 @@ For example:
 <h2><a id=exceptions>Exceptions</a></h2>
 
 <p>
-In addition to traditional control flow constructs -- loops, conditionals, subroutines -- <i>es</i> has an exception mechanism which is used for implementing non-structured control flow.
+In addition to traditional control flow constructs&mdash;loops, conditionals, subroutines&mdash;<i>es</i> has an exception mechanism which is used for implementing non-structured control flow.
 The built-in function <code>throw</code> raises an exception, which typically consists of a string which names the exception and other arguments which are specific to the named exception type.
 For example, the exception <code>error</code> is caught by the default interpreter loop, which treats the remaining arguments as an error message. [<a class=local href=#erratum3 name=erratum3-use>Errata note 3</a>]
 Thus:
@@ -860,7 +860,7 @@ Although traditionally the environment has been used to pass values of variables
 (While <i>rc</i> also offered this functionality, it was more of a kludge arising from the restriction that there was not a separate space for &ldquo;environment functions.&rdquo;)
 
 <p>
-Having functions in the environment brings them into the same conceptual framework as variables -- they follow identical rules for creation, deletion, presence in the environment, and so on.
+Having functions in the environment brings them into the same conceptual framework as variables&mdash;they follow identical rules for creation, deletion, presence in the environment, and so on.
 Additionally, functions in the environment are an optimization for file I/O and parsing time.
 Since nearly all shell state can now be encoded in the environment, it becomes superfluous for a new instance of <i>es</i>, such as one started by <i>xterm</i> (1), to run a configuration file.
 Hence shell startup becomes very quick.
@@ -983,7 +983,7 @@ This is an implementation deficiency which we hope to remedy in the near future.
 
 <p>
 <i>Es</i>, in addition to being a good language for shell programming, is a good candidate for a use as an embeddable &ldquo;scripting&rdquo; language, along the lines of Tcl.
-<i>Es</i>, in fact, borrows much from Tcl -- most notably the idea of passing around blocks of code as unparsed strings -- and, since the requirements on the two languages are similar, it is not surprising that the syntaxes are so similar.
+<i>Es</i>, in fact, borrows much from Tcl&mdash;most notably the idea of passing around blocks of code as unparsed strings&mdash;and, since the requirements on the two languages are similar, it is not surprising that the syntaxes are so similar.
 <i>Es</i> has two advantages over most embedded languages: (1) the same code can be used by the shell or other programs, and many functions could be identical; and (2) it supports a wide variety of programming constructs, such as closures and exceptions.
 We are currently working on a &ldquo;library&rdquo; version of <i>es</i> which could be used stand-alone as a shell or linked in other programs, with or without shell features such as wildcard expansion or pipes.
 
@@ -1001,7 +1001,7 @@ In <i>es</i>, once a construct is surrounded by braces, it can be stored or pass
 
 <p>
 <i>Es</i> contains little that is completely new.
-It is a synthesis of the attributes we admire most from two shells -- the venerable Bourne shell and Tom Duff&rsquo;s <i>rc</i> -- and several programming languages, notably Scheme and Tcl.
+It is a synthesis of the attributes we admire most from two shells&mdash;the venerable Bourne shell and Tom Duff&rsquo;s <i>rc</i>&mdash;and several programming languages, notably Scheme and Tcl.
 Where possible we tried to retain the simplicity of <i>es</i>&rsquo;s predecessors, and in several cases, such as control flow constructs, we believe that we have simplified and generalized what was found in earlier shells.
 
 <p>
@@ -1121,7 +1121,7 @@ no. 6, pp. 1971-1990, 1978.
 
 <p>
 <a id=ref3>3.</a>
-Tom Duff, &ldquo;Rc -- A Shell for Plan 9 and UNIX Systems,&rdquo; in <i>UKUUG
+Tom Duff, &ldquo;Rc&mdash;A Shell for Plan 9 and UNIX Systems,&rdquo; in <i>UKUUG
 Conference Proceedings</i>, pp. 21-33, Summer 1990.
 
 <p>
@@ -1146,7 +1146,7 @@ Jon L. Bentley, <i>More Programming Pearls</i>, Addison-Welsey, 1988.
 <p>
 <a id=ref8>8.</a>
 David R. Hanson, &ldquo;Fast allocation and deallocation of memory based on
-object lifetimes,&rdquo; <i>Software -- Practice and Experience</i>,
+object lifetimes,&rdquo; <i>Software&mdash;Practice and Experience</i>,
 vol. 20, no.  1, pp. 5-12, January, 1990.
 
 <p>
