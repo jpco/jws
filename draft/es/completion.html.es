@@ -22,12 +22,51 @@ Moreover, there is essentially no compatibility between shells, which is obnoxio
 <h2>Different completion systems</h2>
 
 <p>
-We can use the <a href=/notcat>notcat</a> CLI to illustrate completion systems.
-Notcat is a slightly complicated CLI, but not nearly as overwhelmingly so as something like <code>git</code>.
+There are a few things to look at with each shell&rsquo;s completion system.
+How is a command (in particular, a complex one with variables, quoted terms, redirecitons, pipes, and so on) presented to completion logic?
+How does the completion logic solve what I call &ldquo;the cdpath problem&rdquo;, where a completion term referring to essentially a random directory must be presented correctly?
 
 <h3>bash</h3>
 
+<p>
+Bash (<a href="https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#Programmable-Completion">whose online documentation is quite informative</a>) uses the <code>complete</code> builtin to specify how certain commands or prefixes are to be completed.
+There are built-in completions that can be performed (<code>complete -f</code>) and multiple ways to specify functions or commands to be called: <code>complete -F</code> (supposedly, for &ldquo;function&rdquo;), <code>complete -C</code> (&ldquo;command&rdquo;), and <code>complete -X</code> (&ldquo;exclude&rdquo;).
+The <code>-F</code> convention seems to be the preferred one by far (commands invoked via <code>-C</code> are done in a subshell with their output being captured like in a command substitution; presumably, this leads to the usual rescanning issues.)
+
+<p>
+The input to one of these functions is in the form of a few special variables:
+
+<ul>
+<li><code>COMP_LINE</code>: current command being completed (not including other commands in the pipeline, or other commands separated by <code>&amp;</code> or <code>;</code>, but including unprocessed variables, command substitutions, and redirections&mdash;even quotes are not removed)
+<li><code>COMP_POINT</code>: the character index within the line at which completion is taking place
+<li><code>COMP_KEY</code>: the key used to invoke the completion function&mdash;potentially useful when completion keybindings are themselves programmable
+<li><code>COMP_TYPE</code>: the type of completion (in the readline sense), one of <code>'%'</code>, <code>'?'</code>, <code>TAB</code>, and so on; what these actually mean doesn&rsquo;t matter for this page
+</ul>
+
+<p>
+The list of possible completions is placed in the <code>COMPREPLY</code> array variable, or printed to stdout in case of a command invoked via <code>complete -C</code>.
+(There are actually two more variables besides, <code>COMP_WORDS</code> and <code>COMP_WORDBREAKS</code>; see the documentation.)
+
+<p>
+It is reasonably common to use <code>complete -F</code> to define a completion function for a command, and then from that function call <code>compgen</code> to perform certain kinds of built-in completions, like filename, directory, or even just a hardcoded list of words.
+Both the <code>compgen</code> and <code>compopt</code> builtins perform, immediately, aspects of what the <code>complete</code> builtin configures ahead of time to be done for a certain completion.
+
+<p>
+It is also fairly common for <a href="https://github.com/scop/bash-completion/">completions in the bash-completion package</a> to use a helper function like <code>_comp_initialize</code> to pre-process the input variables into a simpler, more commonly useful shape.
+This command populates the dynamically-scoped variables <code>cur</code>, <code>prev</code>, <code>words</code>, <code>cword</code>, and <code>was_split</code> with the current word, previous word, an array containing all the words, the current word&rsquo;s index in the array, and a variable indicating whether the current &ldquo;word&rdquo; is actually the part of a GNU longopt-style <code>--foo=bar</code> flag after the equal sign.
+<code>_comp_initialize</code> also strips out any redirections in the command.
+Notably, this function doesn&rsquo;t expand variables or dequote terms.
+
+<p>
+Post-completion behaviors like sorting, filtering, and completion type designation are achieved with a mix of completion options via <code>complete -o</code> or <code>compopts</code>, and the <code>FIGNORE</code> variable.
+The cdpath problem is solved using the <code>nospace</code> completion option and manually adding <code>/</code> to completion candidates in the <code>cd</code> completion function.
+(This is why cdpath completion in bash doesn&rsquo;t color the cdpath directories when the <code>colored-stats</code> readline option is enabled; readline doesn&rsquo;t even know that those entries are directories.)
+
+
 <h3>tcsh</h3>
+
+<p>
+https://www.ibm.com/docs/en/zos/3.2.0?topic=shell-complete-built-in-command-tcsh-list-completions
 
 <h3>zsh</h3>
 
@@ -92,7 +131,7 @@ Is it just checking for a terminating slash?
 Fish also uses this setup to produce <em>hints</em>, in addition to completions.
 
 <p>
-Fish has really good support in general for flags (a.k.a., named arguments), and exploits that support effectively.
+In general, fish has really good support for flags (a.k.a., named arguments), and exploits that support effectively.
 In some cases (confirm this), fish is able to do via named arguments what bash does via environment variables.
 Named arguments seem like a better mechanism&mdash;consider this.
 (Though, if we have named arguments, should we also have named return values?)
@@ -103,20 +142,44 @@ Named arguments seem like a better mechanism&mdash;consider this.
 <h2>What does this mean for <i>es</i>?</h2>
 
 <p>
-Be opt-in and unobtrusive.
-Some people don&rsquo;t want tab completion.
+<i>Es</i> is minimal by default.
+Completion should be opt-in, and unobtrusive when not opted into&mdash;for example, the function namespace shouldn&rsquo;t be polluted by a pile of unused completion hooks.
 
 <p>
-Prefer to exploit hook functions, lexical state, and first-class functions.  Avoid piles of settings, dynamic state, and tweaks to global tables.
+<i>Es</i> is built around function and code-fragment invocation, with lexical arguments and rich return values.
+Make use of these wherever possible; try to exploit the fact that what make up many features in other shells are flattened in <i>es</i> into function calls.
 
 <p>
-Aim to implement as much as possible in <i>es</i>, rather than C.
-This helps with functions that call functions (i.e., completions can call completions)&mdash;even with a fish-like mechanism, recursive completions would be necessary by <em>some</em> method.
-Doing things in <i>es</i> also helps reduce the complexity of the C layer, which helps with both implementation difficulty as well as the next point.
+Completing a syntactically sugary command like
+
+<figure>
+<pre>
+<code>first-cmd |[1=2] second-cmd &gt; file [TAB]</code>
+</pre>
+</figure>
 
 <p>
-Try, ideally, to be editor-library-agnostic.
-In particular, don&rsquo;t adjust down to what readline can do; be capable of better things than that.
+should, like evaluating the command, be implemented using function calls: the completion hook for <code>%pipe</code> should be called, and it should recurse to the hook for <code>%create</code> (the function which implements the <code>&gt;</code> redirection), which should try to dispatch to a completion hook for <code>second-cmd</code>, if it exists.
+<i>Es</i> is never more powerful than it is when working with functions and code fragments.
 
 <p>
-Parser support&hellip;
+Much of <i>es</i> is implemented in <i>es</i>, and can be changed with <i>es</i> script.
+In order to have completion logic capable of the same flexibility as evaluation logic, a correspondingly large amount of completion should be implemented in <i>es</i> as well.
+Doing things in <i>es</i> also helps reduce the complexity of the C layer, which helps with implementation difficulty.
+
+<p>
+It should be reasonably easy (and legible) to spoof a completion hook for a function in the same file that the function itself is spoofed (for example, the cdpath canonical extension script should ideally also contain a completion hook).
+
+<p>
+Completion would, ideally, be line-editor-library agnostic.
+In particular, avoid over-indexing on what readline can (and can&rsquo;t) do.
+Rich, per-command completion requires such a large body of code that it is unreasonable to try to have completions for each command <em>and</em> each line editing library.
+
+<p>
+The cdpath problem should be solved&hellip; how?
+<code>%completion-to-file</code> works well for <code>in</code>; could a simpler scheme work just as well for that, or is hooking functions &ldquo;on the way out&rdquo; the best we can do here?
+
+<p>
+We could create a hacky way to invoke another shell&rsquo;s completion logic and pass the result back up to <i>es</i> in order to &ldquo;fill in the gaps&rdquo; that <i>es</i> will never quite have the development resources to close.
+Bash&rsquo;s completion library is the most obvious candidate for this, due to its ubiquity, sheer number of custom completions, and the kludgy simplicity of its completion logic.
+Turns out, <a href="https://github.com/marckhouzam/tcsh-completion">somebody has done something like this for tcsh already</a>.

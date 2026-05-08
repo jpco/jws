@@ -88,7 +88,7 @@ I&rsquo;m going to deliver half a megabyte of font data just to make sure people
 Some folks want that nice dyslexia-friendly font with the fat bottom.
 Some people want a classy, newspaper-like serif.
 Some people want Comic Sans.
-No joke, my manager uses Comic Sans as his default browser font.
+No joke, my old manager uses Comic Sans as his default browser font.
 More power to him.
 
 <p>
@@ -192,7 +192,7 @@ Okay, so we have an idea of what we want a website to be like.
 How do we actually make that?
 
 <p>
-Well, <a href=/es/web-server.html>the web server is a shell script</a> (specifically, an <a href=/es>es</a> script), with a very simple self-written sort of templating built in.
+Well, <a href=/es/web-server.html>the web server is a shell script</a> (specifically, an <i><a href=/es>es</a></i> script), with a very simple self-written sort of templating built in.
 The site is currently dead simple and static, but for pages that are a bit more dynamic, a design built around something like <a href="https://htmx.org/">htmx</a> seems fairly ideal.
 
 <p>
@@ -200,7 +200,7 @@ As far as the stuff that runs in the browser goes:
 
 <p>
 The overall HTML structure is inspired by <a href="http://lofi.limo/blog/write-html-right">these tips from Aaron Parks</a>.
-Doing markup in this way is nice for the server, too, since it can just smash files together pretty blindly without being markup-aware.
+Doing markup in this way is nice for the server, too, since it can just smash files together in a UNIX-oid line-by-line way without being markup-aware.
 
 <p>
 This <a href="https://www.patrickweaver.net/blog/a-blog-post-with-every-html-element/">page from Patrick Weaver</a> is a fun high-level view on more or less all the HTML elements.
