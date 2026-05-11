@@ -66,7 +66,48 @@ The cdpath problem is solved using the <code>nospace</code> completion option an
 <h3>tcsh</h3>
 
 <p>
-https://www.ibm.com/docs/en/zos/3.2.0?topic=shell-complete-built-in-command-tcsh-list-completions
+<a href="https://www.ibm.com/docs/en/zos/3.2.0?topic=shell-complete-built-in-command-tcsh-list-completions">Tcsh has its own <code>complete</code> builtin</a>, which is <a href="https://github.com/tcsh-org/tcsh/blob/master/complete.tcsh">rather different than other shells&rsquo;</a>.
+
+<p>
+This <code>complete</code> takes a vaguely <code>ed(1)</code>-command-like string which configures an internal completion table, like:
+
+<figure>
+<pre>
+<code>complete cd 'p/1/d/'</code>
+</pre>
+</figure>
+
+<p>
+The <code>p/1</code> here specifies that this is a <em>position</em>-dependent completion for the first argument of <code>cd</code>.
+The <code>d</code> specifies that the candidates for completion are directories.
+
+<p>
+There are alternatives to these: instead of position-dependent completion, completion can be based on something about the current word (specified via glob pattern), or the previous word (also via glob pattern).
+Instead of directories, completions can be aliases, environment variables, filenames, groups, jobs, limits, shell variables, signals, usernames, a custom list, or even a command to run.
+Multiple of these can be provided for a single command for more complex cases.  For example, as documented:
+
+<figure>
+<pre>
+<code>complete find \
+	'n/-name/f/' 'n/-newer/f/' 'n/-{,n}cpio/f/' \
+	'n/-exec/c/' 'n/-ok/c/' 'n/-user/u/' \
+	'n/-group/g/' 'n/-fstype/(nfs 4.2)/' \
+	'n/-type/(b c d f l p s)/' \
+	'c/-/(name newer cpio ncpio exec ok user \
+	group fstype type atime ctime depth inum \
+	ls mtime nogroup nouser perm print prune \
+	size xdev)/' \
+	'p/*/d/'</code>
+</pre>
+</figure>
+
+<p>
+This is very csh-ish in all the ways that <i>es</i> avoids, design-wise.
+It lets users easily and very concisely define a simple, half-correct completion for a command, but it does so by performing a lot of internal hard-coded logic, including parsing a specialized DSL.
+
+<p>
+Despite the oddities that make this setup a poor choice for <i>es</i> to emulate, <a href="https://github.com/marckhouzam/tcsh-completion">it <em>can</em> be used to call out to bash completions</a>, which is something <i>es</i> would also benefit from, given the massive size of bash&rsquo;s completion library and the lack of spare <i>es</i> developer-hours.
+
 
 <h3>zsh</h3>
 
@@ -77,7 +118,7 @@ Fish should be considered a shell that performs tab completion especially well.
 While we likely won&rsquo;t take too much from <em>how</em> it does completion, we should strongly consider <em>what</em> completion behaviors it can do, because having some method to perform the same behaviors is likely to be reasonably &ldquo;complete&rdquo;.
 
 <p>
-<code>complete</code> does all the work.
+<a href="https://fishshell.com/docs/current/completions.html">Its <code>complete</code> command does all the work</a>.
 Any single given command will have <code>complete</code> called for it several times to configure its completions.
 
 <p>
@@ -160,7 +201,8 @@ Completing a syntactically sugary command like
 
 <p>
 should, like evaluating the command, be implemented using function calls: the completion hook for <code>%pipe</code> should be called, and it should recurse to the hook for <code>%create</code> (the function which implements the <code>&gt;</code> redirection), which should try to dispatch to a completion hook for <code>second-cmd</code>, if it exists.
-<i>Es</i> is never more powerful than it is when working with functions and code fragments.
+To some degree, this is made obligatory by the fact that the semantics of this syntax can be changed arbitrarily; to match that, the semantics of completing the syntax should be arbitrarily changeable.
+Moreover, though, <i>es</i> is never more powerful than it is when working with functions and code fragments.
 
 <p>
 Much of <i>es</i> is implemented in <i>es</i>, and can be changed with <i>es</i> script.
@@ -168,7 +210,8 @@ In order to have completion logic capable of the same flexibility as evaluation 
 Doing things in <i>es</i> also helps reduce the complexity of the C layer, which helps with implementation difficulty.
 
 <p>
-It should be reasonably easy (and legible) to spoof a completion hook for a function in the same file that the function itself is spoofed (for example, the cdpath canonical extension script should ideally also contain a completion hook).
+It should be reasonably easy (and legible) to spoof a completion hook for a function in the same file that the function itself is spoofed (for example, the cdpath canonical extension script should ideally also spoof the completion hook for cd).
+This implies that the definition of a completion hook should be possible to look up without needing to invoke the hook; something to note for a potential autoloading facility.
 
 <p>
 Completion would, ideally, be line-editor-library agnostic.
@@ -177,9 +220,47 @@ Rich, per-command completion requires such a large body of code that it is unrea
 
 <p>
 The cdpath problem should be solved&hellip; how?
-<code>%completion-to-file</code> works well for <code>in</code>; could a simpler scheme work just as well for that, or is hooking functions &ldquo;on the way out&rdquo; the best we can do here?
+Well, the cdpath problem is really a special case of a more general problem: providing metadata for completion candidates.
+Solving the cdpath problem is really about providing a bit of metadata (a filename) corresponding with a completion candidate, but other metadata has already been listed here: for example, fish&rsquo;s completion descriptions are another type of metadata associated with completion candidates.
 
 <p>
-We could create a hacky way to invoke another shell&rsquo;s completion logic and pass the result back up to <i>es</i> in order to &ldquo;fill in the gaps&rdquo; that <i>es</i> will never quite have the development resources to close.
-Bash&rsquo;s completion library is the most obvious candidate for this, due to its ubiquity, sheer number of custom completions, and the kludgy simplicity of its completion logic.
-Turns out, <a href="https://github.com/marckhouzam/tcsh-completion">somebody has done something like this for tcsh already</a>.
+This metadata is generally fairly complex (see elvish, TODO); <i>es</i> is not great at working with complex data, but it is good at defining and passing around functions.
+This implies that managing hook functions is probably the ideal way to support these forms of metadata in <i>es</i>, especially given the metadata also needs to be spoofable (consider <code>in</code> and its <code>%completion-to-file</code>).
+
+<h2>Implementation</h2>
+
+<p>
+How do we teach the parser to work with incomplete commands?
+<a href="https://blog.jez.io/error-recovery-part-4/">This blog post</a> is the first evidence I&rsquo;ve seen that suggests that yacc error recovery might be powerful enough to do it, but more study is necessary.
+Fortunately, incomplete commands are a strict subset of invalid syntax, so <a href="https://tratt.net/laurie/blog/2020/automatic_syntax_error_recovery.html">a completely general error-recovery strategy</a> isn&rsquo;t necessary.
+
+<p>
+How do we recurse?  Consider what the <code>in</code> completion hook will need to do in these examples:
+
+<figure>
+<pre>
+<code>in /tmp echo file[TAB]
+in /tmp {echo file[TAB]
+in /tmp {var = &lt;={result file[TAB]</code>
+</figure>
+
+<p>
+Correctly performing completion on built-in behavior like assignment will require built-in completion logic.
+Recursing to built-in completion from in-<i>es</i> completion will require a primitive.
+
+<p>
+How do we expose variables and other syntax transformed by glomming to completion hooks?
+Variable completion should be built-in (since variable resolution is built-in), and completion of a command like <code>cmd &lt;={echo [TAB]</code> is okay to only care about the <code>echo [TAB]</code>, since it is called <em>before</em> the outer <code>cmd</code> can affect it in any way.  But&hellip; how do we expose a term like a variable or function call when completing a command?  Surely we don&rsquo;t want
+
+<figure>
+<pre>
+<code>in &lt;={sleep 100 &amp;&amp; result .} echo hello[TAB]</code>
+</pre>
+</figure>
+
+<p>
+to hang the shell for 100 seconds, do we?
+It&rsquo;s easy to imagine much worse scenarios involving <code>rm</code>.
+Is this rare enough not to worry about?
+The alternative would be to do some kind of complicated partial-glomming, where the parsed outer command would be converted to a list without actually performing the call, and then the completion hook would have imperfect information about the command.
+(This is also directly relevant to redirection completion, given the use of the <code>%one</code> function in most of the desugaring of redirections.)
