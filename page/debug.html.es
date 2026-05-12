@@ -31,7 +31,7 @@
 <p>
 <figure>
 <pre>
-<; vars >
+<; vars | sed -e 's/&/\&amp;/g' -e 's/</\&lt;/g' >
 </pre>
 </figure>
 </main>

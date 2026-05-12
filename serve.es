@@ -44,7 +44,7 @@ let (
 )
 fn respond code type flags {
 	if {~ $#(code-$code) 0} {
-		echo >[1=2] WARNING: Unknown HTTP status code: $code
+		throw error respond un-handled HTTP status code $code
 	}
 	echo >[1=2] $method $reqpath '->' $version $code $(code-$code)
 	echo $version $code $(code-$code)
@@ -135,51 +135,54 @@ fn build-nav {
 
 #
 # This is where the logic starts!
-#
-# Parse the request.  Populate $method, $reqpath, $version, and variables
-# for any request headers.
-#
-
-(method reqpath version) = <={%split ' ' <={~~ <=%read *\r}}
-
-let (q = <={~~ $reqpath *'?'*})
-if {!~ $q ()} {
-	(reqpath query) = $q
-	query = <={%split '&' $query}
-}
-
-# this whole bit is structured to try to minimize the number of fork/execs
-let (header-names = (); header-values = ()) {
-	# read in headers
-	while {!~ <={header = <=%read} \r} {
-		let ((n v) = <={~~ $header *': '*\r})
-		if {!~ $#n 0} {
-			header-names = $header-names $^n
-			header-values = $header-values $^v
-		}
-	}
-	# convert to lowercase, if necessary
-	if {~ $header-names *[A-Z]*} {
-		local (lhns = $header-names) {
-			eval `` '' {var lhns | awk '{print tolower($0)}'}
-			header-names = $lhns
-		}
-	}
-	# set the header variables
-	for (n = $header-names; v = $header-values)
-		head-$n = $v
-}
-
-
-#
-# Core routing/service logic.
+# Wrap it all in an exception handler that will yell in HTTP
 #
 
 catch @ exception {
-	# FIXME: this is messy, especially when an exception is generated mid-response
 	echo >[1=2] 'Exception while serving:' $exception
+	respond 500 text/html
 	build-page < page/500.html.es $exception
 } {
+	#
+	# Parse the request.  Populate $method, $reqpath, $version, and variables
+	# for any request headers.
+	#
+
+	(method reqpath version) = <={%split ' ' <={~~ <=%read *\r}}
+
+	let (q = <={~~ $reqpath *'?'*})
+	if {!~ $q ()} {
+		(reqpath query) = $q
+		query = <={%split '&' $query}
+	}
+
+	# this whole bit is structured to try to minimize the number of fork/execs
+	let (header-names = (); header-values = ()) {
+		# read in headers
+		let (h = ())
+		while {!~ <={h = <=%read} \r} {
+			let ((n v) = <={~~ $h *': '*\r})
+			if {!~ $#n 0} {
+				header-names = $header-names $^n
+				header-values = $header-values $^v
+			}
+		}
+		# convert to lowercase, if necessary
+		if {~ $header-names *[A-Z]*} {
+			local (lhns = $header-names) {
+				eval `` '' {var lhns | awk '{print tolower($0)}'}
+				header-names = $lhns
+			}
+		}
+		# set the header variables
+		for (n = $header-names; v = $header-values)
+			head-$n = $v
+	}
+
+	#
+	# Core routing/service logic.
+	#
+
 	if (
 		# redirect www.jpco.io to jpco.io
 		{~ $head-host www.jpco.io} {
