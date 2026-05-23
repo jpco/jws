@@ -906,7 +906,7 @@ In particular, the signal machinery is unsuited to the task.
 In fact, signals complicate the control flow in the shell enough, and cause enough special cases throughout the shell, so as to be more of a nuisance than a benefit.
 
 <p>
-One other unfortunate consequence of our shoehorning <i>es</i> onto UNIX systems is the interaction between lexically scoped variables, the environment, and subshells.
+One other unfortunate consequence of our shoehorning <i>es</i> onto UNIX systems is the interaction between lexically scoped variables, the environment, and subshells [<a class=local href=#erratum7 name=erratum7-use>Errata note 7</a>].
 Two functions, for example, may have been defined in the same lexical scope.
 If one of them modifies a lexically scoped variable, that change will affect the variable as seen by the other function.
 On the other hand, if the functions are run in a subshell, the connection between their lexical scopes is lost as a consequence of them being exported in separate environment strings.
@@ -1049,10 +1049,8 @@ If you are aware of any undocumented differences, please contact the authors.
 <p>
 <a id=erratum1 class=local href=#erratum1-use>1.</a>
 
-Haahr&rsquo;s present affiliation is
-<a href="http://www.google.com/">Jive Technology</a>,
-and he can be reached by email at
-<a href="mailto:haahr@jivetech.com">haahr@jivetech.com</a>.
+Both authors have long since moved on from their positions at these organizations.
+Their present affiliations may be looked up online.
 
 <p>
 <a id=erratum2 class=local href=#erratum2-use>2.</a>
@@ -1091,12 +1089,12 @@ The <code>in</code> function should now be
 
 The pipe timing example may not work on all systems.
 It depends on having a version of <code>time</code> that understands <i>es</i>, either by building it in to <i>es</i> or having an external time use the <code>SHELL</code> environment variable.
-<i>Es</i> will include a (minimal) time function if it is built with the compilation option <code>BUITIN_TIME</code>.
+<i>Es</i> will include a (minimal) time function if it is built with the compilation option <code>BUILTIN_TIME</code>.
 
 <p>
 <a id="erratum6" class=local href="#erratum6-use">6.</a>
 
-The initialization procedure as originally described lead to performance problems, for two reasons.
+The initialization procedure as originally described led to performance problems, for two reasons.
 The first is the time needed to parse and run the initialization code;  the second that the data created by running the code (variable names and function definitions, for example) had to be garbage collected.
 <i>Es</i> solves both problems by moving this work to compile-time.
 
@@ -1106,6 +1104,12 @@ That program is run, with the initialization file <code>initial.es</code> as its
 The last thing done in the initialization file is a call to a primitive <code>$&amp;dump</code>, which is only included in <code>esdump</code>, that writes out the entire memory state of the shell as declarations in C source code.
 The generated C code is compiled and linked with the rest of the source to produce the real shell executable.
 The data from the dumping is not garbage collected and is declared <code>const</code> so that the C compiler can put it into read-only memory, if possible.
+
+<p>
+<a id="erratum7" class=local href="#erratum7-use">7.</a>
+
+This has been fixed through the use of a tagging mechanism when encoding closures.
+The same tagging mechanism also allows complex lexical contours to be encoded, including circular references.
 
 <h2><a id=references>References</a></h2>
 

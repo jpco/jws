@@ -225,6 +225,9 @@ This is near-identical to existing assignment statements, and it would not be un
 </figure>
 
 
+<h2>Relationship with extensible primitives</h2>
+
+
 <h2>Loose ends</h2>
 
 <p>
