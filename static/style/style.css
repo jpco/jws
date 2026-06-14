@@ -97,6 +97,11 @@ figure pre {
 	margin: 0;
 	padding: 1ex;
 }
+figure.hero {
+	text-align: center;
+	border: none;
+	background-color: initial;
+}
 figure.centered {
 	text-align: center;
 }

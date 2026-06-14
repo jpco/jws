@@ -2,7 +2,7 @@
 
 Maybe [serving your personal site from a shell script](https://jpco.io/es/web-server.html) isn't the best idea, but maybe I don't care.
 
-This isn't actually written in javascript.  Github just doesn't know what I mean by files with the ".es" extension.
+The shell in question is [_es_](https://github.com/wryun/es-shell).
 
 ## Notes to self on deployment
 
