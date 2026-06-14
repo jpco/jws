@@ -58,53 +58,49 @@ River is an interesting compositor in a few ways, but I initially chose to use i
 <p>
 When river starts up, it runs the executable file <code>~/.config/river/init</code> if it exists.
 On my laptop, of course, this executable file is an <i>es</i> script.
-This script does a few things; many of them are <code>riverctl(1)</code> commands, used to control and configure river from the outside.
-The following is an excerpted version of my river config, skipping the not-very-interesting parts which set colors and basic keybindings.
+This script does a few things:
 
 <figure>
 <pre>
-<code># start the terminal server.  This prevents the junk below from impacting the environment
+<code># start the terminal server first.
+# this prevents any junk below from impacting the environment
 foot -Ss &amp;
-
-# core utilities
-riverctl map normal Super Return spawn footclient
-riverctl map normal Super Space spawn 'rofi -show combi'
-
-for ((media-key bin args notif) = (
-  XF86AudioRaiseVolume	pamixer		'--unmute --increase 5'	'"Set volume" "$(pamixer --get-volume-human)"'
-  XF86AudioLowerVolume	pamixer		'--decrease 5'		'"Set volume" "$(pamixer --get-volume-human)"'
-  XF86AudioMute		pamixer		'--mute --set-volume 0'	'"Audio muted"'
-  XF86MonBrightnessDown	brightnessctl	'-e set 5%-'		'"Set brightness" "$(brightnessctl get)"'
-  XF86MonBrightnessUp	brightnessctl	'-e set 5%+'		'"Set brightness" "$(brightnessctl get)"'
-)) {
-  riverctl map normal None $media-key spawn &lt;={
-    %flatten ' ' $bin $args '&amp;&amp;' \
-    notcat send -a $bin -h canonical:^$bin -u low $notif
-  }
-}
-
 waybar &amp;
+gammastep -l 48.58:-122.36 -t 6500:3500 &amp;
+get-online &amp;&amp; forever { sync-mail.es; sleep 60} &amp;
 
-get-online &amp;&amp; {
-  forever { sync-mail.es; sleep 60 }
-} &amp;
+kanshi -c /dev/stdin &lt;&lt; EOF &amp;
+output eDP-1 scale 2
+profile {
+	output eDP-1
+}
+profile {
+	output eDP-1
+	output DP-2 position 1440,0
+}
+EOF
 
-# layout settings
-riverctl default-layout rivertile
-rivertile -view-padding 0 -outer-padding 0 -main-ratio 0.52 &amp;</code>
+# firefox dialogs don't work without this
+dbus-update-activation-environment --systemd --all
+# force a password entry on each login
+gpgconf --reload gpg-agent
+
+# enter the wm
+exec /usr/local/bin/jrwm &gt; /var/log/jrwm/session &gt;[2=1]</code>
 </pre>
 </figure>
 
 <p>
 For my terminal I use <code>foot(1)</code>, particularly using the client-server model via <code>foot -s</code> and <code>footclient(1)</code>.
 This speeds up terminal startup and reduces resource use.
-After the <code>foot</code> server, this script adds keybindings to spawn <code>footclient</code>, <code>rofi(1)</code>, and media keys including <code>notcat send</code> commands for them (more on notcat below).
-Then, we spawn a <code>waybar(5)</code>, and finally <code>rivertile(1)</code>.
+In addition to the <code>foot</code> server, we start up a <code>waybar</code> (status bar), <code>gammastep</code> (color temperature manager), and <code>kanshi</code> (output manager).
 
 <p>
-<code>rivertile</code> is part of what makes river interesting; it&rsquo;s a separate program which communicates over a custom Wayland protocol to control the window management of the graphical session.
-Other programs can be used in place of <code>rivertile</code>, as long as they implement the same protocol.
-In theory a shell script could do it, if there were a helper program to translate between plain text and the Wayland protocol (like <code>ncat(1)</code> does for <a href=/es/web-server.html>this site&rsquo;s web server</a>, or notcat does for notifications, which I describe below) or, someday, if there were a module that could be loaded into <i>es</i>.
+Then, after a couple of one-time setup commands, this script execs <a href=/jrwm>the JrWM window manager</a>.
+JrWM, a window manager I wrote myself, makes use of the fact that River is non-monolithic: instead of doing everything itself, it exposes a set of private Wayland protocols that an external program can use to perform its own window management logic.
+In theory, that external program <em>could</em> even be a shell script, which of course is an interesting notion for me, although it&rsquo;s not clear to me how window manager state can be reasonably exposed and modeled in a way that <i>es</i> could make good use of.
+Maybe someday&mdash;we&rsquo;ll see.
+
 
 <h2>waybar and notcat</h2>
 
