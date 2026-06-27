@@ -33,6 +33,19 @@ function newgame(rule) {
 	return game;
 }
 
+function randomrule() {
+	const b = Array.from(Array(8).keys(),
+		(i) => Math.random() < 0.4 ? i.toString() : "");
+	const s = Array.from(Array(8).keys(),
+		(i) => Math.random() < 0.4 ? i.toString() : "");
+	console.log("B" + b.join("") + "/S" + s.join(""));
+	return "B" + b.join("") + "/S" + s.join("");
+}
+
+function randominitial(x, y) {
+
+}
+
 function update(game, state, newstate) {
 	var nx = newstate.length;
 	var ny = newstate[0].length;
@@ -235,6 +248,11 @@ function redraw(state, newstate) {
 	cache.collect();
 
 	// this needs improvement, it's a bottleneck
+	if (drawboxes.length == 0) {
+		var box = newdrawbox();
+		drawboxes.push(box);
+	}
+
 	for (var x = 0; x < nx; x++) {
 		for (var y = 0; y < ny; y++) {
 			var oldc = (state[x][y] ? 255 : trace[x][y]);
@@ -247,7 +265,7 @@ function redraw(state, newstate) {
 			if (newc == oldc) {
 				continue;
 			}
-			var boxed = false;
+			/* var boxed = false;
 			for (var i = 0; i < drawboxes.length; i++) {
 				if (drawboxes[i].distance(x, y) < boxmargin) {
 					drawboxes[i].add(newc, x, y);
@@ -255,11 +273,11 @@ function redraw(state, newstate) {
 					break;
 				}
 			}
-			if (!boxed) {
-				var box = newdrawbox();
-				drawboxes.push(box);
-				box.add(newc, x, y);
-			}
+			if (!boxed) { */
+				// var box = newdrawbox();
+				// drawboxes.push(box);
+				drawboxes[0].add(newc, x, y);
+			// }
 		}
 	}
 
@@ -301,6 +319,7 @@ function drawdebug(timing) {
 	if (boxpct > maxboxpct) {
 		maxboxpct = boxpct;
 	}
+	d.fillText(`game: ${rule}`, 0, debugcanvas.height - 56);
 	d.fillText(`rendered: ${boxpct}% (max ${maxboxpct}%), cached: ${cboxpct}% (max ${maxcboxpct}%)`, 0, debugcanvas.height - 42);
 	d.fillText(`boxes: rendered: ${drawboxes.length - cachedboxes - idleboxes}, cached: ${cachedboxes}, idle: ${idleboxes}, total: ${drawboxes.length}`, 0, debugcanvas.height - 28);
 	d.fillText(`cache: ${cache.debug()}`, 0, debugcanvas.height - 14);
@@ -317,22 +336,35 @@ var initial = params.get("i");
 var debug = params.get("debug");
 var scale = params.get("scale");
 var setquery = false;
-if (rule == null) {
+
+if (scale == null) {
+	scale = defaultscale;
+}
+
+const numx = Math.floor(canvas.width / scale);
+const numy = Math.floor(canvas.height / scale);
+
+if (rule == "random") {
+	rule = randomrule();
+} else if (rule == null) {
 	rule = defaultrule;
 	setquery = true;
 }
-if (initial == null) {
-	initial = defaultinitial;
-	setquery = true;
+
+if (initial == "random") {
+	// setquery = true;
+} else if (initial == null) {
+	initial = "random";
+	// setquery = true;
 }
 if (debug == null || debug == "0" || debug == "false") {
 	debug = 0;
 }
-if (scale == null) {
-	scale = defaultscale;
-}
 if (setquery) {
 	var str = `game=${rule}&i=${initial}`;
+	if (initial == "random") {
+		str = `game=${rule}`;
+	}
 	if (debug) {
 		str += `&debug=${debug}`;
 	}
@@ -342,18 +374,24 @@ if (setquery) {
 	window.location.search = str;
 }
 
-const numx = Math.floor(canvas.width / scale);
-const numy = Math.floor(canvas.height / scale);
-
 var state = newgrid(numx, numy);
 var newstate = newgrid(numx, numy);
 
 var trace = newgrid(numx, numy);
 
 var game = newgame(rule);
-for (il of initial.split(";")) {
-	var ils = il.split(",");
-	state[Number(ils[0])%numx][Number(ils[1])%numy] = 1;
+if (initial == "random") {
+	var pb = 0.5;
+	for (i = 0; i < numx; i++) {
+		for (j = 0; j < numy; j++) {
+			state[i][j] = Math.random() < pb ? 1 : 0;
+		}
+	}
+} else {
+	for (il of initial.split(";")) {
+		var ils = il.split(",");
+		state[Number(ils[0])%numx][Number(ils[1])%numy] = 1;
+	}
 }
 
 var cache = newcanvascache();
