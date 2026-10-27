@@ -13,30 +13,32 @@
 I am excited to announce that version 0.10.0 of <i>es</i>, the extensible shell, has been released.
 
 <p>
-This is the first release of <i>es</i> in almost four years, and the first time the release hasn&rsquo;t started with 0.9 in over three <em>decades</em>.
-So, while this release doesn&rsquo;t contain any profound changes to the language or interpreter, it should be taken as a signal that activity in <i>es</i> has picked up once again.
+This is the first release of <i>es</i> in almost four years, and the first time the release has started with anything other than 0.9 in over three <em>decades</em>.
+So, while the release doesn&rsquo;t contain any profound changes to the language or interpreter, it should be taken as a signal that activity in <i>es</i> has picked up once again.
 
 <p>
-For those not already familiar with it, the best introductions to <i>es</i> are <a href=/es/paper.html>the original paper</a> presented at Usenix 1993 or the <a href=/es/man.html>man page</a>, but I&rsquo;ll provide a shorter, incomplete introduction to the shell here, the state of the shell after its over three decades of existence, and some ideas on what interesting work there still is to be done.
+For those not already familiar with it, the best descriptions of <i>es</i> are <a href=/es/paper.html>the original paper</a> presented at Usenix 1993 and the <a href=/es/man.html>man page</a>.
+I&rsquo;ll provide a brief introduction to the shell here, the state of the shell after its over three decades of existence, and some ideas on what interesting work there still is to be done.
 
 <p>
 The current version of <i>es</i> is hosted on <a href="https://github.com/wryun/es-shell">the GitHub repository</a>.
-It is written in a <a href=/es/runtime-quirks.html>somewhat quirky form of ANSI C</a>, using preprocessor macros to implement certain core behaviors.
-It should successfully build using any ANSI C compiler and it should successfully run on any OS which implements a reasonable portion of the <span class=uppernum>POSIX.1-2001</span> standard.
+It is written in a <a href=/es/runtime-quirks.html>somewhat quirky form of ANSI C</a>, using some extensive preprocessor macros to implement certain core behaviors.
+It should successfully build using any ANSI C compiler, and it should successfully run on any OS which implements a reasonable portion of the <span class=uppernum>POSIX.1-2001</span> standard.
+
 
 <h2>What is <i>es</i>?</h2>
 
 <p>
 <i>Es</i> is a Unix shell first developed in the early 1990s by Byron Rakitzis and Paul Haahr, based directly on <a href="https://github.com/rakitzis/rc">Rakitzis&rsquo; earlier port of the shell <i>rc</i></a> from Plan 9 to Unix.
-To quote the 1993 <i>es</i> Usenix paper:
+To quote the 1993 <i>es</i> Usenix paper,
 
 <blockquote>
 [w]hile rc was an experiment in adding modern syntax to Bourne shell semantics, es is an exploration of new semantics combined with rc-influenced syntax: es has lexically scoped variables, first-class functions, and an exception mechanism, which are concepts borrowed from modern programming languages such as Scheme and ML.
 </blockquote>
 
 <p>
-Simple <i>es</i> commands closely resemble other shells, with familiar syntax for things such as pipes, redirections, <code>$variables</code>, wildcards, and backgrounding.
-These things should be especially familiar for those experienced with <i>rc</i>.
+Simple <i>es</i> commands closely resemble other shells, with familiar syntax for pipes, redirections, variables, wildcards, and backgrounding.
+These should all be particularly familiar for those experienced with <i>rc</i>.
 
 <figure>
 <pre>
@@ -45,8 +47,8 @@ These things should be especially familiar for those experienced with <i>rc</i>.
 </figure>
 
 <p>
-Also like in <i>rc</i>, all <i>es</i> variables are flat lists, and a variable&rsquo;s value is never split or otherwise mangled unless a specific command like <code>eval</code> is invoked to do just that.
-This makes the common experience of using variables much more natural than in Bourne-derived shells.
+<i>Es</i> variables, also following from <i>rc</i>, are flat lists, and a variable&rsquo;s value is never split or otherwise mangled unless a call is made to a function like <code>%split</code> or <code>eval</code>.
+This makes the typical experience of using variables much more natural than it is in Bourne-derived shells.
 
 <figure>
 <pre>
@@ -57,26 +59,48 @@ This makes the common experience of using variables much more natural than in Bo
 </figure>
 
 <p>
-Where <i>es</i> differs from <i>rc</i> is in its influence from functional programming.
-In particular, from Scheme, <i>es</i> draws features like higher-order functions and lexical scope.
+Where <i>es</i> departs from <i>rc</i> is in its influence from functional programming.
+In particular, from Scheme, <i>es</i> draws features such as higher-order functions.
 
 <figure>
 <pre>
 <code>fn map cmd args {
-	for (i = $args)
+	for (i = $args) {
 		$cmd $i
-}
-map @ i {cd $i; rm -f *} /tmp /var/tmp</code>
+	}
+}</code>
 </pre>
 </figure>
 
 <p>
-In this example, <code>@ i {cd $i; rm -f *}</code> is a <em>lambda expression</em>&mdash;an anonymous, inline function&mdash;which takes an argument <code>i</code>, <code>cd</code>s to the directory named in <code>$i</code>, and then <code>rm -f</code>s everything in the directory.
-In this example, it is being used as the first argument (everything between the <code>@</code> and closing <code>}</code> is parsed as a single term) passed to the <code>map</code> function.
+This snippet defines a <code>map</code> function with two parameters, <code>cmd</code> and <code>args</code>.
+The function loops over <code>$args</code>, and calls <code>$cmd</code> on each element in order.
+(This implementation of <code>map</code> doesn&rsquo;t produce the proper return value for a <code>map</code> function, but we&rsquo;ll ignore that for now.)
 
 <p>
-Blocks of code (&ldquo;code fragments&rdquo; in <i>es</i>-speak), represented as <code>{commands in curly braces}</code>, can also be stored as terms within variables, or passed as arguments to functions.
-These blocks of code function like lambda expressions, except that they bind no arguments.
+<code>map</code> can be called like
+
+<figure>
+<pre>
+<code>map ls /tmp /var/tmp</code>
+</pre>
+</figure>
+
+<p>
+where it calls <code>ls /tmp</code> and then <code>ls /var/tmp</code>, but it can also be called like
+
+<figure>
+<pre>
+<code>map @ i {cd $i; rm -f *} /tmp /var/tmp</code>
+</pre>
+</figure>
+
+<p>
+In this second example, <code>@ i {cd $i; rm -f *}</code> is a <em>lambda expression</em>&mdash;an anonymous, inline function&mdash;which takes an argument <code>i</code>, <code>cd</code>s to the directory named in <code>$i</code>, and then <code>rm -f</code>s everything in the directory.
+This whole lambda expression is parsed as a single word, passed to <code>map</code>, bound to the <code>cmd</code> parameter, and then invoked just as if it were a named function or external command like <code>ls</code>.
+
+<p>
+Blocks of code (&ldquo;code fragments&rdquo; in <i>es</i>-speak), represented as <code>{commands in curly braces}</code>, are much like lambda expressions in that a code fragment is parsed as a single term and can be bound to variables or passed as an argument to functions.
 
 <figure>
 <pre>
@@ -90,7 +114,7 @@ These blocks of code function like lambda expressions, except that they bind no 
 
 <p>
 Many constructs within <i>es</i> are implemented as functions which take lambda expressions and/or code fragments as arguments.
-For example, the builtin command <code>catch</code>, which is core to <a href=/es/exceptions.html><i>es</i>&rsquo; exception mechanism</a>, takes a lambda expression for its catcher, and a code fragment for its body.
+For example, the builtin command <code>catch</code>, which is core to <a href=/es/exceptions.html><i>es</i>&rsquo; exception mechanism</a>, is a function which takes a lambda expression for its catcher and a code fragment for its body.
 
 <figure>
 <pre>
@@ -105,14 +129,14 @@ For example, the builtin command <code>catch</code>, which is core to <a href=/e
 </figure>
 
 <p>
-Because so many behaviors in <i>es</i> are modeled internally as function calls, and function definitions are visible to users and changeable at will, the internals of the shell are highly malleable.
+Because so many behaviors in <i>es</i> are modeled internally as function calls, and function definitions can be inspected and changed, the internals of the shell are highly malleable.
 The following shows how pipes are implemented: when parsed, the <code>|</code> syntax is desugared into a call to the <code>%pipe</code> function, and the <code>%pipe</code> function is itself just a call to the <code>$&amp;pipe</code> <em>primitive</em>, the built-in function which performs the behavior.
 
 <figure>
 <pre>
 <samp>; </samp><kbd>echo {ls | wc -l}</kbd>
 <samp>{%pipe {ls} 1 0 {wc -l}}
-; </samp><kbd>echo $fn-%pipe</kbd>
+; </samp><kbd>whatis %pipe</kbd>
 <samp>$&amp;pipe
 </pre>
 </figure>
@@ -130,7 +154,7 @@ With this knowledge, the definition of <code>%pipe</code> can be changed to add 
 		$&amp;pipe $args
 	}
 }
-; </samp><kbd>. pipe-spoof.es  # "load" the spoof into the current shell process</kbd>
+; </samp><kbd>. pipe-spoof.es  # "load" the spoof in the current scope</kbd>
 <samp>; </samp><kbd>cat page/es/paper.html.es | tr -cs a-zA-Z0-9 '\012' | sort | uniq -c | sort -nr | sed 6q</kbd>
 <samp> 0.001r   0.000u   0.000s	{cat page/es/paper.html.es}
  0.001r   0.000u   0.000s	{tr -cs a-zA-Z0-9 '\012'}
@@ -148,8 +172,8 @@ With this knowledge, the definition of <code>%pipe</code> can be changed to add 
 </figure>
 
 <p>
-Spoofing is the major mechanism by which users can redefine large swaths of the shell&rsquo;s internal behavior.
-For example, the <code>%write-history</code> function is called by the shell to write a command to the shell history after reading it.
+Spoofing is the major mechanism by which the shell can be customized.
+For example, the <code>%write-history</code> function is called by the shell to write a command to the history file after invoking it.
 To make the shell avoid writing duplicate commands to history, one can simply redefine the function as follows:
 
 <figure>
@@ -173,7 +197,7 @@ We can go through this example line-by-line.
 <code>let (write = $fn-%write-history; last-cmd = ())</code>
 
 <p>
-This creates a (lexical) binding of the current definition of <code>%write-history</code> to the variable <code>write</code>, and of <code>()</code>&mdash;the empty list&mdash;to the variable <code>last-cmd</code>.
+This creates a lexical binding of the current definition of <code>%write-history</code> to the variable <code>write</code>, and of <code>()</code>&mdash;the empty list&mdash;to the variable <code>last-cmd</code>.
 
 <li>
 <p>
@@ -182,11 +206,10 @@ This creates a (lexical) binding of the current definition of <code>%write-histo
 <p>
 This creates a new definition of <code>%write-history</code> with one parameter, <code>$cmd</code>.
 Thanks to the <code>write</code> variable bound with the <code>let</code> in the previous line, the old definition of <code>%write-history</code> is accessible within the body of this function.
-This is a very common idiom in <i>es</i>, because it allows multiple spoofs of a single function to &ldquo;stack&rdquo; with one another with little difficulty.
+This pattern, where a spoofed function has the previous definition bound using <code>let</code>, is a common idiom in <i>es</i>, since it allows multiple spoofs of a single function to &ldquo;stack&rdquo; with one another.
 
 <p>
-Note also that when the <code>last-cmd</code> variable was bound, the binding was created outside of this function.
-That means the binding, and therefore the value of <code>last-cmd</code>, persists across function calls.
+Note also that because the <code>last-cmd</code> binding is made outside of the function body, the bound value of <code>last-cmd</code> persists across function calls.
 
 <li>
 <p>
@@ -208,44 +231,50 @@ We call the previous definition of <code>%write-history</code> on our new <code>
 <code>last-cmd = $cmd</code>
 
 <p>
-Then, we set <code>last-cmd</code> to <code>$cmd</code>.
-Because <code>last-cmd</code> persists across calls to <code>%write-history</code>, this saves this value to compare against future values of <code>$cmd</code>.
+Then, we update <code>last-cmd</code> to <code>$cmd</code>.
+Since <code>last-cmd</code> persists across calls to <code>%write-history</code>, this saves this value to compare against future values of <code>$cmd</code>.
 
 </ol>
 
 <p>
-This bit of code implements what in Bash would be achieved using <code>HISTCONTROL=ignoredups</code>, and it&rsquo;s reasonable to note that for this specific case, the Bash version is quite a bit more concise and easier to configure than the <i>es</i> version is to script up.
+This bit of code implements what in Bash would be achieved using <code>HISTCONTROL=ignoredups</code>, and it&rsquo;s reasonable to  that for this specific case, the Bash version is quite a bit more concise, and easier to configure, than the <i>es</i> version is to script up.
 
 <p>
-But that&rsquo;s because this is a specific feature, one of a great many, that has been pre-implemented in Bash.
-<code>HISTCONTROL</code> is a colon-separated (<code>$PATH</code>-style) list which can contain one of a few special, hardcoded tokens, which correspond with particular behaviors around writing shell history (an exercise for the reader: without looking it up, what are all the possible tokens?)
-It is semi-redundant with another special variable, <code>HISTIGNORE</code>, which controls yet further behaviors, configured using a different kind of colon-separated (<code>$PATH</code>-style) list, with syntax unique to the <code>HISTIGNORE</code> variable (More exercises for the reader: without looking it up, what is that syntax?  In what cases are <code>HISTCONTROL</code> and <code>HISTIGNORE</code> redundant?  In those cases, which is preferable to use?)
-There is a lot to know about these two variables.
+But that&rsquo;s because <code>HISTCONTROL</code> is a specific feature, one of a great many, that has been pre-implemented in Bash.
+<code>HISTCONTROL</code> is a colon-separated (<code>$PATH</code>-style) list which can contain one of a few special, hardcoded tokens, which correspond with particular configurable behaviors around writing shell history (an exercise for the reader: without looking it up, what are all the possible tokens?)
+It is semi-redundant with another special variable, <code>HISTIGNORE</code>, which controls yet further behaviors, configured using a different kind of <code>$PATH</code>-style list, with syntax unique to the <code>HISTIGNORE</code> variable
+(Another exercise for the reader: without looking it up, what is that syntax?
+In what cases are <code>HISTCONTROL</code> and <code>HISTIGNORE</code> redundant?
+In those cases, which is preferable to use?)
+There is a lot to know about these two variables, and all this is to manage a single behavior: writing history.
 
 <p>
-<i>Es</i> takes a different approach instead.
-There is more knowledge required to hand-write the equivalent of <code>HISTCONTROL=ignoredups</code>, but most of that knowledge is general: spoofing functions, saving state across function calls, comparing values.
-These are some of the tools of <i>es</i> scripting; once somebody is proficient in writing <i>es</i> scripts, they&rsquo;re proficient in customizing <i>es</i>.
+<i>Es</i> takes a different approach.
+There is more knowledge required to hand-write the equivalent of <code>HISTCONTROL=ignoredups</code>, but most of that knowledge is general.
+Spoofing functions, saving state across function calls, comparing values, are some of the core tools of <i>es</i> scripting.
+Once somebody is proficient in writing <i>es</i> scripts, they&rsquo;re proficient in customizing <i>es</i>.
 
 <p>
 The <i>es</i> approach also enables a fundamentally greater degree of flexibility, because an <i>es</i> function can do anything <i>es</i> can do.
-When Paul and Byron exposed the shell&rsquo;s interactive REPL as the function <code>%interactive-loop</code>, they also exposed the non-interactive REPL as <code>%batch-loop</code>, despite having reservations that actually modifying the non-interactive REPL would ever be a good idea.
+When the original authors exposed the shell&rsquo;s interactive REPL as the function <code>%interactive-loop</code>, they also exposed the non-interactive REPL as <code>%batch-loop</code>, despite having reservations that there would ever be a good reason to spoof it.
 Doing so, however, made it possible to write an alternate version of <code>%batch-loop</code> that parses an entire script before running any of its commands, which is a convenient way to &ldquo;sanity-check&rdquo; code and avoid running half of a buggy script.
 
 <p>
-This degree of flexibility is remarkable.  The kind of pre-parsing performed here was never implemented or even considered by the authors of <i>es</i>, but it&rsquo;s just as possible as it is under other shells which <a href="https://elv.sh/ref/language.html#code-chunk">officially advertise the behavior</a>.
+This degree of flexibility is remarkable.  The kind of pre-parsing performed here was never implemented or even considered by the authors of <i>es</i>, but it&rsquo;s just as possible as it is under other shells which <a href="https://elv.sh/ref/language.html#code-chunk">officially advertise the benefits of the behavior</a>.
+This flexibility&mdash;the <em>extensibility</em> of the extensible shell&mdash;is a big part of why it remains usable and relevant today, over thirty years after its initial release.
+
 
 <h2>What&rsquo;s been happening with <i>es</i>?</h2>
 
 <p>
 <i>Es</i> was mostly developed over the course of 1992-1995.
-The bulk of development went through the release of version 0.84; 0.88 was released after the authors had taken a break, and then after that release both of them got too busy with life and jobs to continue work on the shell.
+The bulk of development went through the release of version 0.84; 0.88 was released after the authors had taken a break, and then after that release both of them got too busy with life and jobs to keep working on the shell.
 
 <p>
-After that, maintainership passed through a couple hands, leading eventually to the current maintainer James Haggerty, but that maintainership was largely focused on keeping <i>es</i> basically functional over the decades as OSes, build systems, and code-hosting practices have evolved.
+After that, maintainership passed through a couple hands, leading eventually to the current maintainer James Haggerty, but that maintainership was largely focused on keeping <i>es</i> functional over the decades as OSes, build systems, and code-hosting practices have evolved.
 
 <p>
-This left <i>es</i> as an incomplete experiment: Paul and Byron didn&rsquo;t have time to achieve a good amount of what they planned on, and even if they had, their near- to medium-term plans certainly didn&rsquo;t sum up to everything the shell could be made to do.
+This left <i>es</i> as an incomplete experiment: Paul and Byron never had time to achieve a good amount of what they planned on, and even if they had, their near- to medium-term plans certainly didn&rsquo;t sum up to everything the shell could be made to do.
 
 <p>
 Recently, however, there has been more activity, which has just been bundled up in version 0.10.0.
@@ -282,7 +311,7 @@ Well, there are a couple of near-term goals I would like to achieve.
 
 <p>
 <a href=/es/input.html>Shell input has recently been refactored</a> so that it can be meaningfully extended like other parts of the shell, but this hasn&rsquo;t yet been exploited.
-For example, there&rsquo;s no mechanism for programmable tab completion, and there&rsquo;s no alternative to readline integration, such as editline, <a href="https://github.com/antirez/linenoise">linenoise</a>, <a href="https://github.com/AmokHuginnsson/replxx">replxx</a>, <a href="https://github.com/injinj/linecook">linecook</a>, or even something like an <i>es</i> version of <a href="https://github.com/akinomyoga/ble.sh">ble.sh</a>.
+For example, there&rsquo;s no mechanism for programmable tab completion, and there&rsquo;s no alternative to readline, such as editline, <a href="https://github.com/antirez/linenoise">linenoise</a>, <a href="https://github.com/AmokHuginnsson/replxx">replxx</a>, <a href="https://github.com/injinj/linecook">linecook</a>, or even something like an <i>es</i> version of <a href="https://github.com/akinomyoga/ble.sh">ble.sh</a>.
 Essentially, it is finally <em>possible</em> to make <i>es</i> input extensible, but I want to actually follow through.
 
 <p>
@@ -292,12 +321,12 @@ Despite that, the ability to manage process groups&mdash;which is the real, core
 Once that support is added, then a simple <code>job-control.es</code> script can be easily added as a canonical extension.
 
 <p>
-Both of these are intended to improve <i>es</i>&rsquo; usability as a shell; these usability gaps create a real drag on how useful <i>es</i> is for people who have come to expect and depend on these features.
-It should be possible to make these behaviors possible for those who want them, with little cost to those who don&rsquo;t, using the same techniques already ubiquitous in <i>es</i>.
+Both of these are intended to address <i>es</i>&rsquo; usability as a shell; these usability gaps create a real drag on how useful <i>es</i> is for people who have come to expect and depend on these features.
+It should be possible to make them possible for users who want them, with little cost to those who don&rsquo;t, using the same techniques already ubiquitous in <i>es</i>.
 
 <p>
 Ideally though, I don&rsquo;t want to add too much to what&rsquo;s built into the upstream shell.
-The current feature set is pretty good, and I think it&rsquo;s right to have a shell that starts small and lets users build on that.
+The current feature set is pretty good, and I think it&rsquo;s right to have a shell that starts small and lets users add to it.
 Whatever is added to upstream should be primarily focused on extensibility, programmability, and generality.
 
 <p>
@@ -314,7 +343,7 @@ Other improvements include a general facility for resource handles upon which th
 
 <p>
 Outside of actual development work, I intend to write more posts to document various aspects of <i>es</i>, making it easier to get a strong grasp of the shell without having to dive into the codebase or trawl the old mailing list just to have an idea of how certain things work or why they&rsquo;re implemented the way they are.
-(It is an opinion of mine that somebody shouldn&rsquo;t have to learn C just to learn <i>es</i>.)
+(It is an opinion of mine that somebody shouldn&rsquo;t have to learn C just to learn how to use and customize <i>es</i>.)
 
 <p>
 Some pages I ought to get around to writing include:
