@@ -938,7 +938,7 @@ At this point, the memory request which triggered the collection should be able 
 If not, a larger block is allocated and the collection is redone.
 
 <p>
-During some parts of the shell&rsquo;s execution&mdash;notably while the <i>yacc</i> parser driver is running&mdash;it is not possible to identify all of the rootset, so garbage collection is disabled.
+During some parts of the shell&rsquo;s execution&mdash;notably while the <i>yacc</i> parser driver is running [<a class=local href=#erratum8 name=erratum8-use>Errata note 8</a>]&mdash;it is not possible to identify all of the rootset, so garbage collection is disabled.
 If an allocation request is made during this time for which there is not enough memory available in the arena, a new chunk of memory is grabbed so that allocation can continue.
 
 <p>
@@ -1092,7 +1092,7 @@ It depends on having a version of <code>time</code> that understands <i>es</i>, 
 <i>Es</i> will include a (minimal) time function if it is built with the compilation option <code>BUILTIN_TIME</code>.
 
 <p>
-<a id="erratum6" class=local href="#erratum6-use">6.</a>
+<a id=erratum6 class=local href=#erratum6-use>6.</a>
 
 The initialization procedure as originally described led to performance problems, for two reasons.
 The first is the time needed to parse and run the initialization code;  the second that the data created by running the code (variable names and function definitions, for example) had to be garbage collected.
@@ -1106,10 +1106,15 @@ The generated C code is compiled and linked with the rest of the source to produ
 The data from the dumping is not garbage collected and is declared <code>const</code> so that the C compiler can put it into read-only memory, if possible.
 
 <p>
-<a id="erratum7" class=local href="#erratum7-use">7.</a>
+<a id=erratum7 class=local href=#erratum7-use>7.</a>
 
 This has been fixed through the use of a tagging mechanism when encoding closures.
-The same tagging mechanism also allows complex lexical contours to be encoded, including circular references.
+The same tagging mechanism also allows complex lexical contours such as recursive structures to be encoded as strings.
+
+<p>
+<a id=erratum8 class=local href=#erratum8-use>8.</a>
+
+This has been fixed by <a href=/es/input.html>moving memory references created by the parser out of garbage collected memory</a>, so that the GC can still identify the full rootset while parsing.
 
 <h2><a id=references>References</a></h2>
 
