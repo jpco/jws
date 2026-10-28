@@ -16,54 +16,56 @@ A website is a complicated thing.
 If you don&rsquo;t have a clear idea of what you want to do, there are a lot of different ways to end up with something that, plainly, stinks.
 
 <p>
-Impressively, it seems that some of the world&rsquo;s premiere institutions of the written word struggle with this just as soon as that word needs to be wrapped in an <code>&lt;html&gt;</code>.
-Have you ever clicked a link, hoping to read something insightful from a great writer, just to become locked in battle with the page it&rsquo;s on, which is desperately trying to get you to do anything except read what you came there for?
+Impressively, it seems that some of the world&rsquo;s premiere institutions of the written word struggle with this just as soon as those words need to be wrapped in an <code>&lt;html&gt;</code>.
+Have you ever clicked a link, hoping to read something insightful from a great writer, only to become locked in battle with the page it&rsquo;s on, which is desperately trying to get you to do anything <em>except</em> read what you came there for?
 
 <p>
 Sure you have.
-That&rsquo;s like 40% of what the web is these days.
+That&rsquo;s like a third of what the web is these days.
 
 <p>
-Now, admittedly, I can&rsquo;t exactly claim to be a great designer myself.
+Now, despite my opinions, I can&rsquo;t exactly claim to be a great designer myself.
 I&rsquo;ve got what you might call &ldquo;basic&rdquo; visual aesthetic tastes.
-I also don&rsquo;t spend a great deal of time working in the browser, so it&rsquo;s easy for me to forget about some of the various things I care about in a website.
+I also don&rsquo;t spend a great deal of time working with the web, so it&rsquo;s easy for me to forget some of those things I care about in a website.
 
 <p>
-So, this page is primarily for myself, to remember my own design goals, inspirations, and practices.
-I&rsquo;m putting it on this site so that it&rsquo;s definitely available when I want to use it, but maybe it&rsquo;ll be useful to somebody else, too.
+So this page exists to document, for my future self and for others, my own design goals, inspirations, and practices.
+It may help explain to some degree why this site is the way that it is.
+
 
 <h2>Websites that work well</h2>
 
 <p>
 First, hello, future me and anyone else reading.
 Let&rsquo;s talk about what actually makes a website <em>good</em>.
-This is useful not only because people have different opinions, but also because the web is versatile, and different uses of web technology imply different behaviors.
+This is useful not only because people have different opinions, but also because the web is versatile, and different kinds of page have different virtues.
 
 <p>
-For example, web <em>art</em>, the kind that <a href="https://everest-pipkin.com">Everest Pipkin</a> makes, shouldn&rsquo;t be judged the same way as a blog post or a web app.
-Some of the stuff that Steven Wittens does on <a href="https://acko.net">his site acko.net</a> is similar; while his site is visually great and technically impressive, all the heavily animated whizzing-about going on on the site would be kind of miserable if it were happening on essentially any website that wasn&rsquo;t essentially a tech demo for 3D graphics in the browser.
+For example, web <em>art</em>, like the kind that <a href="https://everest-pipkin.com">Everest Pipkin</a> makes, shouldn&rsquo;t be judged the same way as a blog post or a web app.
+Some of the stuff that Steven Wittens does on <a href="https://acko.net">his site acko.net</a> is similar; while the site is visually great and technically impressive, it would be miserable if your average website had all that animated whizzing-about.
 
 <p>
 Complex web apps are yet another thing altogether.
 I have very little to say about, say, Google Maps as a &ldquo;website&rdquo;, except that it seems good at being a big interactive map.
-As far as I&rsquo;m concerned, websites like that are more or less magic.
-
-<p> That said, though, sophisticated web apps like that&mdash;web apps that really <em>need</em> that degree of sophistication&mdash;are pretty rare.
+However, web apps that really need the kind of sophistication of a Google Maps are rare.
 There aren&rsquo;t that many websites where &ldquo;what if we used wasm?&rdquo; is a reasonable question.
 
 <p>
-So, for everything else, all those sites that are essentially fancy text-and-image delivery systems, what makes a site good?
+For all the other pages, the vast majority of pages on the web which are essentially just text-and-image delivery systems&hellip; what makes them good?
 
 <p>
 Well, some universally good things are compactness and accessibility.
 
 <p>
-By compactness I mean the amount of data your browser downloads shouldn&rsquo;t be much bigger than it has to.
-Plenty of people have written about this before; Maciej Cegłowski did <a href="https://idlewords.com/talks/website_obesity.htm">the canonical talk on the &ldquo;website obesity crisis&rdquo;</a>, which itself refers to half a dozen pages bemoaning, and at the same time exhibiting, page bloat.
-Dan Luu has done some great writing on this as well, focusing on the impacts of bloated sites on both <a href="http://danluu.com/web-bloat/">slow and intermittent internet</a> and <a href="http://danluu.com/slow-device/">slow devices</a>.
-Incidentally, <a href="http://danluu.com">danluu.com</a> itself is a very good, if extreme, example of a compact website.
+By compactness, I mean the amount of data your browser downloads when it loads a page shouldn&rsquo;t be much bigger than it actually needs to.
+In a document, that is essentially just the size of the text.
 
 <p>
+Plenty of people have written on the topic before; Maciej Cegłowski did <a href="https://idlewords.com/talks/website_obesity.htm">the canonical talk on the &ldquo;website obesity crisis&rdquo;</a>, which itself refers to half a dozen pages bemoaning, and at the same time exhibiting, page bloat.
+Dan Luu has done some great writing on this as well, focusing on the impacts of bloated sites on <a href="http://danluu.com/web-bloat/">slow and intermittent internet</a> as well as <a href="http://danluu.com/slow-device/">slow devices</a>.
+
+<p>
+Both of these sites, <a href="https://idlewords.com">idlewords.com</a> and <a href="http://danluu.com">danluu.com</a>, are themselves quite compact.
 There is also <a href="https://motherfuckingwebsite.com">this motherfucking website</a>, which uses nearly as many bytes on obscenity as it does on markup (I counted).
 
 <p>
@@ -71,9 +73,9 @@ I also mentioned accessibility.
 Accessibility is a very good thing if you want people to use your thing.
 
 <p>
-Accessibility includes the typical topics of screen-readers and semantic HTML, but it&rsquo;s broader than that.
+Accessibility encapsulates the typically-discussed topics of screen readers and semantic HTML, but it&rsquo;s broader than that.
 I would define accessibility on the web as something like &ldquo;usable, according to many different preferences and needs.&rdquo;
-Because there are many ways people use the web, and many levers of control available to a user.
+This goes beyond accessibility for disability; everybody uses the web in different ways, and there are many levers of control available to do this.
 
 <p>
 An accessible site should use responsive design, so that people can read a site easily on whatever screen they want, and at whatever font size or zoom level they want.
@@ -196,7 +198,7 @@ Well, <a href=/es/web-server.html>the web server is a shell script</a> (specific
 The site is currently dead simple and static, but for pages that are a bit more dynamic, a design built around something like <a href="https://htmx.org/">htmx</a> seems fairly ideal.
 
 <p>
-As far as the stuff that runs in the browser goes:
+As far as the stuff that the browser executes goes:
 
 <p>
 The overall HTML structure is inspired by <a href="http://lofi.limo/blog/write-html-right">these tips from Aaron Parks</a>.
