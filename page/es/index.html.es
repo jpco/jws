@@ -348,7 +348,6 @@ Outside of actual development work, I intend to write more posts to document var
 <p>
 Some pages I ought to get around to writing include:
 <ul>
-<li>Job control and the extensible shell
 <li>Effective <i>es</i> scripting
 <li>The life of an <i>es</i> command
 <li>The <i>es</i> runtime
