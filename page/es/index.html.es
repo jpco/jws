@@ -317,7 +317,7 @@ Essentially, it is finally <em>possible</em> to make <i>es</i> input extensible,
 <p>
 I would also like to add some form of support for job control to the shell.
 There is a long history of religious arguments about job control in both <i>es</i> and <i>rc</i>, and I admit that I find many shells&rsquo; abstraction of a &ldquo;job&rdquo; to be more obnoxious than useful.
-Despite that, the ability to manage process groups&mdash;which is the real, core functionality of job control&mdash;is something that should be possible for any competent Unix shell, and I believe that it can be possible for <i>es</i> with only small extensions to existing shell mechanisms.
+Despite that, the ability to manage process groups&mdash;which is the real, core functionality of job control&mdash;is something that should be possible for any competent Unix shell, and I believe that <a href=/es/job-control.html>it can be possible for <i>es</i> with only small extensions to existing shell mechanisms</a>.
 Once that support is added, then a simple <code>job-control.es</code> script can be easily added as a canonical extension.
 
 <p>
